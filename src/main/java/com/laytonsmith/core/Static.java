@@ -341,8 +341,6 @@ public final class Static {
         return profilingLogFileHandle;
     }
 
-
-
     public static WorldEditPlugin getWorldEditPlugin(Target t) {
         if (Implementation.GetServerType() != Implementation.Type.BUKKIT) {
             throw new ConfigRuntimeException("Trying to use WorldEdit on non-bukkit server.", ExceptionType.InvalidPluginException, t);

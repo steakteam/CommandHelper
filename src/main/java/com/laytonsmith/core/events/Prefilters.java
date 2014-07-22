@@ -14,18 +14,16 @@ import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.PrefilterNonMatchException;
 import com.laytonsmith.core.functions.Exceptions.ExceptionType;
-import com.sk89q.worldedit.expression.Expression;
-import com.sk89q.worldedit.expression.ExpressionException;
 import java.util.Map;
 
 /**
  *
- * 
+ *
  */
 public final class Prefilters {
-    
+
     private Prefilters(){}
-    
+
     public enum PrefilterType{
         /**
          * Item matches are fuzzy matches for item notation. Red wool and black wool
@@ -57,11 +55,6 @@ public final class Prefilters {
          */
         REGEX,
         /**
-         * An expression allows for more complex numerical matching. Similar to a regex,
-         * but designed for numerical values.
-         */
-        EXPRESSION,
-        /**
          * A macro expression allows for either an exact string match, or a regular expression,
          * or an expression. It is parsed according to the format of the prefilter. In
          * general, this should be used most often for things that are not definitively
@@ -69,32 +62,32 @@ public final class Prefilters {
          */
         MACRO
     }
-    
+
     public static void match(Map<String, Construct> map, String key,
             String actualValue, PrefilterType type) throws PrefilterNonMatchException{
         match(map, key, new CString(actualValue, Target.UNKNOWN), type);
     }
-    
+
     public static void match(Map<String, Construct> map, String key,
             int actualValue, PrefilterType type) throws PrefilterNonMatchException{
         match(map, key, new CInt(actualValue, Target.UNKNOWN), type);
     }
-    
+
     public static void match(Map<String, Construct> map, String key,
             double actualValue, PrefilterType type) throws PrefilterNonMatchException{
         match(map, key, new CDouble(actualValue, Target.UNKNOWN), type);
     }
-    
+
 	public static void match(Map<String, Construct> map, String key,
 			boolean actualValue, PrefilterType type) throws PrefilterNonMatchException {
 		match(map, key, CBoolean.get(actualValue), type);
 	}
-    
+
 	public static void match(Map<String, Construct> map, String key,
 			MCLocation actualValue, PrefilterType type) throws PrefilterNonMatchException {
 		match(map, key, ObjectGenerator.GetGenerator().location(actualValue, false), type);
 	}
-    
+
     /**
      * Given a prototype and the actual user provided value, determines if it matches.
      * If it doesn't, it throws an exception. If the value is not provided, or it does
@@ -113,9 +106,6 @@ public final class Prefilters {
                 case MATH_MATCH:
                     MathMatch(map.get(key), actualValue);
                     break;
-                case EXPRESSION:
-                    ExpressionMatch(MathReplace(key, map.get(key), actualValue), actualValue);
-                    break;
                 case REGEX:
                     RegexMatch(map.get(key), actualValue);
                     break;
@@ -131,7 +121,7 @@ public final class Prefilters {
             }
         }
     }
-    
+
     private static void ItemMatch(Construct item1, Construct item2) throws PrefilterNonMatchException{
         String i1 = item1.val();
         String i2 = item2.val();
@@ -167,7 +157,7 @@ public final class Prefilters {
             throw new PrefilterNonMatchException();
         }
     }
-    
+
     private static void MathMatch(Construct one, Construct two) throws PrefilterNonMatchException{
         try{
             double dOne = Static.getNumber(one, Target.UNKNOWN);
@@ -179,37 +169,7 @@ public final class Prefilters {
             throw new PrefilterNonMatchException();
         }
     }
-    
-    private static void ExpressionMatch(Construct expression, Construct dvalue) throws PrefilterNonMatchException{
-        if(expression.val().matches("\\(.*\\)")){
-            String exp = expression.val().substring(1, expression.val().length() - 1);
-            boolean inequalityMode = false;
-            if(exp.contains("<") || exp.contains(">") || exp.contains("==")){
-                inequalityMode = true;
-            }
-            try{
-                double val = Expression.compile(exp).evaluate();
-                if(inequalityMode){
-                    if(val == 0){
-                        throw new PrefilterNonMatchException();
-                    }
-                } else {
-                    if(val != Static.getDouble(dvalue, Target.UNKNOWN)){
-                        throw new PrefilterNonMatchException();
-                    }
-                }
-            } catch(ExpressionException e){
-                throw new ConfigRuntimeException("Your expression is invalidly formatted", 
-                        ExceptionType.FormatException, expression.getTarget());
-            }
-        } else {
-            throw new ConfigRuntimeException("Prefilter expecting expression type, and \"" 
-                    + expression.val() + "\" does not follow expression format. "
-                    + "(Did you surround it in parenthesis?)", 
-                    ExceptionType.FormatException, expression.getTarget());
-        }
-    }
-    
+
     private static void RegexMatch(Construct expression, Construct value) throws PrefilterNonMatchException{
         if(expression.val().matches("/.*/")){
             String exp = expression.val().substring(1, expression.val().length() - 1);
@@ -217,21 +177,19 @@ public final class Prefilters {
                 throw new PrefilterNonMatchException();
             }
         } else {
-            throw new ConfigRuntimeException("Prefilter expecting regex type, and \"" 
+            throw new ConfigRuntimeException("Prefilter expecting regex type, and \""
                     + expression.val() + "\" does not follow regex format", ExceptionType.FormatException, expression.getTarget());
         }
     }
-    
+
     private static void MacroMatch(String key, Construct expression, Construct value) throws PrefilterNonMatchException{
-        if(expression.val().matches("\\(.*\\)")){
-            ExpressionMatch(MathReplace(key, expression, value), value);
-        } else if(expression.val().matches("/.*/")){
+		if(expression.val().matches("/.*/")){
             RegexMatch(expression, value);
         } else {
             StringMatch(expression.val(), value.val());
         }
     }
-    
+
     private static Construct MathReplace(String key, Construct expression, Construct value){
         return new CString(expression.val().replaceAll(key, value.val()), expression.getTarget());
     }

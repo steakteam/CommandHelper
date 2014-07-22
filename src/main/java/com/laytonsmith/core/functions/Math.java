@@ -25,8 +25,6 @@ import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.functions.Exceptions.ExceptionType;
 import com.laytonsmith.core.natives.interfaces.ArrayAccess;
-import com.sk89q.worldedit.expression.Expression;
-import com.sk89q.worldedit.expression.ExpressionException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -2105,46 +2103,47 @@ public class Math {
 
 		@Override
 		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-			String expr = args[0].val().trim();
-			if("".equals(expr)){
-				throw new Exceptions.FormatException("Expression may not be empty", t);
-			}
-			CArray vars = null;
-			if (args.length == 2 && args[1] instanceof CArray) {
-				vars = (CArray) args[1];
-			} else if (args.length == 2 && !(args[1] instanceof CArray)) {
-				throw new ConfigRuntimeException("The second argument of expr() should be an array", ExceptionType.CastException, t);
-			}
-			if (vars != null && !vars.inAssociativeMode()) {
-				throw new ConfigRuntimeException("The array provided to expr() must be an associative array", ExceptionType.CastException, t);
-			}
-			double[] da;
-			String[] varNames;
-			if (vars != null) {
-				int i = 0;
-				da = new double[(int)vars.size()];
-				varNames = new String[(int)vars.size()];
-				for (String key : vars.stringKeySet()) {
-					varNames[i] = key;
-					da[i] = Static.getDouble(vars.get(key, t), t);
-					i++;
-				}
-			} else {
-				da = new double[0];
-				varNames = new String[0];
-			}
-			try {
-				Expression e = Expression.compile(expr, varNames);
-				return new CDouble(e.evaluate(da), t);
-			} catch (ExpressionException ex) {
-				throw new ConfigRuntimeException("Your expression was invalidly formatted", ExceptionType.PluginInternalException, t, ex);
-			}
+			throw new ConfigRuntimeException(getName() + " is currently out of service. It will be re-added later.", ExceptionType.NotFoundException, t);
+//			String expr = args[0].val().trim();
+//			if("".equals(expr)){
+//				throw new Exceptions.FormatException("Expression may not be empty", t);
+//			}
+//			CArray vars = null;
+//			if (args.length == 2 && args[1] instanceof CArray) {
+//				vars = (CArray) args[1];
+//			} else if (args.length == 2 && !(args[1] instanceof CArray)) {
+//				throw new ConfigRuntimeException("The second argument of expr() should be an array", ExceptionType.CastException, t);
+//			}
+//			if (vars != null && !vars.inAssociativeMode()) {
+//				throw new ConfigRuntimeException("The array provided to expr() must be an associative array", ExceptionType.CastException, t);
+//			}
+//			double[] da;
+//			String[] varNames;
+//			if (vars != null) {
+//				int i = 0;
+//				da = new double[(int)vars.size()];
+//				varNames = new String[(int)vars.size()];
+//				for (String key : vars.stringKeySet()) {
+//					varNames[i] = key;
+//					da[i] = Static.getDouble(vars.get(key, t), t);
+//					i++;
+//				}
+//			} else {
+//				da = new double[0];
+//				varNames = new String[0];
+//			}
+//			try {
+//				Expression e = Expression.compile(expr, varNames);
+//				return new CDouble(e.evaluate(da), t);
+//			} catch (ExpressionException ex) {
+//				throw new ConfigRuntimeException("Your expression was invalidly formatted", ExceptionType.PluginInternalException, t, ex);
+//			}
 		}
 
 		@Override
 		public Set<OptimizationOption> optimizationOptions() {
 			return EnumSet.of(
-						OptimizationOption.CONSTANT_OFFLINE,
+						//OptimizationOption.CONSTANT_OFFLINE,
 						OptimizationOption.CACHE_RETURN
 			);
 		}

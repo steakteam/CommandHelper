@@ -17,7 +17,7 @@ import org.junit.Test;
 
 /**
  *
- * 
+ *
  */
 public class PrefiltersTest {
 
@@ -96,7 +96,7 @@ public class PrefiltersTest {
         } catch (PrefilterNonMatchException e) {
         }
     }
-    
+
     @Test public void testMathMatch(){
         Map<String, Construct> map = new HashMap<String, Construct>();
         map.put("x", C.String("2"));
@@ -107,45 +107,6 @@ public class PrefiltersTest {
         }
         try {
             Prefilters.match(map, "x", "2.00001", PrefilterType.MATH_MATCH);
-            fail("Did not expect a match here");
-        } catch (PrefilterNonMatchException e) {
-        }
-    }
-    
-    @Test public void testExpressionMatch(){
-        Map<String, Construct> map = new HashMap<String, Construct>();
-        map.put("x", C.String("(x > 4)"));
-        try {
-            Prefilters.match(map, "x", "5", PrefilterType.EXPRESSION);
-        } catch (PrefilterNonMatchException e) {
-            fail("Expected a match here");
-        }
-        try {
-            Prefilters.match(map, "x", "4", PrefilterType.EXPRESSION);
-            fail("Did not expect a match here");
-        } catch (PrefilterNonMatchException e) {
-        }
-        
-        map.put("x", C.String("(x == 5)"));
-        try {
-            Prefilters.match(map, "x", "5", PrefilterType.EXPRESSION);
-        } catch (PrefilterNonMatchException e) {
-            fail("Expected a match here");
-        }
-        try {
-            Prefilters.match(map, "x", "4", PrefilterType.EXPRESSION);
-            fail("Did not expect a match here");
-        } catch (PrefilterNonMatchException e) {
-        }
-        
-        map.put("x", C.String("(2 + 3)"));
-        try {
-            Prefilters.match(map, "x", "5", PrefilterType.EXPRESSION);
-        } catch (PrefilterNonMatchException e) {
-            fail("Expected a match here");
-        }
-        try {
-            Prefilters.match(map, "x", "4", PrefilterType.EXPRESSION);
             fail("Did not expect a match here");
         } catch (PrefilterNonMatchException e) {
         }

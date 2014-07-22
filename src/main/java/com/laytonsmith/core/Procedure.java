@@ -1,5 +1,6 @@
 package com.laytonsmith.core;
 
+import com.laytonsmith.PureUtilities.Common.StringUtils;
 import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CFunction;
 import com.laytonsmith.core.constructs.CVoid;
@@ -18,7 +19,6 @@ import com.laytonsmith.core.functions.Exceptions.ExceptionType;
 import com.laytonsmith.core.functions.Function;
 import com.laytonsmith.core.functions.FunctionBase;
 import com.laytonsmith.core.functions.FunctionList;
-import com.sk89q.util.StringUtil;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -112,7 +112,7 @@ public class Procedure implements Cloneable {
                 }
             }
             catch (ConfigCompileException e) {
-                //It's a proc. We will treat this just like any other function call, 
+                //It's a proc. We will treat this just like any other function call,
             }
             //Ok, well, we have to check the children first.
             for (ParseTree child : tree.getChildren()) {
@@ -138,7 +138,7 @@ public class Procedure implements Cloneable {
 
     @Override
     public String toString() {
-        return name + "(" + StringUtil.joinString(varList.keySet(), ", ", 0) + ")";
+        return name + "(" + StringUtils.Join(varList.keySet(), ", ") + ")";
     }
 
     /**
@@ -175,7 +175,7 @@ public class Procedure implements Cloneable {
             env.getEnv(GlobalEnv.class).GetVarList().set(new IVariable(key, c, Target.UNKNOWN));
             arguments.push(c);
         }
-        Script fakeScript = Script.GenerateScript(tree, env.getEnv(GlobalEnv.class).GetLabel());//new Script(null, null);        
+        Script fakeScript = Script.GenerateScript(tree, env.getEnv(GlobalEnv.class).GetLabel());//new Script(null, null);
         for (int i = 0; i < args.size(); i++) {
             Construct c = args.get(i);
             arguments.set(i, c, t);
@@ -216,7 +216,7 @@ public class Procedure implements Cloneable {
 		}
         return CVoid.VOID;
     }
-	
+
 	public Target getTarget(){
 		return definedAt;
 	}

@@ -1057,7 +1057,7 @@ public class PlayerEvents {
 
 		@Override
         public String docs() {
-            return "{x: <expression>| y: <expression>| z: <expression>| world: <string match>| player: <macro>}"
+            return "{x: <math match>| y: <math match>| z: <math match>| world: <string match>| player: <macro>}"
                     + "Fires when a player respawns. Technically during this time, the player is not considered to be"
                     + " 'online'. This can cause problems if you try to run an external command with run() or something."
                     + " CommandHelper takes into account the fact that the player is offline, and works around this, so"
@@ -1085,9 +1085,9 @@ public class PlayerEvents {
             if (e instanceof MCPlayerRespawnEvent) {
                 MCPlayerRespawnEvent event = (MCPlayerRespawnEvent) e;
                 Prefilters.match(prefilter, "player", event.getPlayer().getName(), PrefilterType.MACRO);
-                Prefilters.match(prefilter, "x", event.getRespawnLocation().getBlockX(), PrefilterType.EXPRESSION);
-                Prefilters.match(prefilter, "y", event.getRespawnLocation().getBlockY(), PrefilterType.EXPRESSION);
-                Prefilters.match(prefilter, "z", event.getRespawnLocation().getBlockZ(), PrefilterType.EXPRESSION);
+                Prefilters.match(prefilter, "x", event.getRespawnLocation().getBlockX(), PrefilterType.MATH_MATCH);
+                Prefilters.match(prefilter, "y", event.getRespawnLocation().getBlockY(), PrefilterType.MATH_MATCH);
+                Prefilters.match(prefilter, "z", event.getRespawnLocation().getBlockZ(), PrefilterType.MATH_MATCH);
                 Prefilters.match(prefilter, "world", event.getRespawnLocation().getWorld().getName(), PrefilterType.STRING_MATCH);
                 return true;
             }

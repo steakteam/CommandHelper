@@ -38,8 +38,6 @@ import com.laytonsmith.persistence.PersistenceNetwork;
 import com.laytonsmith.persistence.io.ConnectionMixinFactory;
 import static com.laytonsmith.testing.StaticTest.Run;
 import static com.laytonsmith.testing.StaticTest.SRun;
-import com.sk89q.worldedit.expression.Expression;
-import com.sk89q.worldedit.expression.ExpressionException;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -61,7 +59,7 @@ import static org.mockito.Mockito.when;
 
 /**
  *
- * 
+ *
  */
 //@RunWith(PowerMockRunner.class)
 //@PrepareForTest(Static.class)
@@ -266,13 +264,6 @@ public class RandomTests {
 	}
 
 	@Test
-	public void expressionTester() throws ExpressionException {
-		//verify basic usage works
-		Expression e = Expression.compile("(x + 2) * y", "x", "y");
-		assertEquals(16, e.evaluate(2, 4), 0.00001);
-	}
-
-	@Test
 	public void testProcScope() throws ConfigCompileException {
 		SRun("proc(_b, assign(@a, 2)) assign(@a, 1) _b() msg(@a)", fakePlayer);
 		verify(fakePlayer).sendMessage("1");
@@ -289,7 +280,7 @@ public class RandomTests {
 		String ret = SRun("reflect_docs('reflect_docs', 'return')", null);
 		assertEquals("string", ret);
 	}
-	
+
 	@Test
 	public void testGetValues() throws Exception {
 		try{
@@ -315,7 +306,7 @@ public class RandomTests {
 			new File("persistence.json").deleteOnExit();
 		}
 	}
-	
+
 //    @Test
 //    public void testBlah() throws Throwable{
 //	    StaticTest.InstallFakeConvertor(fakePlayer);
