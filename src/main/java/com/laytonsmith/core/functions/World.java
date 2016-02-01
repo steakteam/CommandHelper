@@ -27,7 +27,6 @@ import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
@@ -40,6 +39,7 @@ import com.laytonsmith.core.exceptions.CRE.CRERangeException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -100,7 +100,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			String world;
 			if (args.length == 1) {
 				world = args[0].val();
@@ -138,7 +138,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = (environment.getEnv(CommandHelperEnvironment.class).GetPlayer() != null ? environment.getEnv(CommandHelperEnvironment.class).GetPlayer().getWorld() : null);
 			int x = 0;
 			int y = 0;
@@ -229,7 +229,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld world;
 			int x;
@@ -289,7 +289,7 @@ public class World {
  		}
 
  		@Override
- 		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+ 		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
  			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
  			MCWorld world;
  			int x;
@@ -374,7 +374,7 @@ public class World {
  		}
 
  		@Override
- 		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+ 		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
  			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
  			MCWorld world;
  			int x;
@@ -455,7 +455,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
  			MCWorld world;
  			if (args.length == 1) {
@@ -551,7 +551,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld world;
 			int x;
@@ -642,7 +642,7 @@ public class World {
 		Random rnd = new Random();
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld world;
 			int x;
@@ -692,7 +692,7 @@ public class World {
 		}
 	}
 
-	private static final SortedMap<String, Construct> TimeLookup = new TreeMap<String, Construct>();
+	private static final SortedMap<String, Mixed> TimeLookup = new TreeMap<>();
 
 	static {
 		synchronized (World.class) {
@@ -760,7 +760,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = null;
 			if (environment.getEnv(CommandHelperEnvironment.class).GetPlayer() != null) {
 				w = environment.getEnv(CommandHelperEnvironment.class).GetPlayer().getWorld();
@@ -855,7 +855,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = null;
 			if (environment.getEnv(CommandHelperEnvironment.class).GetPlayer() != null) {
 				w = environment.getEnv(CommandHelperEnvironment.class).GetPlayer().getWorld();
@@ -889,7 +889,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			MCWorldCreator creator = StaticLayer.GetConvertor().getWorldCreator(args[0].val());
 			if (args.length >= 3) {
 				MCWorldType type;
@@ -965,7 +965,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray worlds = new CArray(t);
 			for(MCWorld w : Static.getServer().getWorlds()){
 				worlds.push(new CString(w.getName(), t), t);
@@ -1008,7 +1008,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			MCCommandSender cs = env.getEnv(CommandHelperEnvironment.class).GetCommandSender();
 			MCPlayer p = null;
 			MCWorld w = null;
@@ -1098,7 +1098,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCLocation loc = ObjectGenerator.GetGenerator().location(args[0], p != null ? p.getWorld() : null , t);
 			MCItemStack item = Static.ParseItemNotation(this.getName(), args[1].val(), 1, t);
@@ -1175,8 +1175,8 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = Static.getServer().getWorld(args[0].val());
 			if (w == null) {
 				throw ConfigRuntimeException.BuildException("Unknown world: " + args[0],
@@ -1233,7 +1233,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			boolean save = true;
 			if (args.length == 2) {
 				save = Static.getBoolean(args[1]);
@@ -1306,7 +1306,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld world = Static.getServer().getWorld(args[0].val());
 			if (world == null) {
 				throw ConfigRuntimeException.BuildException("Unknown world: " + args[0].val(), CREInvalidWorldException.class, t);
@@ -1355,7 +1355,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCDifficulty difficulty;
 			if (args.length == 1) {
 				try {
@@ -1421,7 +1421,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld world = Static.getServer().getWorld(args[0].val());
 			if (world == null) {
 				throw ConfigRuntimeException.BuildException("Unknown world: " + args[0].val(), CREInvalidWorldException.class, t);
@@ -1469,7 +1469,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if (args.length == 1) {
 				boolean pvp = Static.getBoolean(args[0]);
 				for (MCWorld world : Static.getServer().getWorlds()) {
@@ -1527,7 +1527,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld world = Static.getServer().getWorld(args[0].val());
 			if (world == null) {
 				throw ConfigRuntimeException.BuildException("Unknown world: " + args[0].val(), CREInvalidWorldException.class, t);
@@ -1590,7 +1590,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCGameRule gameRule;
 			if (args.length == 2) {
 				try {
@@ -1660,7 +1660,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 
@@ -1723,7 +1723,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 
@@ -1784,7 +1784,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 
@@ -1823,7 +1823,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld world = Static.getWorld(args[0], t);
 			world.save();
 			return CVoid.VOID;
@@ -1870,7 +1870,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target target, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target target, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer player = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld world = null;
 			if(player != null) {

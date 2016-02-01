@@ -81,7 +81,6 @@ import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
@@ -165,8 +164,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			CArray ret = new CArray(t);
 			if (args.length == 0) {
 				for (MCWorld w : Static.getServer().getWorlds()) {
@@ -258,8 +257,8 @@ public class EntityManagement {
 	public static class entity_exists extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCEntity e;
 			try {
 				e = Static.getEntity(args[0], t);
@@ -289,8 +288,8 @@ public class EntityManagement {
 	public static class is_entity_living extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCEntity e;
 
 			try {
@@ -322,8 +321,8 @@ public class EntityManagement {
 	public static class entity_loc extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			return ObjectGenerator.GetGenerator().location(e.getLocation());
 		}
@@ -365,8 +364,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			MCLocation l;
 			if (args[1] instanceof CArray) {
@@ -414,8 +413,8 @@ public class EntityManagement {
 	public static class entity_velocity extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 
 			MCEntity e = Static.getEntity(args[0], t);
 			CArray va = ObjectGenerator.GetGenerator().vector(e.getVelocity(), t);
@@ -453,7 +452,7 @@ public class EntityManagement {
 	public static class set_entity_velocity extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			e.setVelocity(ObjectGenerator.GetGenerator().vector(args[1], t));
 			return CVoid.VOID;
@@ -492,7 +491,7 @@ public class EntityManagement {
 	public static class entity_remove extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			if (ent == null) {
 				return CVoid.VOID;
@@ -533,7 +532,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent;
 			try {
 				ent = Static.getEntity(args[0], t);
@@ -564,7 +563,7 @@ public class EntityManagement {
 	public static class get_entity_breedable extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 
 			if (ent instanceof MCAgeable){
@@ -594,7 +593,7 @@ public class EntityManagement {
 	public static class set_entity_breedable extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			boolean breed = Static.getBoolean(args[1]);
 
 			MCEntity ent = Static.getEntity(args[0], t);
@@ -628,7 +627,7 @@ public class EntityManagement {
 	public static class get_entity_age extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			if (ent == null) {
 				return CNull.NULL;
@@ -663,7 +662,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			int age = Static.getInt32(args[1], t);
 
 			if (age < 1) {
@@ -705,7 +704,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCLivingEntity ent = Static.getLivingEntity(args[0], t);
 			if (ent == null) {
 				return CNull.NULL;
@@ -744,7 +743,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			int age = Static.getInt32(args[1], t);
 			boolean lock = false;
 			if (args.length == 3) {
@@ -790,7 +789,7 @@ public class EntityManagement {
 	public static class get_mob_effects extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCLivingEntity mob = Static.getLivingEntity(args[0], t);
 			return ObjectGenerator.GetGenerator().potions(mob.getEffects(), t);
 		}
@@ -853,7 +852,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			MCLivingEntity mob = Static.getLivingEntity(args[0], t);
 
 			int effect = Static.getInt32(args[1], t);
@@ -896,7 +895,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 
@@ -1073,7 +1072,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 
 			MCLocation loc;
@@ -1174,8 +1173,8 @@ public class EntityManagement {
 	public static class get_mob_target extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCLivingEntity le = Static.getLivingEntity(args[0], t);
 			if (le.getTarget(t) == null) {
 				return CNull.NULL;
@@ -1210,7 +1209,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCLivingEntity le = Static.getLivingEntity(args[0], t);
 			MCLivingEntity target = null;
 			if (!(args[1] instanceof CNull)) {
@@ -1241,7 +1240,7 @@ public class EntityManagement {
 	public static class get_mob_equipment extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCLivingEntity le = Static.getLivingEntity(args[0], t);
 			MCEntityEquipment eq = le.getEquipment();
 			if (eq == null) {
@@ -1286,7 +1285,7 @@ public class EntityManagement {
 	public static class set_mob_equipment extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCLivingEntity le = Static.getLivingEntity(args[0], t);
 			MCEntityEquipment ee = le.getEquipment();
 			if (ee == null) {
@@ -1344,7 +1343,7 @@ public class EntityManagement {
 	public static class get_max_health extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCLivingEntity le = Static.getLivingEntity(args[0], t);
 			return new CDouble(le.getMaxHealth(), t);
 		}
@@ -1369,7 +1368,7 @@ public class EntityManagement {
 	public static class set_max_health extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCLivingEntity le = Static.getLivingEntity(args[0], t);
 			le.setMaxHealth(Static.getDouble(args[1], t));
 			return CVoid.VOID;
@@ -1402,8 +1401,8 @@ public class EntityManagement {
 	public static class entity_onfire extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			return new CInt(Static.ticksToMs(ent.getFireTicks())/1000, t);
 		}
@@ -1430,8 +1429,8 @@ public class EntityManagement {
 	public static class set_entity_onfire extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			int setTicks = (int) Static.msToTicks(Static.getInt(args[1], t)*1000);
 			if (setTicks < 0) {
@@ -1464,7 +1463,7 @@ public class EntityManagement {
 	public static class play_entity_effect extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			MCEntityEffect mee;
 			try {
@@ -1503,7 +1502,7 @@ public class EntityManagement {
 	public static class get_mob_name extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity le = Static.getEntity(args[0], t);
 			try {
 				return new CString(le.getCustomName(), t);
@@ -1532,7 +1531,7 @@ public class EntityManagement {
 	public static class set_mob_name extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity le = Static.getEntity(args[0], t);
 			try {
 				le.setCustomName(args[1].val());
@@ -1570,7 +1569,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCCommandSender cs = environment.getEnv(CommandHelperEnvironment.class).GetCommandSender();
 			int qty = 1;
 			CArray ret = new CArray(t);
@@ -1663,7 +1662,7 @@ public class EntityManagement {
 	public static class set_entity_rider extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity horse, rider;
 			boolean success;
 			if (args[0] instanceof CNull) {
@@ -1712,8 +1711,8 @@ public class EntityManagement {
 	public static class get_entity_rider extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			if (ent.getPassenger() != null) {
 				return new CString(ent.getPassenger().getUniqueId().toString(), t);
@@ -1741,8 +1740,8 @@ public class EntityManagement {
 	public static class get_entity_vehicle extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			if (ent.isInsideVehicle()) {
 				return new CString(ent.getVehicle().getUniqueId().toString(), t);
@@ -1775,8 +1774,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 
 			MCEntity e = Static.getEntity(args[0], t);
 
@@ -1817,8 +1816,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 
 			MCEntity e = Static.getEntity(args[0], t);
 			double speed = Static.getDouble(args[1], t);
@@ -1856,7 +1855,7 @@ public class EntityManagement {
 	public static class get_equipment_droprates extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntityEquipment eq = Static.getLivingEntity(args[0], t).getEquipment();
 			if (eq.getHolder() instanceof MCPlayer) {
 				throw ConfigRuntimeException.BuildException(getName() + " does not work on players.", CREBadEntityException.class, t);
@@ -1889,7 +1888,7 @@ public class EntityManagement {
 	public static class set_equipment_droprates extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntityEquipment ee = Static.getLivingEntity(args[0], t).getEquipment();
 			Map<MCEquipmentSlot, Float> eq = ee.getAllDropChances();
 			if (ee.getHolder() instanceof MCPlayer) {
@@ -1937,7 +1936,7 @@ public class EntityManagement {
 	public static class get_name_visible extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				return CBoolean.get(Static.getEntity(args[0], t).isCustomNameVisible());
 			} catch (IllegalArgumentException e) {
@@ -1967,7 +1966,7 @@ public class EntityManagement {
 	public static class set_name_visible extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				Static.getEntity(args[0], t).setCustomNameVisible(Static.getBoolean(args[1]));
 			} catch (IllegalArgumentException e) {
@@ -1998,7 +1997,7 @@ public class EntityManagement {
 	public static class can_pickup_items extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return CBoolean.get(Static.getLivingEntity(args[0], t).getCanPickupItems());
 		}
 
@@ -2022,7 +2021,7 @@ public class EntityManagement {
 	public static class set_can_pickup_items extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Static.getLivingEntity(args[0], t).setCanPickupItems(Static.getBoolean(args[1]));
 			return CVoid.VOID;
 		}
@@ -2047,7 +2046,7 @@ public class EntityManagement {
 	public static class get_entity_persistence extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return CBoolean.get(!Static.getLivingEntity(args[0], t).getRemoveWhenFarAway());
 		}
 
@@ -2071,7 +2070,7 @@ public class EntityManagement {
 	public static class set_entity_persistence extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Static.getLivingEntity(args[0], t).setRemoveWhenFarAway(!Static.getBoolean(args[1]));
 			return CVoid.VOID;
 		}
@@ -2110,7 +2109,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = null;
 			if(environment.getEnv(CommandHelperEnvironment.class).GetPlayer() != null){
 				w = environment.getEnv(CommandHelperEnvironment.class).GetPlayer().getWorld();
@@ -2166,7 +2165,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = null;
 			if(environment.getEnv(CommandHelperEnvironment.class).GetPlayer() != null){
 				w = environment.getEnv(CommandHelperEnvironment.class).GetPlayer().getWorld();
@@ -2224,7 +2223,7 @@ public class EntityManagement {
 	public static class get_leashholder extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCLivingEntity le = Static.getLivingEntity(args[0], t);
 			if (!le.isLeashed()) {
 				return CNull.NULL;
@@ -2253,7 +2252,7 @@ public class EntityManagement {
 	public static class set_leashholder extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCLivingEntity le = Static.getLivingEntity(args[0], t);
 			MCEntity holder;
 			if (args[1] instanceof CNull) {
@@ -2288,7 +2287,7 @@ public class EntityManagement {
 	public static class entity_grounded extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return CBoolean.get(Static.getEntity(args[0], t).isOnGround());
 		}
 
@@ -2322,7 +2321,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return new CInt(Static.getLivingEntity(args[0], t).getRemainingAir(), t);
 		}
 		
@@ -2346,7 +2345,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Static.getLivingEntity(args[0], t).setRemainingAir(Static.getInt32(args[1], t));
 			return CVoid.VOID;
 		}
@@ -2371,7 +2370,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return new CInt(Static.getLivingEntity(args[0], t).getMaximumAir(), t);
 		}
 		
@@ -2395,7 +2394,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Static.getLivingEntity(args[0], t).setMaximumAir(Static.getInt32(args[1], t));
 			return CVoid.VOID;
 		}
@@ -2433,7 +2432,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCLivingEntity entity = Static.getLivingEntity(args[0], t);
 			HashSet<Byte> transparents = null;
 			int maxDistance = 512;
@@ -2489,7 +2488,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return CBoolean.get(Static.getLivingEntity(args[0], t).hasLineOfSight(Static.getEntity(args[1], t)));
 		}
 		
@@ -2503,7 +2502,7 @@ public class EntityManagement {
 	public static class entity_id extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntityByUuid(Static.GetUUID(args[0], t), t);
 			return new CString(entity.getUniqueId().toString(), t);
 		}
@@ -2529,7 +2528,7 @@ public class EntityManagement {
 	public static class entity_uuid extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 			return new CString(entity.getUniqueId().toString(), t);
 		}
@@ -2587,7 +2586,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 			CArray specArray = CArray.GetAssociativeArray(t);
 
@@ -2867,7 +2866,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 			CArray specArray = Static.getArray(args[1], t);
 
@@ -3425,7 +3424,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 
 			if (entity instanceof MCProjectile) {
@@ -3463,7 +3462,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 
 			if (entity instanceof MCProjectile) {
@@ -3502,7 +3501,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 
 			if (entity instanceof MCProjectile) {
@@ -3532,7 +3531,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 
 			if (entity instanceof MCProjectile) {
@@ -3560,7 +3559,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 
 			if (!(entity instanceof MCLivingEntity)) {
@@ -3617,7 +3616,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return new CDouble(Static.getEntity(args[0], t).getFallDistance(), t);
 		}
 		
@@ -3641,7 +3640,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Static.getEntity(args[0], t).setFallDistance(ArgumentValidation.getDouble32(args[1], t));
 			return CVoid.VOID;
 		}

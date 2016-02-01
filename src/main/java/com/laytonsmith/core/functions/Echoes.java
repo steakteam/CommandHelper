@@ -18,7 +18,6 @@ import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
@@ -29,6 +28,7 @@ import com.laytonsmith.core.exceptions.CRE.CREPlayerOfflineException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
@@ -52,12 +52,12 @@ public class Echoes {
         }
 
 		@Override
-        public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException{
+        public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException{
             if(args.length == 0){
                 throw new CancelCommandException("", t);
             }
             StringBuilder b = new StringBuilder();
-			for (Construct arg : args) {
+			for (Mixed arg : args) {
 				b.append(arg.val());
 			}
             try{
@@ -127,7 +127,7 @@ public class Echoes {
         }
 
 		@Override
-        public Construct exec(final Target t, Environment env, final Construct... args) throws CancelCommandException, ConfigRuntimeException {
+        public Mixed exec(final Target t, Environment env, final Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			StringBuilder b = new StringBuilder();
 			for(int i = 0; i < args.length; i++){
 				b.append(args[i].val());
@@ -186,7 +186,7 @@ public class Echoes {
         }
 
 		@Override
-        public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+        public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
             if(args.length < 2){
                 throw ConfigRuntimeException.BuildException("You must send at least 2 arguments to tmsg", CREInsufficientArgumentsException.class, t);
             }
@@ -262,9 +262,9 @@ public class Echoes {
         }
 
 		@Override
-        public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+        public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
             String color = null;
-			String val = args[0].nval();
+			String val = Static.GetValOrNull(args[0]);
 			if (val == null) {
 				return new CString(MCChatColor.WHITE.toString(), t);
 			}
@@ -411,7 +411,7 @@ public class Echoes {
         }
 
 		@Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+        public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
             return new CString(MCChatColor.stripColor(args[0].val()), t);
         }
         
@@ -431,7 +431,7 @@ public class Echoes {
         }
 
 		@Override
-        public Construct exec(final Target t, final Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+        public Mixed exec(final Target t, final Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			if(p != null){
 				p.chat(args[0].val());
@@ -503,7 +503,7 @@ public class Echoes {
         }
 
 		@Override
-        public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+        public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
             final MCPlayer player = Static.GetPlayer(args[0], t);
             Static.AssertPlayerNonNull(player, t);
 			player.chat(args[1].val());
@@ -551,7 +551,7 @@ public class Echoes {
         }
 
 		@Override
-        public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+        public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
             if(args[0] instanceof CNull){
                 throw ConfigRuntimeException.BuildException("Trying to broadcast null won't work", CRENullPointerException.class, t);
             }
@@ -611,7 +611,7 @@ public class Echoes {
         }
 
 		@Override
-        public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+        public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
             String mes = args[0].val();
             boolean prefix = true;
             if(args.length > 1){
@@ -652,8 +652,8 @@ public class Echoes {
 
 		color color = new color();
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-			Construct text = args[0];
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
+			Mixed text = args[0];
 			String symbol = "&";
 			if(args.length == 2){
 				symbol = args[1].val();

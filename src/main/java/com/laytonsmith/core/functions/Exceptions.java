@@ -28,7 +28,6 @@ import com.laytonsmith.core.constructs.CFunction;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.IVariable;
 import com.laytonsmith.core.constructs.IVariableList;
 import com.laytonsmith.core.constructs.NativeTypeList;
@@ -121,7 +120,7 @@ public class Exceptions {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script that, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script that, ParseTree... nodes) {
 			ParseTree tryCode = nodes[0];
 			ParseTree varName = null;
 			ParseTree catchCode = null;
@@ -198,7 +197,7 @@ public class Exceptions {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			return CVoid.VOID;
 		}
 
@@ -268,7 +267,7 @@ public class Exceptions {
 //		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if(args.length == 1){
 				try {
 					// Exception type
@@ -382,7 +381,7 @@ public class Exceptions {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(args[0] instanceof CClosure){
 				CClosure old = environment.getEnv(GlobalEnv.class).GetExceptionHandler();
 				environment.getEnv(GlobalEnv.class).SetExceptionHandler((CClosure)args[0]);
@@ -471,12 +470,12 @@ public class Exceptions {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return CVoid.VOID;
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			boolean exceptionCaught = false;
 			ConfigRuntimeException caughtException = null;
 			try {
@@ -497,10 +496,7 @@ public class Exceptions {
 							// We need to define the exception in the variable table
 							IVariableList varList = env.getEnv(GlobalEnv.class).GetVarList();
 							IVariable var = (IVariable)assign.getChildAt(1).getData();
-							// This should eventually be changed to be of the appropriate type. Unfortunately, that will
-							// require reworking basically everything. We need all functions to accept Mixed, instead of Construct.
-							// This will have to do in the meantime.
-							varList.set(new IVariable(new CClassType("array", t), var.getVariableName(), e.getExceptionObject(), t));
+							varList.set(new IVariable(new CClassType(e.typeof(), t), var.getVariableName(), e, t));
 							parent.eval(nodes[i + 1], env);
 							varList.remove(var.getVariableName());
 						} catch (ConfigRuntimeException | FunctionReturnException newEx){
@@ -630,7 +626,7 @@ public class Exceptions {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			StackTraceManager stManager = environment.getEnv(GlobalEnv.class).GetStackTraceManager();
 			List<ConfigRuntimeException.StackTraceElement> elements = stManager.getCurrentStackTrace();
 			CArray ret = new CArray(t);

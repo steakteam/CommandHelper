@@ -12,7 +12,6 @@ import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CBoolean;
 import com.laytonsmith.core.constructs.CByteArray;
 import com.laytonsmith.core.constructs.CString;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
@@ -21,6 +20,7 @@ import com.laytonsmith.core.exceptions.CRE.CRERangeException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -41,7 +41,7 @@ public class Crypto {
         return "Provides common cryptographic functions";
     }
 
-	private static CString getHMAC(String algorithm, Target t, Construct[] args) {
+	private static CString getHMAC(String algorithm, Target t, Mixed[] args) {
 		try {
 			SecretKeySpec signingKey = new SecretKeySpec(args[0].val().getBytes(), algorithm);
 			Mac mac = Mac.getInstance(algorithm);
@@ -92,7 +92,7 @@ public class Crypto {
         }
 
 		@Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+        public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
             String s = args[0].val();
             StringBuilder b = new StringBuilder();
             for (int i = 0; i < s.length(); i++) {
@@ -170,7 +170,7 @@ public class Crypto {
         }
 
 		@Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+        public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
             try {
                 MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
                 digest.update(args[0].val().getBytes());
@@ -237,7 +237,7 @@ public class Crypto {
         }
 
 		@Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+        public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
             try {
                 MessageDigest digest = java.security.MessageDigest.getInstance("SHA1");
                 digest.update(args[0].val().getBytes());
@@ -303,7 +303,7 @@ public class Crypto {
         }
 
 	@Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+        public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
             try {
                 MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
                 digest.update(args[0].val().getBytes());
@@ -350,7 +350,7 @@ public class Crypto {
         }
 
 		@Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+        public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
             int log_rounds = 5;
             if(args.length == 2){
                 log_rounds = Static.getInt32(args[1], t);
@@ -414,7 +414,7 @@ public class Crypto {
         }
 
 		@Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+        public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
             return CBoolean.get(BCrypt.checkpw(args[0].val(), args[1].val()));
         }
 
@@ -469,7 +469,7 @@ public class Crypto {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CByteArray ba = Static.getByteArray(args[0], t);
 			byte[] data = ba.asByteArrayCopy();
 			data = Base64.encodeBase64(data);
@@ -524,7 +524,7 @@ public class Crypto {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CByteArray ba = Static.getByteArray(args[0], t);
 			byte[] data = ba.asByteArrayCopy();
 			data = Base64.decodeBase64(data);
@@ -599,7 +599,7 @@ public class Crypto {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return getHMAC("HmacMD5", t, args);
 		}
 
@@ -658,7 +658,7 @@ public class Crypto {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return getHMAC("HmacSHA1", t, args);
 		}
 
@@ -717,7 +717,7 @@ public class Crypto {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return getHMAC("HmacSHA256", t, args);
 		}
 

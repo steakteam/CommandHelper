@@ -16,7 +16,6 @@ import com.laytonsmith.core.constructs.CClosure;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.environments.GlobalEnv;
@@ -28,6 +27,7 @@ import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.FunctionReturnException;
 import com.laytonsmith.core.exceptions.LoopManipulationException;
 import com.laytonsmith.core.exceptions.ProgramFlowManipulationException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.concurrent.Callable;
 
 /**
@@ -61,7 +61,7 @@ public class Threading {
 		}
 
 		@Override
-		public Construct exec(final Target t, final Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(final Target t, final Environment environment, Mixed... args) throws ConfigRuntimeException {
 			String id = args[0].val();
 			if(!(args[1] instanceof CClosure)){
 				throw new CRECastException("Expected closure for arg 2", t);
@@ -156,7 +156,7 @@ public class Threading {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return new CString(Thread.currentThread().getName(), t);
 		}
 
@@ -210,7 +210,7 @@ public class Threading {
 		}
 
 		@Override
-		public Construct exec(final Target t, final Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(final Target t, final Environment environment, Mixed... args) throws ConfigRuntimeException {
 			final CClosure closure = Static.getObject(args[0], t, CClosure.class);
 			StaticLayer.GetConvertor().runOnMainThreadLater(environment.getEnv(GlobalEnv.class).GetDaemonManager(), new Runnable() {
 
@@ -273,7 +273,7 @@ public class Threading {
 		}
 
 		@Override
-		public Construct exec(final Target t, final Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(final Target t, final Environment environment, Mixed... args) throws ConfigRuntimeException {
 			final CClosure closure = Static.getObject(args[0], t, CClosure.class);
 			Object ret;
 			try {
@@ -299,7 +299,7 @@ public class Threading {
 			if(ret instanceof RuntimeException){
 				throw (RuntimeException)ret;
 			} else {
-				return (Construct) ret;
+				return (Mixed) ret;
 			}
 		}
 

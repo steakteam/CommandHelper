@@ -12,7 +12,6 @@ import com.laytonsmith.core.constructs.CBoolean;
 import com.laytonsmith.core.constructs.CByteArray;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
@@ -22,6 +21,7 @@ import com.laytonsmith.core.exceptions.CRE.CREPlayerOfflineException;
 import com.laytonsmith.core.exceptions.CRE.CREPluginChannelException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.Set;
 
 /**
@@ -51,7 +51,7 @@ public class PluginMeta {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPluginMeta meta = StaticLayer.GetConvertor().GetPluginMeta();
 			MCPlayer p = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			int offset = 0;
@@ -109,7 +109,7 @@ public class PluginMeta {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 
 			MCPlayer p = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			int offset = 0;
@@ -167,7 +167,7 @@ public class PluginMeta {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCMessenger messenger = Static.getServer().getMessenger();
 			if (messenger == null) {
 				throw ConfigRuntimeException.BuildException(
@@ -226,7 +226,7 @@ public class PluginMeta {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCMessenger messenger = Static.getServer().getMessenger();
 			if (messenger == null) {
 				throw ConfigRuntimeException.BuildException(
@@ -284,7 +284,7 @@ public class PluginMeta {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCMessenger messenger = Static.getServer().getMessenger();
 			if (messenger == null) {
 				throw ConfigRuntimeException.BuildException(
@@ -335,7 +335,7 @@ public class PluginMeta {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCMessenger messenger = Static.getServer().getMessenger();
 			if (messenger == null) {
 				throw ConfigRuntimeException.BuildException(

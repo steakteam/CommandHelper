@@ -256,7 +256,8 @@ public class ArrayHandling {
 					}
 				} else {
 					try {
-						return new CString(args[0].val().charAt(Static.getInt32(index, t)), t);
+						return ((ArrayAccess)args[0]).get(index, t);
+						//return new CString(args[0].val().charAt(Static.getInt32(index, t)), t);
 					} catch (ConfigRuntimeException e) {
 						if (e instanceof CRECastException) {
 							if(args[0] instanceof CArray){

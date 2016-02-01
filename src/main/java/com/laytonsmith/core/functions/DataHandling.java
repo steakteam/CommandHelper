@@ -3622,7 +3622,7 @@ public class DataHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public CClassType exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				return new CClassType(args[0].typeof(), t);
 			} catch (IllegalArgumentException ex) {

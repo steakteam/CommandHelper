@@ -62,7 +62,7 @@ public class DataTransformations {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray ca = Static.getArray(args[0], t);
 			try {
 				return new CString(Construct.json_encode(ca, t), t);
@@ -163,7 +163,7 @@ public class DataTransformations {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray ca = Static.getArray(args[0], t);
 			boolean prettyPrint = false;
 			if(args.length == 2){
@@ -222,7 +222,7 @@ public class DataTransformations {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			String data = args[0].val();
 			Yaml yaml = new Yaml();
 			Object ret = null;
@@ -280,7 +280,7 @@ public class DataTransformations {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Properties props = new Properties();
 			CArray arr = Static.getArray(args[0], t);
 			String comment = null;
@@ -359,7 +359,7 @@ public class DataTransformations {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Properties props = new Properties();
 			Reader reader = new StringReader(args[0].val());
 			try {
@@ -425,7 +425,7 @@ public class DataTransformations {
 		}
 
 		@Override
-		public Mixed exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			XMLDocument doc;
 			try {
 				doc = new XMLDocument(args[0].val());
@@ -481,7 +481,7 @@ public class DataTransformations {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			throw new UnsupportedOperationException("Not supported yet.");
 		}
 

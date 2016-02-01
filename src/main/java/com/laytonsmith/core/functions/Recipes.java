@@ -10,13 +10,13 @@ import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CBoolean;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.List;
 
 /**
@@ -52,7 +52,7 @@ public class Recipes {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return CBoolean.get(Static.getServer().addRecipe(ObjectGenerator.GetGenerator().recipe(args[0], t)));
 		}
 
@@ -86,7 +86,7 @@ public class Recipes {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray ret = new CArray(t);
 			MCItemStack item = ObjectGenerator.GetGenerator().item(args[0], t);
 			List<MCRecipe> recipes = Static.getServer().getRecipesFor(item);
@@ -129,7 +129,7 @@ public class Recipes {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray ret = new CArray(t);
 			List<MCRecipe> recipes = Static.getServer().allRecipes();
 			for(MCRecipe recipe : recipes) {
@@ -170,7 +170,7 @@ public class Recipes {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Static.getServer().clearRecipes();
 			
 			return CVoid.VOID;
@@ -207,7 +207,7 @@ public class Recipes {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Static.getServer().resetRecipes();
 			
 			return CVoid.VOID;

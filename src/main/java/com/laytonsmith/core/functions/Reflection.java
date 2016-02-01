@@ -20,7 +20,6 @@ import com.laytonsmith.core.constructs.CFunction;
 import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.IVariable;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
@@ -241,7 +240,7 @@ public class Reflection {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			String element = args[0].val();
 			DocField docField;
 			try {
@@ -380,7 +379,7 @@ public class Reflection {
 		}
 		
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray ret = CArray.GetAssociativeArray(t);
 			if (funcs.keySet().size() < 10) {
 				initf();
@@ -437,8 +436,8 @@ public class Reflection {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			CArray ret = new CArray(t);
 			for (Event event : EventList.GetEvents()) {
 				ret.push(new CString(event.getName(), t), t);
@@ -487,7 +486,7 @@ public class Reflection {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray ret = new CArray(t);
 			for (Script s : Static.getAliasCore().getScripts()) {
 				ret.push(new CString(s.getSignature(), t), t);
@@ -536,7 +535,7 @@ public class Reflection {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			PersistenceNetwork pn = environment.getEnv(GlobalEnv.class).GetPersistenceNetwork();
 			return new CString(pn.getKeySource(args[0].val().split("\\.")).toString(), t);
 		}
@@ -585,7 +584,7 @@ public class Reflection {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray ret = new CArray(t);
 			for (Map.Entry<String, Procedure> p : environment.getEnv(GlobalEnv.class).GetProcs().entrySet()) {
 				ret.push(new CString(p.getKey(), t), t);

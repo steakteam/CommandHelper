@@ -7,12 +7,12 @@ import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CClosure;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -48,7 +48,7 @@ public class Marquee {
 		}
 
 		@Override
-		public Construct exec(final Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(final Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			final String marqueeName;
 			final String text;
 			final int stringWidth;
@@ -78,7 +78,7 @@ public class Marquee {
 
 							@Override
 							public Object call() throws Exception {
-									callback.execute(new Construct[]{new CString(portion, t)});
+									callback.execute(new Mixed[]{new CString(portion, t)});
 									return null;
 							}
 						});
@@ -153,7 +153,7 @@ public class Marquee {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			String marqueeName = args[0].val();
 			if(marqeeMap.containsKey(marqueeName)){
 				marqeeMap.get(marqueeName).stop();

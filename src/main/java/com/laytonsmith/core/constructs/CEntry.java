@@ -2,19 +2,21 @@
 
 package com.laytonsmith.core.constructs;
 
+import com.laytonsmith.core.natives.interfaces.Mixed;
+
 /**
  *
  * 
  */
 public class CEntry extends Construct {
-    Construct ckey;
-    Construct construct;
+    Mixed ckey;
+    Mixed construct;
 
     public CEntry(String value, Target t){
         super(value, ConstructType.ENTRY, t);
         throw new UnsupportedOperationException("CEntry Constructs cannot use this constructor");
     }
-    public CEntry(Construct key, Construct value, Target t){
+    public CEntry(Mixed key, Mixed value, Target t){
         super(key.val() + ":(CEntry)", ConstructType.ENTRY, t);
         this.ckey = key;
         this.construct = value;
@@ -25,7 +27,7 @@ public class CEntry extends Construct {
         return construct.val();
     }
     
-    public Construct construct(){
+    public Mixed construct(){
         return this.construct;
     }
 

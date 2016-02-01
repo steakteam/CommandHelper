@@ -20,7 +20,6 @@ import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
@@ -30,6 +29,7 @@ import com.laytonsmith.core.exceptions.CRE.CREPlayerOfflineException;
 import com.laytonsmith.core.exceptions.CRE.CREScoreboardException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -162,7 +162,7 @@ public class Scoreboards {
 	 * @return the scoreboard chosen, defaulting to main if numArgsToReadName was not matched
 	 * @throws CREScoreboardException if the specified scoreboard does not exist
 	 */
-	public static MCScoreboard assignBoard(int numArgsToReadName, int indexOfName, Target t, Construct... args) throws CREScoreboardException {
+	public static MCScoreboard assignBoard(int numArgsToReadName, int indexOfName, Target t, Mixed... args) throws CREScoreboardException {
 		if (args.length == numArgsToReadName) {
 			return getBoard(args[indexOfName].val(), t);
 		}
@@ -207,8 +207,8 @@ public class Scoreboards {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCPlayer p = Static.GetPlayer(args[0], t);
 			String ret;
 			try {
@@ -252,8 +252,8 @@ public class Scoreboards {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCPlayer p = Static.GetPlayer(args[0], t);
 			p.setScoreboard(assignBoard(2, 1, t, args));
 			return CVoid.VOID;
@@ -290,8 +290,8 @@ public class Scoreboards {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			CArray ret = new CArray(t);
 			for (String id : boards.keySet()) {
 				ret.push(new CString(id, t), t);
@@ -326,7 +326,7 @@ public class Scoreboards {
 	public static class get_objectives extends SBFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s;
 			if (args.length == 0) {
 				s = getBoard(MAIN, t);
@@ -350,7 +350,7 @@ public class Scoreboards {
 				CArray obj = CArray.GetAssociativeArray(t);
 				obj.set("name", new CString(o.getName(), t), t);
 				obj.set("displayname", new CString(o.getDisplayName(), t), t);
-				Construct slot = CNull.NULL;
+				Mixed slot = CNull.NULL;
 				if (o.getDisplaySlot() != null) {
 					slot = new CString(o.getDisplaySlot().name(), t);
 				}
@@ -390,8 +390,8 @@ public class Scoreboards {
 	public static class get_teams extends SBFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s;
 			if (args.length == 0) {
 				s = getBoard(MAIN, t);
@@ -455,7 +455,7 @@ public class Scoreboards {
 		}
 		
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard newBoard = Static.getServer().getNewScoreboard();
 			if (newBoard == null) {
 				throw ConfigRuntimeException.BuildException(
@@ -497,8 +497,8 @@ public class Scoreboards {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s = assignBoard(3, 2, t, args);
 			String name = args[0].val();
 			if (name.length() > 16) {
@@ -555,8 +555,8 @@ public class Scoreboards {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s = assignBoard(2, 1, t, args);
 			String name = args[0].val();
 			if (name.length() > 16) {
@@ -603,8 +603,8 @@ public class Scoreboards {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s = assignBoard(3, 2, t, args);
 			MCObjective o = s.getObjective(args[0].val());
 			if (o == null) {
@@ -681,8 +681,8 @@ public class Scoreboards {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s = assignBoard(3, 2, t, args);
 			MCTeam o = s.getTeam(args[0].val());
 			if (o == null) {
@@ -773,8 +773,8 @@ public class Scoreboards {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s = assignBoard(3, 2, t, args);
 			MCTeam team = s.getTeam(args[0].val());
 			if (team == null) {
@@ -815,8 +815,8 @@ public class Scoreboards {
 	public static class team_remove_player extends SBFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s = assignBoard(3, 2, t, args);
 			MCTeam team = s.getTeam(args[0].val());
 			if (team == null) {
@@ -851,8 +851,8 @@ public class Scoreboards {
 	public static class remove_scoreboard extends SBFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			String id = args[0].val();
 			boolean nullify = true;
 			if (args.length == 2) {
@@ -908,8 +908,8 @@ public class Scoreboards {
 	public static class remove_objective extends SBFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s = assignBoard(2, 1, t, args);
 			MCObjective o = s.getObjective(args[0].val());
 			try {
@@ -947,8 +947,8 @@ public class Scoreboards {
 	public static class remove_team extends SBFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s = assignBoard(2, 1, t, args);
 			MCTeam team = s.getTeam(args[0].val());
 			try {
@@ -986,8 +986,8 @@ public class Scoreboards {
 	public static class get_pscore extends SBFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s = assignBoard(3, 2, t, args);
 			MCObjective o = s.getObjective(args[0].val());
 			if (o == null) {
@@ -1027,8 +1027,8 @@ public class Scoreboards {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s = assignBoard(4, 3, t, args);
 			MCObjective o = s.getObjective(args[0].val());
 			if (o == null) {
@@ -1067,7 +1067,7 @@ public class Scoreboards {
 	public static class reset_all_pscores extends SBFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			assignBoard(2, 1, t, args).resetScores(args[0].val());
 			return CVoid.VOID;
 		}
@@ -1103,7 +1103,7 @@ public class Scoreboards {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCScoreboard s = assignBoard(3, 2, t, args);
 			MCTeam team = s.getTeam(args[0].val());
 			if (team == null) {

@@ -24,6 +24,7 @@ import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.MarshalException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.persistence.DataSourceException;
 import com.laytonsmith.persistence.PersistenceNetwork;
 import com.laytonsmith.persistence.ReadOnlyException;
@@ -87,7 +88,7 @@ public class Persistence {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			String key = GetNamespace(args, args.length - 1, getName(), t);
 			String value = null;
 			try {
@@ -169,7 +170,7 @@ public class Persistence {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			Object o;
 			String namespace = GetNamespace(args, null, getName(), t);
 			CHLog.GetLogger().Log(CHLog.Tags.PERSISTENCE, LogLevel.DEBUG, "Getting value: " + namespace, t);
@@ -256,7 +257,7 @@ public class Persistence {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			PersistenceNetwork p = environment.getEnv(GlobalEnv.class).GetPersistenceNetwork();
 			List<String> keyChain = new ArrayList<String>();
 			keyChain.add("storage");
@@ -336,7 +337,7 @@ public class Persistence {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			try {
 				return CBoolean.get(env.getEnv(GlobalEnv.class).GetPersistenceNetwork().hasKey(("storage." + GetNamespace(args, null, getName(), t)).split("\\.")));
 			} catch (DataSourceException ex) {
@@ -392,7 +393,7 @@ public class Persistence {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			String namespace = GetNamespace(args, null, getName(), t);
 			CHLog.GetLogger().Log(CHLog.Tags.PERSISTENCE, LogLevel.DEBUG, "Clearing value: " + namespace, t);
 			try {
@@ -424,7 +425,7 @@ public class Persistence {
 	 * @param exclude
 	 * @return
 	 */
-	private static String GetNamespace(Construct[] args, Integer exclude, String name, Target t) {
+	private static String GetNamespace(Mixed[] args, Integer exclude, String name, Target t) {
 		if (exclude != null && args.length < 2 || exclude == null && args.length < 1) {
 			throw ConfigRuntimeException.BuildException(name + " was not provided with enough arguments. Check the documentation, and try again.", CREInsufficientArgumentsException.class, t);
 		}

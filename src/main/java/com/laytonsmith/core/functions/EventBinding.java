@@ -17,7 +17,6 @@ import com.laytonsmith.core.constructs.CBoolean;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.IVariable;
 import com.laytonsmith.core.constructs.IVariableList;
 import com.laytonsmith.core.constructs.Target;
@@ -103,7 +102,7 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return CVoid.VOID;
 		}
 
@@ -258,7 +257,7 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return EventUtils.DumpEvents();
 		}
 	}
@@ -303,7 +302,7 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			String id = null;
 			if (args.length == 1) {
 				//We are cancelling an arbitrary event
@@ -376,7 +375,7 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			boolean cancelled = true;
 			if (args.length == 1) {
 				cancelled = Static.getBoolean(args[0]);
@@ -433,7 +432,7 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			BoundEvent.ActiveEvent original = environment.getEnv(GlobalEnv.class).GetEvent();
 			if (original == null) {
 				throw ConfigRuntimeException.BuildException("is_cancelled cannot be called outside an event handler", CREBindException.class, t);
@@ -490,7 +489,7 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray obj = null;
 			if (args[1] instanceof CNull) {
 				obj = new CArray(t);
@@ -557,9 +556,9 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			String parameter = args[0].val();
-			Construct value = args[1];
+			Mixed value = args[1];
 			boolean throwOnFailure = false;
 			if (args.length == 3) {
 				throwOnFailure = Static.getBoolean(args[3]);
@@ -625,7 +624,7 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if (environment.getEnv(GlobalEnv.class).GetEvent() == null) {
 				throw ConfigRuntimeException.BuildException("lock must be called from within an event handler", CREBindException.class, t);
 			}
@@ -696,7 +695,7 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if (environment.getEnv(GlobalEnv.class).GetEvent() == null) {
 				throw ConfigRuntimeException.BuildException("is_locked may only be called from inside an event handler", CREBindException.class, t);
 			}
@@ -745,7 +744,7 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if (environment.getEnv(GlobalEnv.class).GetEvent() == null) {
 				throw ConfigRuntimeException.BuildException("consume may only be called from an event handler!", CREBindException.class, t);
 			}
@@ -796,7 +795,7 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if (environment.getEnv(GlobalEnv.class).GetEvent() == null) {
 				throw ConfigRuntimeException.BuildException("is_consumed must be called from within an event handler", CREBindException.class, t);
 			}
@@ -850,7 +849,7 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if (environment.getEnv(GlobalEnv.class).GetEvent() == null) {
 				throw ConfigRuntimeException.BuildException("event_meta must be called from within an event handler!", CREBindException.class, t);
 			}
@@ -886,7 +885,7 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			String id = args[0].val();
 			for (Driver d : Driver.values()) {
 				Set<BoundEvent> events = EventUtils.GetEvents(d);

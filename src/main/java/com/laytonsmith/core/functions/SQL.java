@@ -26,7 +26,6 @@ import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.environments.GlobalEnv;
@@ -143,7 +142,7 @@ public class SQL {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				Profiles.Profile profile;
 				if (args[0] instanceof CArray) {
@@ -160,7 +159,7 @@ public class SQL {
 					throw ConfigRuntimeException.BuildException("Profile must be an SQL type profile, but found \"" + profile.getType() + "\"", CRECastException.class, t);
 				}
 				String query = args[1].val();
-				Construct[] params = new Construct[args.length - 2];
+				Mixed[] params = new Mixed[args.length - 2];
 				for (int i = 2; i < args.length; i++) {
 					int index = i - 2;
 					params[index] = args[i];
@@ -222,7 +221,7 @@ public class SQL {
 						while (rs != null && rs.next()) {
 							CArray row = CArray.GetAssociativeArray(t);
 							for (int i = 1; i <= md.getColumnCount(); i++) {
-								Construct value;
+								Mixed value;
 								int columnType = md.getColumnType(i);
 								if (columnType == Types.INTEGER
 										|| columnType == Types.TINYINT
@@ -460,34 +459,34 @@ public class SQL {
 		}
 
 		@Override
-		public Construct exec(final Target t, final Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(final Target t, final Environment environment, Mixed... args) throws ConfigRuntimeException {
 			startup();
-			Construct arg = args[args.length - 1];
+			Mixed arg = args[args.length - 1];
 			if(!(arg instanceof CClosure)){
 				throw ConfigRuntimeException.BuildException("The last argument to " + getName() + " must be a closure.", CRECastException.class, t);
 			}
 			final CClosure closure = ((CClosure)arg);
-			final Construct[] newArgs = new Construct[args.length - 1];
+			final Mixed[] newArgs = new Mixed[args.length - 1];
 			//Make a new array minus the closure
 			System.arraycopy(args, 0, newArgs, 0, newArgs.length);
 			queue.invokeLater(environment.getEnv(GlobalEnv.class).GetDaemonManager(), new Runnable() {
 
 				@Override
 				public void run() {
-					Construct returnValue = CNull.NULL;
-					Construct exception = CNull.NULL;
+					Mixed returnValue = CNull.NULL;
+					Mixed exception = CNull.NULL;
 					try{
 						returnValue = new query().exec(t, environment, newArgs);
 					} catch(ConfigRuntimeException ex){
 						exception = ObjectGenerator.GetGenerator().exception(ex, environment, t);
 					}
-					final Construct cret = returnValue;
-					final Construct cex = exception;
+					final Mixed cret = returnValue;
+					final Mixed cex = exception;
 					StaticLayer.GetConvertor().runOnMainThreadLater(environment.getEnv(GlobalEnv.class).GetDaemonManager(), new Runnable() {
 
 						@Override
 						public void run() {
-							closure.execute(new Construct[]{cret, cex});
+							closure.execute(new Mixed[]{cret, cex});
 						}
 					});
 				}

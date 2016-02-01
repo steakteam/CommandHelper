@@ -92,6 +92,9 @@ public abstract class AbstractCREException extends ConfigRuntimeException implem
 	 * @return
 	 */
 	public CArray getExceptionObject(){
+		if(exceptionObject != null){
+			
+		}
 		CArray ret = new CArray(Target.UNKNOWN);
 		ret.set("classType", new CClassType(this.getName(), Target.UNKNOWN), Target.UNKNOWN);
 		ret.set("message", this.getMessage());
@@ -102,7 +105,8 @@ public abstract class AbstractCREException extends ConfigRuntimeException implem
 			stackTrace.push(element, Target.UNKNOWN);
 		}
 		ret.set("causedBy", getCausedBy(this.getCause()), Target.UNKNOWN);
-		return ret;
+		exceptionObject = ret;
+		return exceptionObject;
 	}
 	
 	@SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
@@ -168,42 +172,42 @@ public abstract class AbstractCREException extends ConfigRuntimeException implem
 	 */
 	@Override
 	public Mixed get(String index, Target t) throws ConfigRuntimeException {
-		return exceptionObject.get(index, t);
+		return getExceptionObject().get(index, t);
 	}
 
 	@Override
 	public Mixed get(int index, Target t) throws ConfigRuntimeException {
-		return exceptionObject.get(index, t);
+		return getExceptionObject().get(index, t);
 	}
 
 	@Override
 	public Mixed get(Mixed index, Target t) throws ConfigRuntimeException {
-		return exceptionObject.get(index, t);
+		return getExceptionObject().get(index, t);
 	}
 
 	@Override
 	public Set<Mixed> keySet() {
-		return exceptionObject.keySet();
+		return getExceptionObject().keySet();
 	}
 
 	@Override
 	public long size() {
-		return exceptionObject.size();
+		return getExceptionObject().size();
 	}
 
 	@Override
 	public boolean isAssociative() {
-		return exceptionObject.isAssociative();
+		return getExceptionObject().isAssociative();
 	}
 
 	@Override
 	public boolean canBeAssociative() {
-		return exceptionObject.canBeAssociative();
+		return getExceptionObject().canBeAssociative();
 	}
 
 	@Override
 	public Mixed slice(int begin, int end, Target t) {
-		return exceptionObject.slice(begin, end, t);
+		return getExceptionObject().slice(begin, end, t);
 	}
 
 	@Override

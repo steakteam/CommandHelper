@@ -24,7 +24,13 @@ public class CREThrowable extends AbstractCREException {
 	@Override
 	public String docs() {
 		return "All throwable types must extend this method. Otherwise, they will not be allowed to be thrown"
-				+ " by the in script system.";
+				+ " by the in script system. All exceptions have the following keys:"
+				+ "<ul>"
+				+ "<li>ClassType classType</li>"
+				+ "<li>string message</li>"
+				+ "<li>array stackTrace</li>"
+				+ "<li>Throwable causedBy</li>"
+				+ "</ul>";
 	}
 
 	@Override

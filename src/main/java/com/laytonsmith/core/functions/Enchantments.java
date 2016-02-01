@@ -13,7 +13,6 @@ import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
@@ -24,6 +23,7 @@ import com.laytonsmith.core.exceptions.CRE.CREPlayerOfflineException;
 import com.laytonsmith.core.exceptions.CRE.CRERangeException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -222,7 +222,7 @@ public class Enchantments {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			int offset = 1;
 			if (args.length == 4) {
@@ -315,7 +315,7 @@ public class Enchantments {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			int offset = 1;
 			if (args.length == 3) {
@@ -396,9 +396,9 @@ public class Enchantments {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
-			Construct slot;
+			Mixed slot;
 			if (args.length == 2) {
 				m = Static.GetPlayer(args[0].val(), t);
 				slot = args[1];
@@ -473,7 +473,7 @@ public class Enchantments {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				String name = Enchantments.ConvertName(args[0].val());
 				MCEnchantment e = StaticLayer.GetEnchantmentByName(name);
@@ -526,7 +526,7 @@ public class Enchantments {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				String name = Enchantments.ConvertName(args[0].val());
 				MCEnchantment e = StaticLayer.GetEnchantmentByName(name);
@@ -580,7 +580,7 @@ public class Enchantments {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCItemStack is = Static.ParseItemNotation(this.getName(), args[0].val(), 1, t);
 			/**
 			 * Because enchantment types won't change from run to run, we can
@@ -640,7 +640,7 @@ public class Enchantments {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				MCEnchantment e = StaticLayer.GetEnchantmentByName(args[0].val());
 				return CBoolean.TRUE;
@@ -669,7 +669,7 @@ public class Enchantments {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEnchantment[] enchantments = StaticLayer.GetEnchantmentValues();
 			CArray ret = new CArray(t);
 			for(MCEnchantment e : enchantments){

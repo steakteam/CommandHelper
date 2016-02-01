@@ -14,7 +14,6 @@ import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.IVariable;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
@@ -24,6 +23,7 @@ import com.laytonsmith.core.exceptions.CRE.CREIOException;
 import com.laytonsmith.core.exceptions.CRE.CREPluginInternalException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -234,7 +234,7 @@ public class Debug {
         }
 
 		@Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+        public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
             if (Prefs.DebugMode()) {
                 try {
                     Static.LogDebug(MethodScriptFileLocations.getDefault().getConfigDirectory(), args[0].val(), LogLevel.DEBUG);
@@ -265,16 +265,16 @@ public class Debug {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(args[0] instanceof IVariable){
 				if(Prefs.DebugMode()){
 					IVariable ivar = (IVariable)args[0];
-					Construct val = environment.getEnv(GlobalEnv.class).GetVarList().get(ivar.getVariableName(), t);
+					Mixed val = environment.getEnv(GlobalEnv.class).GetVarList().get(ivar.getVariableName(), t);
 					StreamUtils.GetSystemOut().println(ivar.getVariableName() + ": " + val.val());
 				}
 				return CVoid.VOID;
 			} else {
-				throw new CRECastException("Expecting an ivar, but recieved " + args[0].getCType() + " instead", t);
+				throw new CRECastException("Expecting an ivar, but recieved " + args[0].typeof() + " instead", t);
 			}
 			//TODO: Once Prefs are no longer static, check to see if debug mode is on during compilation, and
 			//if so, remove this function entirely
@@ -516,7 +516,7 @@ public class Debug {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
 			CArray carray = new CArray(t);
 			for(Thread thread : threadSet){
@@ -568,7 +568,7 @@ public class Debug {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			File file = new File("dump.bin");
 			try{
 				HeapDumper.dumpHeap(file.getAbsolutePath(), true);

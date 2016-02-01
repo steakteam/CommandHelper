@@ -210,7 +210,7 @@ public class Web {
 		}
 
 		@Override
-		public Construct exec(final Target t, final Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(final Target t, final Environment environment, Mixed... args) throws ConfigRuntimeException {
 			final URL url;
 			try {
 				url = new URL(args[0].val());
@@ -421,9 +421,9 @@ public class Web {
 			return CVoid.VOID;
 		}
 
-		private void executeFinish(CClosure closure, Construct arg, Target t, Environment environment){
+		private void executeFinish(CClosure closure, Mixed arg, Target t, Environment environment){
 			try{
-				closure.execute(new Construct[]{arg});
+				closure.execute(new Mixed[]{arg});
 			} catch(FunctionReturnException e){
 				//Just ignore this if it's returning void. Otherwise, warn.
 				//TODO: Eventually, this should be taggable as a compile error
@@ -531,7 +531,7 @@ public class Web {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray array = Static.getArray(args[0], t);
 			CookieJar jar = getCookieJar(array, t);
 			jar.clearSessionCookies();
@@ -580,7 +580,7 @@ public class Web {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				return new CString(URLEncoder.encode(args[0].val(), "UTF-8"), t);
 			} catch (UnsupportedEncodingException ex) {
@@ -637,7 +637,7 @@ public class Web {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				return new CString(URLDecoder.decode(args[0].val(), "UTF-8"), t);
 			} catch (UnsupportedEncodingException ex) {
@@ -694,7 +694,7 @@ public class Web {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			// Argument processing
 			CArray options;
 			if(args.length == 1){

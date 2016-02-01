@@ -80,7 +80,7 @@ public class Compiler {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return CVoid.VOID;
 		}
 	}
@@ -97,7 +97,7 @@ public class Compiler {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return new CEntry(args[0], args[1], t);
 		}
 	}
@@ -124,7 +124,7 @@ public class Compiler {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			throw new Error("Should not have gotten here, __autoconcat__ was not removed before runtime.");
 		}
 
@@ -549,7 +549,7 @@ public class Compiler {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			String s = null;
 			if(args.length == 1){
 				s = args[0].val();
@@ -575,7 +575,7 @@ public class Compiler {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if (args.length == 0) {
 				return CVoid.VOID;
 			}
@@ -588,7 +588,7 @@ public class Compiler {
 	public static class __cbracket__ extends DummyFunction implements Optimizable {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			throw new UnsupportedOperationException("Not supported yet.");
 		}
 
@@ -619,7 +619,7 @@ public class Compiler {
 	public static class __cbrace__ extends DummyFunction implements Optimizable {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			throw new UnsupportedOperationException("Not supported yet.");
 		}
 
@@ -656,7 +656,7 @@ public class Compiler {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			throw new UnsupportedOperationException(getName() + " should have been compiled out. If you are reaching this, an error has occured in the parser."
 					+ " Please report this error to the developers.");
 		}
