@@ -1,6 +1,7 @@
 package com.laytonsmith.core.constructs;
 
 import com.laytonsmith.PureUtilities.Common.ClassUtils;
+import com.laytonsmith.PureUtilities.Common.ReflectionUtils;
 import com.laytonsmith.annotations.typeof;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.natives.interfaces.Mixed;
@@ -16,19 +17,14 @@ public class InstanceofUtil {
 	 * @param value The value to check for
 	 * @param instanceofThis The string type to check
 	 * @return
+	 * @throws java.lang.ClassNotFoundException
 	 */
-	public static boolean isInstanceof(Mixed value, String instanceofThis){
+	public static boolean isInstanceof(Mixed value, String instanceofThis) throws ClassNotFoundException{
 		Static.AssertNonNull(instanceofThis, "instanceofThis may not be null");
 		if(instanceofThis.equals("auto")){
 			return true;
 		}
-		for(Class c : ClassUtils.getAllCastableClasses(value.getClass())){
-			String typeof = typeof(c);
-			if(typeof != null && typeof.equals(instanceofThis)){
-				return true;
-			}
-		}
-		return false;
+		return NativeTypeList.getNativeClass(instanceofThis).isAssignableFrom(value.getClass());
 	}
 
 	/**
@@ -37,8 +33,9 @@ public class InstanceofUtil {
 	 * @param value The value to check for
 	 * @param instanceofThis The CClassType to check
 	 * @return
+	 * @throws java.lang.ClassNotFoundException
 	 */
-	public static boolean isInstanceof(Mixed value, CClassType instanceofThis){
+	public static boolean isInstanceof(Mixed value, CClassType instanceofThis) throws ClassNotFoundException{
 		return isInstanceof(value, instanceofThis.val());
 	}
 

@@ -14,6 +14,7 @@ import com.laytonsmith.core.environments.GlobalEnv;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigCompileGroupException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.testing.C;
 import com.laytonsmith.testing.StaticTest;
 import static com.laytonsmith.testing.StaticTest.GetFakeServer;
@@ -95,8 +96,8 @@ public class MathTest {
     @Test(timeout = 10000)
     public void testDec() throws Exception {
         Math.dec a = new Math.dec();
-        IVariable v = (IVariable) a.exec(Target.UNKNOWN, env, new IVariable(CClassType.AUTO, "var", C.onstruct(1), Target.UNKNOWN));
-        IVariable v2 = (IVariable) a.exec(Target.UNKNOWN, env, new IVariable(CClassType.AUTO, "var2", C.onstruct(2.5), Target.UNKNOWN));
+        IVariable v = (IVariable) a.exec(Target.UNKNOWN, env, (Mixed)new IVariable(CClassType.AUTO, "var", C.onstruct(1), Target.UNKNOWN));
+        IVariable v2 = (IVariable) a.exec(Target.UNKNOWN, env, (Mixed)new IVariable(CClassType.AUTO, "var2", C.onstruct(2.5), Target.UNKNOWN));
         assertCEquals(C.onstruct(0), v.ival());
         assertCEquals(C.onstruct(1.5), v2.ival());
         StaticTest.SRun("assign(@var, 0) dec(@var, 2) msg(@var)", fakePlayer);
@@ -114,8 +115,8 @@ public class MathTest {
     @Test(timeout = 10000)
     public void testInc() throws Exception {
         Math.inc a = new Math.inc();
-        IVariable v = (IVariable) a.exec(Target.UNKNOWN, env, new IVariable(CClassType.AUTO, "var", C.onstruct(1), Target.UNKNOWN));
-        IVariable v2 = (IVariable) a.exec(Target.UNKNOWN, env, new IVariable(CClassType.AUTO, "var2", C.onstruct(2.5), Target.UNKNOWN));
+        IVariable v = (IVariable) a.exec(Target.UNKNOWN, env, (Mixed)new IVariable(CClassType.AUTO, "var", C.onstruct(1), Target.UNKNOWN));
+        IVariable v2 = (IVariable) a.exec(Target.UNKNOWN, env, (Mixed)new IVariable(CClassType.AUTO, "var2", C.onstruct(2.5), Target.UNKNOWN));
         assertCEquals(C.onstruct(2), v.ival());
         assertCEquals(C.onstruct(3.5), v2.ival());
         StaticTest.SRun("assign(@var, 0) inc(@var, 2) msg(@var)", fakePlayer);

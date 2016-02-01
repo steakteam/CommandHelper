@@ -6,7 +6,6 @@ import com.laytonsmith.core.constructs.CClassType;
 import com.laytonsmith.core.constructs.CFunction;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.IVariable;
 import com.laytonsmith.core.constructs.IVariableList;
 import com.laytonsmith.core.constructs.InstanceofUtil;
@@ -15,6 +14,7 @@ import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.environments.GlobalEnv;
 import com.laytonsmith.core.exceptions.CRE.AbstractCREException;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
+import com.laytonsmith.core.exceptions.CRE.CREClassNotFoundException;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
@@ -25,6 +25,7 @@ import com.laytonsmith.core.functions.DataHandling;
 import com.laytonsmith.core.functions.Function;
 import com.laytonsmith.core.functions.FunctionBase;
 import com.laytonsmith.core.functions.FunctionList;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -32,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A procedure is a user defined function, essentially. Unlike a closure, however, it does not
@@ -42,7 +45,7 @@ public class Procedure implements Cloneable {
 
     private final String name;
     private Map<String, IVariable> varList;
-    private final Map<String, Construct> originals = new HashMap<>();
+    private final Map<String, Mixed> originals = new HashMap<>();
     private final List<IVariable> varIndex = new ArrayList<>();
     private ParseTree tree;
 	private CClassType returnType;
@@ -159,8 +162,8 @@ public class Procedure implements Cloneable {
 	 * @param t
      * @return
      */
-    public Construct cexecute(List<ParseTree> args, Environment env, Target t) {
-        List<Construct> list = new ArrayList<>();
+    public Mixed cexecute(List<ParseTree> args, Environment env, Target t) {
+        List<Mixed> list = new ArrayList<>();
         for (ParseTree arg : args) {
             list.add(env.getEnv(GlobalEnv.class).GetScript().seval(arg, env));
         }
@@ -175,27 +178,31 @@ public class Procedure implements Cloneable {
 	 * @param t
      * @return
      */
-    public Construct execute(List<Construct> args, Environment env, Target t) {
+    public Mixed execute(List<Mixed> args, Environment env, Target t) {
         env.getEnv(GlobalEnv.class).SetVarList(new IVariableList());
 		//This is what will become our @arguments var
         CArray arguments = new CArray(Target.UNKNOWN);
         for (String key : originals.keySet()) {
-            Construct c = originals.get(key);
+            Mixed c = originals.get(key);
             env.getEnv(GlobalEnv.class).GetVarList().set(new IVariable(CClassType.AUTO, key, c, Target.UNKNOWN));
             arguments.push(c, t);
         }
         Script fakeScript = Script.GenerateScript(tree, env.getEnv(GlobalEnv.class).GetLabel());//new Script(null, null);
         for (int i = 0; i < args.size(); i++) {
-            Construct c = args.get(i);
+            Mixed c = args.get(i);
             arguments.set(i, c, t);
             if (varIndex.size() > i) {
                 String varname = varIndex.get(i).getVariableName();
-				if(c instanceof CNull || InstanceofUtil.isInstanceof(c, varIndex.get(i).getDefinedType()) || varIndex.get(i).getDefinedType().equals(CClassType.AUTO)){
-					env.getEnv(GlobalEnv.class).GetVarList().set(new IVariable(varIndex.get(i).getDefinedType(), varname, c, c.getTarget()));
-				} else {
-					throw new CRECastException("Procedure \"" + name + "\" expects a value of type "
-							+ varIndex.get(i).getDefinedType().val() + " in argument " + (i + 1) + ", but"
-							+ " a value of type " + c.typeof() + " was found instead.", c.getTarget());
+				try {
+					if(c instanceof CNull || InstanceofUtil.isInstanceof(c, varIndex.get(i).getDefinedType()) || varIndex.get(i).getDefinedType().equals(CClassType.AUTO)){
+						env.getEnv(GlobalEnv.class).GetVarList().set(new IVariable(varIndex.get(i).getDefinedType(), varname, c, c.getTarget()));
+					} else {
+						throw new CRECastException("Procedure \"" + name + "\" expects a value of type "
+								+ varIndex.get(i).getDefinedType().val() + " in argument " + (i + 1) + ", but"
+								+ " a value of type " + c.typeof() + " was found instead.", c.getTarget());
+					}
+				} catch (ClassNotFoundException ex) {
+					throw new CREClassNotFoundException("Could not find class of name " + varIndex.get(i).getDefinedType().val(), t, ex);
 				}
             }
         }
@@ -222,10 +229,14 @@ public class Procedure implements Cloneable {
         } catch (FunctionReturnException e) {
 			// Normal exit
 			stManager.popStackTraceElement();
-            Construct ret = e.getReturn();
-			if(!InstanceofUtil.isInstanceof(ret, returnType)){
-				throw new CRECastException("Expected procedure \"" + name + "\" to return a value of type " + returnType.val()
-						 + " but a value of type " + ret.typeof() + " was returned instead", ret.getTarget());
+            Mixed ret = e.getReturn();
+			try {
+				if(!InstanceofUtil.isInstanceof(ret, returnType)){
+					throw new CRECastException("Expected procedure \"" + name + "\" to return a value of type " + returnType.val()
+							+ " but a value of type " + ret.typeof() + " was returned instead", ret.getTarget());
+				}
+			} catch (ClassNotFoundException ex) {
+				throw new CREClassNotFoundException("Could not find class of name " + returnType.val(), t, ex);
 			}
 			return ret;
 		} catch(LoopManipulationException ex){

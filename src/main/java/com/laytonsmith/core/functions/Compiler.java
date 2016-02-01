@@ -28,6 +28,7 @@ import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -67,7 +68,7 @@ public class Compiler {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			switch (nodes.length) {
 				case 0:
 					return CVoid.VOID;
@@ -492,7 +493,7 @@ public class Compiler {
 				return list.get(0);
 			} else {
 				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getData().getCType() == Construct.ConstructType.IDENTIFIER) {
+					if (((Construct)list.get(i).getData()).getCType() == Construct.ConstructType.IDENTIFIER) {
 						if (i == 0) {
 							//Yup, it's an identifier
 							CFunction identifier = new CFunction(list.get(i).getData().val(), list.get(i).getTarget());

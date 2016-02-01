@@ -38,6 +38,7 @@ import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.EventException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -107,17 +108,17 @@ public class EventBinding {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			if (nodes.length < 5) {
 				throw ConfigRuntimeException.BuildException("bind accepts 5 or more parameters", CREInsufficientArgumentsException.class, t);
 			}
-			Construct name = parent.seval(nodes[0], env);
-			Construct options = parent.seval(nodes[1], env);
-			Construct prefilter = parent.seval(nodes[2], env);
-			Construct event_obj = parent.eval(nodes[3], env);
+			Mixed name = parent.seval(nodes[0], env);
+			Mixed options = parent.seval(nodes[1], env);
+			Mixed prefilter = parent.seval(nodes[2], env);
+			Mixed event_obj = parent.eval(nodes[3], env);
 			IVariableList custom_params = new IVariableList();
 			for (int a = 0; a < nodes.length - 5; a++) {
-				Construct var = parent.eval(nodes[4 + a], env);
+				Mixed var = parent.eval(nodes[4 + a], env);
 				if (!(var instanceof IVariable)) {
 					throw ConfigRuntimeException.BuildException("The custom parameters must be ivariables", CRECastException.class, t);
 				}

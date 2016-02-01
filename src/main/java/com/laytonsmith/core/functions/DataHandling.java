@@ -48,6 +48,7 @@ import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.environments.GlobalEnv;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
+import com.laytonsmith.core.exceptions.CRE.CREClassNotFoundException;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
 import com.laytonsmith.core.exceptions.CRE.CREIllegalArgumentException;
 import com.laytonsmith.core.exceptions.CRE.CREIncludeException;
@@ -64,6 +65,7 @@ import com.laytonsmith.core.exceptions.FunctionReturnException;
 import com.laytonsmith.core.exceptions.LoopBreakException;
 import com.laytonsmith.core.exceptions.LoopContinueException;
 import com.laytonsmith.core.natives.interfaces.ArrayAccess;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -235,7 +237,7 @@ public class DataHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			IVariableList list = env.getEnv(GlobalEnv.class).GetVarList();
 			int offset;
 			CClassType type;
@@ -269,7 +271,7 @@ public class DataHandling {
 				name = ((IVariable) args[offset]).getVariableName();
 				type = list.get(name, t, true).getDefinedType();
 			}
-			Construct c = args[offset + 1];
+			Mixed c = args[offset + 1];
 			while(c instanceof IVariable){
 				IVariable cur = (IVariable) c;
 				c = list.get(cur.getVariableName(), cur.getTarget()).ival();
@@ -321,7 +323,7 @@ public class DataHandling {
 		}
 
 		@Override
-		public Construct optimize(Target t, Construct... args) throws ConfigCompileException {
+		public Mixed optimize(Target t, Mixed... args) throws ConfigCompileException {
 			//We can't really optimize, but we can check that we are
 			//getting an ivariable.
 			int offset = 0;
@@ -410,7 +412,7 @@ public class DataHandling {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			return new forelse(true).execs(t, env, parent, nodes);
 		}
 
@@ -536,7 +538,7 @@ public class DataHandling {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) throws ConfigRuntimeException {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) throws ConfigRuntimeException {
 			ParseTree assign = nodes[0];
 			ParseTree condition = nodes[1];
 			ParseTree expression = nodes[2];
@@ -547,7 +549,7 @@ public class DataHandling {
 			}
 			boolean hasRunOnce = false;
 
-			Construct counter = parent.eval(assign, env);
+			Mixed counter = parent.eval(assign, env);
 			if (!(counter instanceof IVariable)) {
 				throw ConfigRuntimeException.BuildException("First parameter of for must be an ivariable", CRECastException.class, t);
 			}
@@ -630,7 +632,7 @@ public class DataHandling {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			if(nodes.length < 3){
 				throw ConfigRuntimeException.BuildException("Insufficient arguments passed to " + getName(), CREInsufficientArgumentsException.class, t);
 			}
@@ -644,22 +646,22 @@ public class DataHandling {
 			}
 			ParseTree value = nodes[1 + offset];
 			ParseTree code = nodes[2 + offset];
-			Construct arr = parent.seval(array, env);
-			Construct ik = null;
+			Mixed arr = parent.seval(array, env);
+			Mixed ik = null;
 			if (key != null) {
 				ik = parent.eval(key, env);
 				if (!(ik instanceof IVariable)) {
 					throw ConfigRuntimeException.BuildException("Parameter 2 of " + getName() + " must be an ivariable", CRECastException.class, t);
 				}
 			}
-			Construct iv = parent.eval(value, env);
+			Mixed iv = parent.eval(value, env);
 			if (arr instanceof CSlice) {
 				long start = ((CSlice) arr).getStart();
 				long finish = ((CSlice) arr).getFinish();
 				if (finish < start) {
 					arr = new ArrayHandling.range().exec(t, env, new CInt(start, t), new CInt(finish - 1, t), new CInt(-1, t));
 				} else {
-					arr = new ArrayHandling.range().exec(t, env, new CInt(start, t), new CInt(finish + 1, t));
+					arr = new ArrayHandling.range().exec(t, env, (Mixed)new CInt(start, t), (Mixed)new CInt(finish + 1, t));
 				}
 			}
 			if (!(arr instanceof ArrayAccess)) {
@@ -677,12 +679,12 @@ public class DataHandling {
 
 					//Clone the set, so changes in the array won't cause changes in
 				//the iteration order.
-				Set<Construct> keySet = new LinkedHashSet<>(one.keySet());
+				Set<Mixed> keySet = new LinkedHashSet<>(one.keySet());
 					//Continues in an associative array are slightly different, so
 				//we have to track this differently. Basically, we skip the
 				//next element in the array key set.
 				int continues = 0;
-				for (Construct c : keySet) {
+				for (Mixed c : keySet) {
 					if (continues > 0) {
 						//If continues is greater than 0, continue in the loop,
 						//however many times necessary to make it 0.
@@ -967,12 +969,12 @@ public class DataHandling {
 	public static class foreachelse extends foreach {
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			ParseTree array = nodes[0];
 			//The last one
 			ParseTree elseCode = nodes[nodes.length - 1];
 
-			Construct data = parent.seval(array, env);
+			Mixed data = parent.seval(array, env);
 
 			if (!(data instanceof CArray) && !(data instanceof CSlice)) {
 				throw new CRECastException(getName() + " expects an array for parameter 1", t);
@@ -2152,7 +2154,7 @@ public class DataHandling {
 				} else {
 					boolean thisNodeIsAssign = false;
 					if (nodes[i].getData() instanceof CFunction) {
-						if (((CFunction) nodes[i].getData()).getValue().equals("assign")) {
+						if (((CFunction) nodes[i].getData()).val().equals("assign")) {
 							thisNodeIsAssign = true;
 							if ((nodes[i].getChildren().size() == 3 && nodes[i].getChildAt(0).getData().isDynamic())
 								|| nodes[i].getChildAt(1).getData().isDynamic()) {
@@ -2161,7 +2163,7 @@ public class DataHandling {
 						}
 					}
 					env.getEnv(GlobalEnv.class).SetFlag("no-check-duplicate-assign", true);
-					Construct cons = parent.eval(nodes[i], env);
+					Mixed cons = parent.eval(nodes[i], env);
 					env.getEnv(GlobalEnv.class).ClearFlag("no-check-duplicate-assign");
 					if (i == 0 && cons instanceof IVariable) {
 						throw ConfigRuntimeException.BuildException("Anonymous Procedures are not allowed", CREInvalidProcedureException.class, t);
@@ -2174,7 +2176,7 @@ public class DataHandling {
 							} else {
 								IVariable ivar = null;
 								try {
-									Construct c = cons;
+									Mixed c = cons;
 									if (c instanceof IVariable) {
 										String varName = ((IVariable) c).getVariableName();
 										if (varNames.contains(varName)) {
@@ -2230,7 +2232,7 @@ public class DataHandling {
 		 * @return
 		 * @throws ConfigRuntimeException
 		 */
-		public static Construct optimizeProcedure(Target t, Procedure myProc, List<ParseTree> children) throws ConfigRuntimeException {
+		public static Mixed optimizeProcedure(Target t, Procedure myProc, List<ParseTree> children) throws ConfigRuntimeException {
 			if (myProc.isPossiblyConstant()) {
 				//Oooh, it's possibly constant. So, let's run it with our children.
 				try {
@@ -2242,7 +2244,7 @@ public class DataHandling {
 					Script fakeScript = Script.GenerateScript(root, Static.GLOBAL_PERMISSION);
 					Environment env = Static.GenerateStandaloneEnvironment();
 					env.getEnv(GlobalEnv.class).SetScript(fakeScript);
-					Construct c = myProc.cexecute(children, env, t);
+					Mixed c = myProc.cexecute(children, env, t);
 					//Yup! It worked. It's a const proc.
 					return c;
 				} catch (ConfigRuntimeException e) {
@@ -2381,7 +2383,7 @@ public class DataHandling {
 		@Override
 		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			ParseTree tree = nodes[0];
-			Construct arg = parent.seval(tree, env);
+			Mixed arg = parent.seval(tree, env);
 			String location = arg.val();
 			File file = Static.GetFileFromArgument(location, env, t, null);
 			ParseTree include = IncludeCache.get(file, t);
@@ -2458,13 +2460,13 @@ public class DataHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			if (args.length < 1) {
 				throw ConfigRuntimeException.BuildException("Expecting at least one argument to " + getName(), CREInsufficientArgumentsException.class, t);
 			}
 			Procedure proc = env.getEnv(GlobalEnv.class).GetProcs().get(args[0].val());
 			if (proc != null) {
-				List<Construct> vars = new ArrayList<Construct>(Arrays.asList(args));
+				List<Mixed> vars = new ArrayList<>(Arrays.asList(args));
 				vars.remove(0);
 				Environment newEnv = null;
 				try {
@@ -2501,12 +2503,12 @@ public class DataHandling {
 	public static class call_proc_array extends call_proc {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray ca = Static.getArray(args[1], t);
 			if (ca.inAssociativeMode()) {
 				throw new CRECastException("Expected the array passed to " + getName() + " to be non-associative.", t);
 			}
-			Construct[] args2 = new Construct[(int) ca.size() + 1];
+			Mixed[] args2 = new Mixed[(int) ca.size() + 1];
 			args2[0] = args[0];
 			for (int i = 1; i < args2.length; i++) {
 				args2[i] = ca.get(i - 1, t);
@@ -2916,7 +2918,7 @@ public class DataHandling {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			if (nodes.length == 0) {
 				//Empty closure, do nothing.
 				return new CClosure(null, env, CClassType.AUTO, new String[]{}, new Construct[]{}, new CClassType[]{}, t);
@@ -2932,7 +2934,7 @@ public class DataHandling {
 				nodes = newNodes;
 			}
 			String[] names = new String[nodes.length - 1];
-			Construct[] defaults = new Construct[nodes.length - 1];
+			Mixed[] defaults = new Mixed[nodes.length - 1];
 			CClassType[] types = new CClassType[nodes.length - 1];
 			// We clone the enviornment at this point, because we don't want the values
 			// that are assigned here to overwrite values in the main scope.
@@ -2950,7 +2952,7 @@ public class DataHandling {
 				newNode.setChildren(children);
 				Script fakeScript = Script.GenerateScript(newNode, myEnv.getEnv(GlobalEnv.class).GetLabel());
 				myEnv.getEnv(GlobalEnv.class).SetFlag("closure-warn-overwrite", true);
-				Construct ret = MethodScriptCompiler.execute(newNode, myEnv, null, fakeScript);
+				Mixed ret = MethodScriptCompiler.execute(newNode, myEnv, null, fakeScript);
 				myEnv.getEnv(GlobalEnv.class).ClearFlag("closure-warn-overwrite");
 				if (!(ret instanceof IVariable)) {
 					throw ConfigRuntimeException.BuildException("Arguments sent to " + getName() + " barring the last) must be ivariables", CRECastException.class, t);
@@ -3019,10 +3021,10 @@ public class DataHandling {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			if (nodes.length == 0) {
 				//Empty closure, do nothing.
-				return new CClosure(null, env, CClassType.AUTO, new String[]{}, new Construct[]{}, new CClassType[]{}, t);
+				return new CClosure(null, env, CClassType.AUTO, new String[]{}, new Mixed[]{}, new CClassType[]{}, t);
 			}
 			// Handle the closure type first thing
 			CClassType returnType = CClassType.AUTO;
@@ -3035,7 +3037,7 @@ public class DataHandling {
 				nodes = newNodes;
 			}
 			String[] names = new String[nodes.length - 1];
-			Construct[] defaults = new Construct[nodes.length - 1];
+			Mixed[] defaults = new Mixed[nodes.length - 1];
 			CClassType[] types = new CClassType[nodes.length - 1];
 			// We clone the enviornment at this point, because we don't want the values
 			// that are assigned here to overwrite values in the main scope.
@@ -3053,7 +3055,7 @@ public class DataHandling {
 				newNode.setChildren(children);
 				Script fakeScript = Script.GenerateScript(newNode, myEnv.getEnv(GlobalEnv.class).GetLabel());
 				myEnv.getEnv(GlobalEnv.class).SetFlag("closure-warn-overwrite", true);
-				Construct ret = MethodScriptCompiler.execute(newNode, myEnv, null, fakeScript);
+				Mixed ret = MethodScriptCompiler.execute(newNode, myEnv, null, fakeScript);
 				myEnv.getEnv(GlobalEnv.class).ClearFlag("closure-warn-overwrite");
 				if (!(ret instanceof IVariable)) {
 					throw ConfigRuntimeException.BuildException("Arguments sent to " + getName() + " barring the last) must be ivariables", CRECastException.class, t);
@@ -3706,7 +3708,7 @@ public class DataHandling {
 			ParseTree node = nodes[0];
 			try {
 				env.getEnv(GlobalEnv.class).SetDynamicScriptingMode(true);
-				Construct script = parent.seval(node, env);
+				Mixed script = parent.seval(node, env);
 				if(script instanceof CClosure){
 					throw new CRECastException("Closures cannot be eval'd directly. Use execute() instead.", t);
 				}
@@ -3714,7 +3716,7 @@ public class DataHandling {
 				StringBuilder b = new StringBuilder();
 				int count = 0;
 				for (ParseTree child : root.getChildren()) {
-					Construct s = parent.seval(child, env);
+					Mixed s = parent.seval(child, env);
 					if (!s.val().trim().isEmpty()) {
 						if (count > 0) {
 							b.append(" ");
@@ -3935,7 +3937,7 @@ public class DataHandling {
 
 		@Override
 		public Class<? extends CREThrowable>[] thrown() {
-			return new Class[]{};
+			return new Class[]{CREClassNotFoundException.class};
 		}
 
 		@Override
@@ -3949,11 +3951,16 @@ public class DataHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(args[0] instanceof CNull){
 				return CBoolean.FALSE;
 			}
-			boolean b = InstanceofUtil.isInstanceof(args[0], args[1].val());
+			boolean b;
+			try {
+				b = InstanceofUtil.isInstanceof(args[0], args[1].val());
+			} catch (ClassNotFoundException ex) {
+				throw new CREClassNotFoundException("Could not find the class of type " + args[1].val(), t, ex);
+			}
 			return CBoolean.get(b);
 		}
 

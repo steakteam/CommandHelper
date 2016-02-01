@@ -3,19 +3,20 @@
 package com.laytonsmith.core.constructs;
 
 import com.laytonsmith.core.constructs.Construct.ConstructType;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 /**
  *
  * 
  */
 public class CLabel extends Construct {
-    Construct label;
-    public CLabel(Construct value){
+    Mixed label;
+    public CLabel(Mixed value){
         super(value.val(), ConstructType.LABEL, value.getTarget()); 
         label = value;
     }
     
-    public Construct cVal(){
+    public Mixed cVal(){
         return label;
     }
 

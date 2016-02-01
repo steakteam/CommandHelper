@@ -29,6 +29,7 @@ import com.laytonsmith.core.constructs.InstanceofUtil;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
+import com.laytonsmith.core.exceptions.CRE.CREClassNotFoundException;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
 import com.laytonsmith.core.exceptions.CRE.CREInsufficientArgumentsException;
 import com.laytonsmith.core.exceptions.CRE.CRENullPointerException;
@@ -37,7 +38,7 @@ import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
-import com.laytonsmith.core.natives.interfaces.Sizable;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -50,6 +51,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import com.laytonsmith.core.natives.interfaces.Sizeable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -236,8 +240,13 @@ public class StringHandling {
 					// sconcat only returns a string (except in the special case above) so we need to
 					// return the string value if it's not already a string
 					try {
-						if(InstanceofUtil.isInstanceof(child.getData(), "string")){
-							return child;
+						try {
+							if(InstanceofUtil.isInstanceof(child.getData(), "string")){
+								return child;
+							}
+						} catch (ClassNotFoundException ex) {
+							// Yeah, this will probably never happen.
+							throw new CREClassNotFoundException("Could not find class of type string", t, ex);
 						}
 					} catch(IllegalArgumentException ex){
 						// Ignored, we'll just toString it, because it's an unknown type.
@@ -621,8 +630,8 @@ public class StringHandling {
 
 		@Override
 		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
-			if (args[0] instanceof Sizable) {
-				return new CInt(((Sizable) args[0]).size(), t);
+			if (args[0] instanceof Sizeable) {
+				return new CInt(((Sizeable) args[0]).size(), t);
 			} else {
 				return new CInt(args[0].val().length(), t);
 			}
@@ -1063,7 +1072,7 @@ public class StringHandling {
 						CREInsufficientArgumentsException.class, t);
 			}
 
-			List<Construct> flattenedArgs = new ArrayList<Construct>();
+			List<Mixed> flattenedArgs = new ArrayList<>();
 			if (numArgs == 3 && args[2] instanceof CArray) {
 				if (((CArray) args[2]).inAssociativeMode()) {
 					throw ConfigRuntimeException.BuildException("If the second argument to " + getName() + " is an array, it may not be associative.", CRECastException.class, t);
@@ -1079,7 +1088,7 @@ public class StringHandling {
 			}
 			//Now figure out how to cast things, now that we know our argument numbers will match up
 			for (int i = 0; i < requiredArgs(parsed); i++) {
-				Construct arg = flattenedArgs.get(i);
+				Mixed arg = flattenedArgs.get(i);
 				FormatString fs = parsed.get(i);
 				Character c = fs.getExpectedType();
 				params[i] = convertArgument(arg, c, i, t);
@@ -1088,7 +1097,7 @@ public class StringHandling {
 			return new CString(String.format(locale, formatString, params), t);
 		}
 
-		private Object convertArgument(Construct arg, Character c, int i, Target t) {
+		private Object convertArgument(Mixed arg, Character c, int i, Target t) {
 			Object o;
 			if (Conversion.isValid(c)) {
 				if (c == 't' || c == 'T') {
@@ -1242,7 +1251,12 @@ public class StringHandling {
 				throw new ConfigCompileException(getName() + " expects 2 or more argument", t);
 			}
 			if (children.get(0).isConst()){
-				String locale = children.get(0).getData().nval();
+				String locale;
+				if(children.get(0).getData() instanceof CNull){
+					locale = null;
+				} else {
+					locale = children.get(0).getData().val();
+				}
 				if(locale != null && Static.GetLocale(locale) == null){
 					throw new ConfigCompileException("The locale " + locale + " could not be found on this system", t);
 				}

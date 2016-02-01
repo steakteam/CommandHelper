@@ -9,6 +9,7 @@ import com.laytonsmith.core.Static;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.natives.interfaces.ArrayAccess;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.Set;
 
 /**
@@ -84,12 +85,12 @@ public class CString extends CPrimitive implements Cloneable, ArrayAccess {
 	}
 
 	@Override
-	public Set<Construct> keySet() {
+	public Set<Mixed> keySet() {
 		throw new UnsupportedOperationException("Not supported.");
 	}
 
 	@Override
-	public Construct get(Construct index, Target t) throws ConfigRuntimeException {
+	public Mixed get(Mixed index, Target t) throws ConfigRuntimeException {
 		int i = Static.getInt32(index, t);
 		return get(i, t);
 	}

@@ -44,38 +44,38 @@ public class CArray extends Construct implements ArrayAccess{
 
     private boolean associative_mode = false;
     private long next_index = 0;
-    private List<Construct> array;
-    private SortedMap<String, Construct> associative_array;
+    private List<Mixed> array;
+    private SortedMap<String, Mixed> associative_array;
     private String mutVal;
     CArray parent = null;
 	private boolean valueDirty = true;
 
 	public CArray(Target t) {
-		this(t, 0, (Construct[]) null);
+		this(t, 0, (Mixed[]) null);
 	}
 
-	public CArray(Target t, Construct... items) {
+	public CArray(Target t, Mixed... items) {
 		this(t, 0, items);
 	}
 
 	public CArray(Target t, int initialCapacity) {
-		this(t, initialCapacity, (Construct[]) null);
+		this(t, initialCapacity, (Mixed[]) null);
 	}
 
-	public CArray(Target t, Collection<Construct> items) {
+	public CArray(Target t, Collection<Mixed> items) {
 		this(t, 0, getArray(items));
 	}
 
-	public CArray(Target t, int initialCapacity, Collection<Construct> items) {
+	public CArray(Target t, int initialCapacity, Collection<Mixed> items) {
 		this(t, initialCapacity, getArray(items));
 	}
 
-	public CArray(Target t, int initialCapacity, Construct... items) {
+	public CArray(Target t, int initialCapacity, Mixed... items) {
 		super("{}", ConstructType.ARRAY, t);
 		if(initialCapacity == -1){
 			associative_mode = true;
 		} else if(items != null){
-			for(Construct item : items){
+			for(Mixed item : items){
 				if(item instanceof CEntry){
 					//it's an associative array
 					associative_mode = true;
@@ -84,10 +84,10 @@ public class CArray extends Construct implements ArrayAccess{
 			}
 		}
 		associative_array = new TreeMap<>(comparator);
-		array = associative_mode ? new ArrayList<Construct>() : initialCapacity > 0 ? new ArrayList<Construct>(initialCapacity) : items != null ? new ArrayList<Construct>(items.length) : new ArrayList<Construct>();
+		array = associative_mode ? new ArrayList<Mixed>() : initialCapacity > 0 ? new ArrayList<Mixed>(initialCapacity) : items != null ? new ArrayList<Mixed>(items.length) : new ArrayList<Mixed>();
 		if(associative_mode){
 			if(items != null){
-				for(Construct item : items){
+				for(Mixed item : items){
 					if(item instanceof CEntry){
 						associative_array.put(normalizeConstruct(((CEntry)item).ckey), ((CEntry)item).construct);
 					} else {
@@ -110,7 +110,7 @@ public class CArray extends Construct implements ArrayAccess{
 			}
 		} else {
 			if(items != null){
-				for(Construct item : items){
+				for(Mixed item : items){
 					array.add(item);
 					if(item instanceof CArray){
 						((CArray)item).parent = this;
@@ -135,7 +135,7 @@ public class CArray extends Construct implements ArrayAccess{
 	 * Returns the backing array.
 	 * @return
 	 */
-	protected List<Construct> getArray(){
+	protected List<Mixed> getArray(){
 		return array;
 	}
 
@@ -144,11 +144,11 @@ public class CArray extends Construct implements ArrayAccess{
 	 * is a normal array.
 	 * @return
 	 */
-	public List<Construct> asList(){
+	public List<Mixed> asList(){
 		if(inAssociativeMode()){
 			throw new RuntimeException("asList can only be called on a normal array");
 		} else {
-			return new ArrayList<Construct>(array);
+			return new ArrayList<>(array);
 		}
 	}
 
@@ -156,14 +156,14 @@ public class CArray extends Construct implements ArrayAccess{
 	 * Returns the backing associative array.
 	 * @return
 	 */
-	protected SortedMap<String, Construct> getAssociativeArray(){
+	protected SortedMap<String, Mixed> getAssociativeArray(){
 		return associative_array;
 	}
 
-	private static Construct [] getArray(Collection<Construct> items){
-		Construct c [] = new Construct[items.size()];
+	private static Mixed [] getArray(Collection<Mixed> items){
+		Mixed c [] = new Mixed[items.size()];
 		int count = 0;
-		for(Construct cc : items){
+		for(Mixed cc : items){
 			c[count++] = cc;
 		}
 		return c;
@@ -185,7 +185,7 @@ public class CArray extends Construct implements ArrayAccess{
 		return new CArray(t, -1);
 	}
 
-	public static CArray GetAssociativeArray(Target t, Construct[] args){
+	public static CArray GetAssociativeArray(Target t, Mixed[] args){
 		return new CArray(t, -1, args);
     }
 
@@ -220,26 +220,26 @@ public class CArray extends Construct implements ArrayAccess{
 	}
 
 	/**
-	 * Pushes a new Construct onto the end of the array.
+	 * Pushes a new Mixed onto the end of the array.
 	 * @param c
 	 * @param t
 	 */
-	public final void push(Construct c, Target t){
+	public final void push(Mixed c, Target t){
 		push(c, null, t);
 	}
 	
 	/**
-     * Pushes a new Construct onto the end of the array. If the index is specified, this works like
+     * Pushes a new Mixed onto the end of the array. If the index is specified, this works like
 	 * a "insert" operation, in that all values are shifted to the right, starting with the value
 	 * at that index. If the array is associative though, you MUST send null, otherwise an
 	 * {@link IllegalArgumentException} is thrown. Ideally, you should use {@link #set} anyways
 	 * for an associative array.
-     * @param c The Construct to add to the array
+     * @param c The Mixed to add to the array
 	 * @throws IllegalArgumentException If index is not null, and this is an associative array.
 	 * @throws IndexOutOfBoundsException If the index is not null, and the index specified is out of
 	 * range.
      */
-    public void push(Construct c, Integer index, Target t) throws IllegalArgumentException, IndexOutOfBoundsException {
+    public void push(Mixed c, Integer index, Target t) throws IllegalArgumentException, IndexOutOfBoundsException {
         if (!associative_mode) {
 			if(index != null){
 				array.add(index, c);
@@ -277,8 +277,8 @@ public class CArray extends Construct implements ArrayAccess{
      * @return
      */
 	@Override
-    public Set<Construct> keySet(){
-        Set<Construct> set = !associative_mode?new LinkedHashSet<Construct>(array.size()):new LinkedHashSet<Construct>(associative_array.size());
+    public Set<Mixed> keySet(){
+        Set<Mixed> set = !associative_mode?new LinkedHashSet<Mixed>(array.size()):new LinkedHashSet<Mixed>(associative_array.size());
         if(!associative_mode){
             for(int i = 0; i < array.size(); i++){
                 set.add(new CInt(i, Target.UNKNOWN));
@@ -314,7 +314,7 @@ public class CArray extends Construct implements ArrayAccess{
      * @param index
      * @param c
      */
-    public void set(Construct index, Construct c, Target t) {
+    public void set(Mixed index, Mixed c, Target t) {
         if (!associative_mode) {
             try {
                 int indx = Static.getInt32(index, t);
@@ -327,7 +327,7 @@ public class CArray extends Construct implements ArrayAccess{
                 }
             } catch (ConfigRuntimeException e) {
                 //Not a number. Convert to associative.
-                associative_array = new TreeMap<String, Construct>(comparator);
+                associative_array = new TreeMap<String, Mixed>(comparator);
                 for (int i = 0; i < array.size(); i++) {
                     associative_array.put(Integer.toString(i), array.get(i));
                 }
@@ -344,12 +344,12 @@ public class CArray extends Construct implements ArrayAccess{
         regenValue(new HashSet<CArray>());
     }
 
-    public final void set(int index, Construct c, Target t){
+    public final void set(int index, Mixed c, Target t){
         this.set(new CInt(index, Target.UNKNOWN), c, t);
     }
     /* Shortcuts */
 
-    public final void set(String index, Construct c, Target t){
+    public final void set(String index, Mixed c, Target t){
         set(new CString(index, c.getTarget()), c, t);
     }
 
@@ -362,7 +362,7 @@ public class CArray extends Construct implements ArrayAccess{
     }
 
 	@Override
-    public Construct get(Construct index, Target t) {
+    public Mixed get(Mixed index, Target t) {
         if(!associative_mode){
             try {
                 return array.get(Static.getInt32(index, t));
@@ -371,7 +371,7 @@ public class CArray extends Construct implements ArrayAccess{
             }
         } else {
             if(associative_array.containsKey(normalizeConstruct(index))){
-                Construct val = associative_array.get(normalizeConstruct(index));
+                Mixed val = associative_array.get(normalizeConstruct(index));
                 if(val instanceof CEntry){
                     return ((CEntry)val).construct();
                 }
@@ -385,17 +385,17 @@ public class CArray extends Construct implements ArrayAccess{
         }
     }
 
-    public final Construct get(long index, Target t){
+    public final Mixed get(long index, Target t){
         return this.get(new CInt(index, t), t);
     }
 
 	@Override
-    public final Construct get(int index, Target t){
+    public final Mixed get(int index, Target t){
         return this.get(new CInt(index, t), t);
     }
 
 	@Override
-    public final Construct get(String index, Target t){
+    public final Mixed get(String index, Target t){
         return this.get(new CString(index, t), t);
     }
 
@@ -415,7 +415,7 @@ public class CArray extends Construct implements ArrayAccess{
         return this.containsKey(Integer.toString(i));
     }
 
-    public boolean contains(Construct c){
+    public boolean contains(Mixed c){
         if(associative_mode){
             return associative_array.containsValue(c);
         } else {
@@ -437,7 +437,7 @@ public class CArray extends Construct implements ArrayAccess{
 	 * @param value
 	 * @return
 	 */
-	public CArray indexesOf(Construct value){
+	public CArray indexesOf(Mixed value){
 		CArray ret = new CArray(Target.UNKNOWN);
 		if(associative_mode){
 			for(String key : associative_array.keySet()){
@@ -553,11 +553,11 @@ public class CArray extends Construct implements ArrayAccess{
         clone.associative_mode = associative_mode;
         if(!associative_mode){
             if (array != null) {
-                clone.array = new ArrayList<Construct>(this.array);
+                clone.array = new ArrayList<>(this.array);
             }
         } else {
             if(associative_array != null){
-                clone.associative_array = new TreeMap<String, Construct>(this.associative_array);
+                clone.associative_array = new TreeMap<>(this.associative_array);
             }
         }
         clone.regenValue(new HashSet<CArray>());
@@ -584,8 +584,8 @@ public class CArray extends Construct implements ArrayAccess{
 		cloneRefs.add(new CArray[] {array, clone});
 		
 		// Iterate over the array, recursively calling this method to perform a deep clone.
-		for (Construct key : array.keySet()) {
-			Construct value = array.get(key, t);
+		for (Mixed key : array.keySet()) {
+			Mixed value = array.get(key, t);
 			if(value instanceof CArray) {
 				value = deepClone((CArray) value, t, cloneRefs);
 			}
@@ -594,7 +594,7 @@ public class CArray extends Construct implements ArrayAccess{
 		return clone;
 	}
 
-    private String normalizeConstruct(Construct c){
+    private String normalizeConstruct(Mixed c){
         if(c instanceof CArray){
             throw ConfigRuntimeException.BuildException("Arrays cannot be used as the key in an associative array", CRECastException.class, c.getTarget());
         } else if(c instanceof CString || c instanceof CInt){
@@ -619,7 +619,7 @@ public class CArray extends Construct implements ArrayAccess{
 	 * @param i
 	 * @return
 	 */
-	public Construct remove(int i){
+	public Mixed remove(int i){
 		return remove(new CInt(i, Target.UNKNOWN));
 	}
 
@@ -628,7 +628,7 @@ public class CArray extends Construct implements ArrayAccess{
 	 * @param s
 	 * @return
 	 */
-	public Construct remove(String s){
+	public Mixed remove(String s){
 		return remove(new CString(s, Target.UNKNOWN));
 	}
 
@@ -637,9 +637,9 @@ public class CArray extends Construct implements ArrayAccess{
 	 * @param construct
 	 * @return
 	 */
-    public Construct remove(Construct construct) {
+    public Mixed remove(Mixed construct) {
         String c = normalizeConstruct(construct);
-        Construct ret;
+        Mixed ret;
         if(!associative_mode){
             try{
                 ret = array.remove(Integer.parseInt(c));
@@ -661,19 +661,19 @@ public class CArray extends Construct implements ArrayAccess{
 	 * from this array
 	 * @param construct
 	 */
-	public void removeValues(Construct construct){
+	public void removeValues(Mixed construct){
 		if(associative_mode){
-			Iterator<Construct> it;
+			Iterator<Mixed> it;
 			it = associative_array.values().iterator();
 			while(it.hasNext()){
-				Construct c = it.next();
+				Mixed c = it.next();
 				if(BasicLogic.equals.doEquals(c, construct)){
 					it.remove();
 				}
 			}
 		} else {
 			for(int i = array.size() - 1; i >= 0; i--){
-				Construct c = array.get(i);
+				Mixed c = array.get(i);
 				if(BasicLogic.equals.doEquals(c, construct)){
 					array.remove(i);
 				}
@@ -776,7 +776,7 @@ public class CArray extends Construct implements ArrayAccess{
     }
 
 	@Override
-    public Construct slice(int begin, int end, Target t) {
+    public Mixed slice(int begin, int end, Target t) {
         return new ArrayHandling.array_get().exec(t, null, new CSlice(begin, end, t));
     }
 
@@ -811,7 +811,7 @@ public class CArray extends Construct implements ArrayAccess{
         STRING_IC
     }
     public void sort(final SortType sort){
-        List<Construct> list = array;
+        List<Mixed> list = array;
         if(this.associative_mode){
             list = new ArrayList(associative_array.values());
             this.associative_array.clear();
@@ -819,14 +819,14 @@ public class CArray extends Construct implements ArrayAccess{
             this.associative_mode = false;
             CHLog.GetLogger().Log(CHLog.Tags.GENERAL, LogLevel.VERBOSE, "Attempting to sort an associative array; key values will be lost.", this.getTarget());
         }
-        Collections.sort(array, new Comparator<Construct>() {
+        Collections.sort(array, new Comparator<Mixed>() {
 			@Override
-            public int compare(Construct o1, Construct o2) {
+            public int compare(Mixed o1, Mixed o2) {
                 //o1 < o2 -> -1
                 //o1 == o2 -> 0
                 //o1 > o2 -> 1
                 for(int i = 0; i < 2; i++){
-                    Construct c;
+                    Mixed c;
                     if(i == 0){
                         c = o1;
                     } else {
@@ -837,14 +837,14 @@ public class CArray extends Construct implements ArrayAccess{
                     }
                     if(!(c instanceof CBoolean || c instanceof CString || c instanceof CInt ||
                             c instanceof CDouble || c instanceof CNull)){
-                        throw ConfigRuntimeException.BuildException("Unsupported type being sorted: " + c.getCType(), CREFormatException.class, CArray.this.getTarget());
+                        throw ConfigRuntimeException.BuildException("Unsupported type being sorted: " + c.typeof(), CREFormatException.class, CArray.this.getTarget());
                     }
                 }
                 if(o1 instanceof CNull || o2 instanceof CNull){
                     if(o1 instanceof CNull && o2 instanceof CNull){
                         return 0;
                     } else if(o1 instanceof CNull){
-                        return "".compareTo(o2.getValue());
+                        return "".compareTo(o2.val());
                     } else {
                         return o1.val().compareTo("");
                     }
@@ -871,7 +871,7 @@ public class CArray extends Construct implements ArrayAccess{
                 }
                 throw ConfigRuntimeException.CreateUncatchableException("Missing implementation for " + sort.name(), Target.UNKNOWN);
             }
-            public int compareRegular(Construct o1, Construct o2){
+            public int compareRegular(Mixed o1, Mixed o2){
                 if(Static.getBoolean(new DataHandling.is_numeric().exec(Target.UNKNOWN, null, o1))
                         && Static.getBoolean(new DataHandling.is_numeric().exec(Target.UNKNOWN, null, o2))){
                     return compareNumeric(o1, o2);
@@ -886,7 +886,7 @@ public class CArray extends Construct implements ArrayAccess{
                     return compareString(o1.val(), o2.val());
                 }
             }
-            public int compareNumeric(Construct o1, Construct o2){
+            public int compareNumeric(Mixed o1, Mixed o2){
                 double d1 = Static.getNumber(o1, o1.getTarget());
                 double d2 = Static.getNumber(o2, o2.getTarget());
                 return Double.compare(d1, d2);

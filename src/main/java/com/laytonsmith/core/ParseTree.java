@@ -4,13 +4,13 @@ package com.laytonsmith.core;
 import com.laytonsmith.core.compiler.FileOptions;
 import com.laytonsmith.core.constructs.CFunction;
 import com.laytonsmith.core.constructs.CString;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.IVariable;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.functions.Function;
 import com.laytonsmith.core.functions.FunctionBase;
 import com.laytonsmith.core.functions.FunctionList;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -38,7 +38,7 @@ public class ParseTree implements Cloneable{
 	 * store a private cache of weak references to "this" instance.
 	 */		
 	private static Map<ParseTree, Map<CacheTypes, Object>> cache 
-		= new WeakHashMap<ParseTree, Map<CacheTypes, Object>>();
+		= new WeakHashMap<>();
 	
 	private static boolean isCached(ParseTree tree, CacheTypes type){
 		if(!cache.containsKey(tree)){
@@ -64,7 +64,7 @@ public class ParseTree implements Cloneable{
 	
 	private static void setCache(ParseTree tree, CacheTypes type, Object value){
 		if(!cache.containsKey(tree)){
-			cache.put(tree, new EnumMap<CacheTypes, Object>(CacheTypes.class));
+			cache.put(tree, new EnumMap<>(CacheTypes.class));
 		}
 		cache.get(tree).put(type, value);
 	}
@@ -74,7 +74,7 @@ public class ParseTree implements Cloneable{
 	}
 	
 	
-	private Construct data = null;
+	private Mixed data = null;
 	private boolean isOptimized = false;
 	private final FileOptions fileOptions;
 	private List<ParseTree> children = null;
@@ -82,17 +82,19 @@ public class ParseTree implements Cloneable{
 	
 	/**
 	 * Creates a new empty tree node
+	 * @param options
 	 */
 	public ParseTree(FileOptions options){
-		children = new ArrayList<ParseTree>();
+		children = new ArrayList<>();
 		this.fileOptions = options;
 	}
 	
 	/**
 	 * Creates a new tree node, with this construct as the data
 	 * @param construct 
+	 * @param options 
 	 */
-	public ParseTree(Construct construct, FileOptions options){
+	public ParseTree(Mixed construct, FileOptions options){
 		this(options);
 		setData(construct);
 	}
@@ -101,7 +103,7 @@ public class ParseTree implements Cloneable{
 		return fileOptions;
 	}
 	
-	public void setData(Construct data) {
+	public final void setData(Mixed data) {
 		this.data = data;
 	}
 	
@@ -126,8 +128,8 @@ public class ParseTree implements Cloneable{
 	 * needs to be scoured for information, regardless of visitation order.
 	 * @return 
 	 */
-	public List<Construct> getAllData(){
-		List<Construct> list = new ArrayList<Construct>();
+	public List<Mixed> getAllData(){
+		List<Mixed> list = new ArrayList<>();
 		list.add(getData());
 		for(ParseTree node : getChildren()){
 			list.addAll(node.getAllData());
@@ -157,7 +159,7 @@ public class ParseTree implements Cloneable{
 	 * Returns the data in this node
 	 * @return 
 	 */
-	public Construct getData(){
+	public Mixed getData(){
 		return data;
 	}
 	
@@ -287,11 +289,11 @@ public class ParseTree implements Cloneable{
 	 */
 	public List<Function> getFunctions(){
 		if(isCached(this, CacheTypes.FUNCTIONS)){
-			return new ArrayList<Function>((List<Function>)getCache(this, CacheTypes.FUNCTIONS));
+			return new ArrayList<>((List<Function>)getCache(this, CacheTypes.FUNCTIONS));
 		} else {
-			List<Function> functions = new ArrayList<Function>();
-			List<Construct> allChildren = getAllData();
-			loop: for(Construct c : allChildren){
+			List<Function> functions = new ArrayList<>();
+			List<Mixed> allChildren = getAllData();
+			loop: for(Mixed c : allChildren){
 				if(c instanceof CFunction){
 					try {
 						FunctionBase f = FunctionList.getFunction(c);
@@ -306,7 +308,7 @@ public class ParseTree implements Cloneable{
 				}
 			}			
 			setCache(this, CacheTypes.FUNCTIONS, functions);
-			return new ArrayList<Function>(functions);
+			return new ArrayList<>(functions);
 		}
 	}
 
@@ -314,7 +316,7 @@ public class ParseTree implements Cloneable{
 	public ParseTree clone() throws CloneNotSupportedException {
 		ParseTree clone = (ParseTree)super.clone();
 		clone.data = data.clone();
-		clone.children = new ArrayList<ParseTree>(this.children);
+		clone.children = new ArrayList<>(this.children);
 		return clone;
 	}
 	

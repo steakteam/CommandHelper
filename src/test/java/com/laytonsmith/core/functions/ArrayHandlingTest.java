@@ -7,11 +7,11 @@ import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CString;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.testing.C;
 import com.laytonsmith.testing.StaticTest;
 import static com.laytonsmith.testing.StaticTest.Run;
@@ -59,7 +59,7 @@ public class ArrayHandlingTest {
 	public void testArraySize() throws Exception, CancelCommandException {
 		ArrayHandling.array_size a = new ArrayHandling.array_size();
 		CArray arr = commonArray;
-		Construct ret = a.exec(Target.UNKNOWN, env, arr);
+		Mixed ret = a.exec(Target.UNKNOWN, env, (Mixed)arr);
 		assertReturn(ret, C.Int);
 		assertCEquals(C.onstruct(3), ret);
 	}
@@ -67,7 +67,7 @@ public class ArrayHandlingTest {
 	@Test(expected = Exception.class, timeout = 10000)
 	public void testArraySizeEx() throws CancelCommandException {
 		ArrayHandling.array_size a = new ArrayHandling.array_size();
-		a.exec(Target.UNKNOWN, env, C.Int(0));
+		a.exec(Target.UNKNOWN, env, (Mixed)C.Int(0));
 	}
 
 	@Test//(timeout = 10000)
@@ -125,13 +125,13 @@ public class ArrayHandlingTest {
 		ArrayHandling.array_scontains a = new ArrayHandling.array_scontains();
 		assertCEquals(C.onstruct(true), a.exec(Target.UNKNOWN, env, commonArray, C.onstruct(1)));
 		assertCEquals(C.onstruct(false), a.exec(Target.UNKNOWN, env, commonArray, C.onstruct(55)));
-		assertCEquals(C.onstruct(false), a.exec(Target.UNKNOWN, env, commonArray, new CString("2", Target.UNKNOWN)));
+		assertCEquals(C.onstruct(false), a.exec(Target.UNKNOWN, env, commonArray, (Mixed)new CString("2", Target.UNKNOWN)));
 	}
 
 	@Test(expected = Exception.class, timeout = 10000)
 	public void testArrayContainsEx() throws CancelCommandException {
 		ArrayHandling.array_contains a = new ArrayHandling.array_contains();
-		a.exec(Target.UNKNOWN, env, C.Int(0), C.Int(1));
+		a.exec(Target.UNKNOWN, env, (Mixed)C.Int(0), C.Int(1));
 	}
 
 	@Test(timeout = 10000)
@@ -143,7 +143,7 @@ public class ArrayHandlingTest {
 	@Test(expected = Exception.class, timeout = 10000)
 	public void testArrayGetEx() throws CancelCommandException {
 		ArrayHandling.array_get a = new ArrayHandling.array_get();
-		a.exec(Target.UNKNOWN, env, C.Int(0), C.Int(1));
+		a.exec(Target.UNKNOWN, env, (Mixed)C.Int(0), C.Int(1));
 	}
 
 	@Test(expected = ConfigRuntimeException.class, timeout = 10000)
@@ -173,7 +173,7 @@ public class ArrayHandlingTest {
 	@Test(expected = Exception.class)
 	public void testArrayPushEx() throws CancelCommandException {
 		ArrayHandling.array_push a = new ArrayHandling.array_push();
-		a.exec(Target.UNKNOWN, env, C.Int(0), C.Int(1));
+		a.exec(Target.UNKNOWN, env, (Mixed)C.Int(0), C.Int(1));
 	}
 
 	@Test(timeout = 10000)

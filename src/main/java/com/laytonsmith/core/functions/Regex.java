@@ -24,6 +24,7 @@ import com.laytonsmith.core.exceptions.CRE.CREFormatException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -594,7 +595,7 @@ public class Regex {
         
     }
     
-    private static Pattern getPattern(Construct c, Target t) throws ConfigRuntimeException{
+    private static Pattern getPattern(Mixed c, Target t) throws ConfigRuntimeException{
         String regex = "";
         int flags = 0;
         String sflags = "";

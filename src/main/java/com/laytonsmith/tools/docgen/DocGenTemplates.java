@@ -7,6 +7,7 @@ import com.laytonsmith.PureUtilities.Common.StreamUtils;
 import com.laytonsmith.PureUtilities.Common.StringUtils;
 import com.laytonsmith.PureUtilities.MSP.Burst;
 import com.laytonsmith.PureUtilities.TermColors;
+import com.laytonsmith.PureUtilities.Version;
 import com.laytonsmith.abstraction.Implementation;
 import com.laytonsmith.annotations.datasource;
 import com.laytonsmith.annotations.typeof;
@@ -21,6 +22,9 @@ import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.functions.FunctionBase;
 import com.laytonsmith.core.functions.FunctionList;
 import com.laytonsmith.core.functions.Scheduling;
+import com.laytonsmith.core.natives.interfaces.Mixed;
+import com.laytonsmith.core.natives.interfaces.TypeofRunnerFor;
+import com.laytonsmith.core.natives.interfaces.TypeofRunnerIface;
 import com.laytonsmith.persistence.DataSource;
 import com.laytonsmith.persistence.MySQLDataSource;
 import com.laytonsmith.persistence.SQLiteDataSource;
@@ -33,8 +37,11 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -54,7 +61,7 @@ public class DocGenTemplates {
 
 	public static void main(String[] args){
 		Implementation.setServerType(Implementation.Type.SHELL);
-		StreamUtils.GetSystemOut().println(Generate("Exceptions"));
+		StreamUtils.GetSystemOut().println(Generate("Builtin_Object_Info"));
 	}
 
 	public static String Generate(String forPage){
@@ -510,5 +517,59 @@ public class DocGenTemplates {
 			}
 			return "[[CommandHelper/Staged/" + page + (text != null ? "|" + text : "") + "]]";
 		}
+	};
+	
+	public static Generator ALL_CLASS_INFO = new Generator(){
+		@Override
+		public String generate(String... args) {
+			StringBuilder b = new StringBuilder();
+			Set<Class> set = new TreeSet<>(new Comparator<Class>() {
+				@Override
+				public int compare(Class o1, Class o2) {
+					return ((typeof)o1.getAnnotation(typeof.class)).value()
+							.compareTo(((typeof)o2.getAnnotation(typeof.class)).value());
+				}
+			});
+			set.addAll(ClassDiscovery.getDefaultInstance().loadClassesWithAnnotation(typeof.class));
+			Set<Class<TypeofRunnerIface>> substitutes = ClassDiscovery.getDefaultInstance().loadClassesWithAnnotationThatExtend(TypeofRunnerFor.class, TypeofRunnerIface.class);
+			// Process the substitutes
+			Map<Class, Class<TypeofRunnerIface>> substituteFor = new HashMap<>();
+			for(Class<TypeofRunnerIface> c : substitutes){
+				substituteFor.put(c.getAnnotation(TypeofRunnerFor.class).value(), c);
+			}
+			for(Class<Mixed> c : set){
+				String name;
+				String docs;
+				Version since;
+				if(substituteFor.containsKey(c)){
+					TypeofRunnerIface r = ReflectionUtils.newInstance(substituteFor.get(c));
+					name = c.getAnnotation(typeof.class).value();
+					docs = r.docs();
+					since = r.since();
+				} else {
+					Mixed r = ReflectionUtils.instantiateUnsafe(c);
+					name = r.getName();
+					docs = r.docs();
+					since = r.since();
+				}
+				b.append("==").append(name).append("==\n\n");
+				List<String> parentTypes = new ArrayList<>();
+				for(Class parent : ReflectionUtils.getAllExtensions(c)){
+					if(parent.getAnnotation(typeof.class) != null){
+						parentTypes.add(((typeof)parent.getAnnotation(typeof.class)).value());
+					}
+				}
+				if(!parentTypes.isEmpty()){
+					Collections.sort(parentTypes);
+					b.append("Parent types: ");
+					b.append(StringUtils.Join(parentTypes, ", "));
+					b.append("\n\n");					
+				}
+				b.append(docs).append("\n\n");
+				b.append("Since: ").append(since.toString()).append("\n\n");
+			}
+			return b.toString();
+		}
+		
 	};
 }

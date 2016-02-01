@@ -40,6 +40,7 @@ import com.laytonsmith.core.exceptions.CRE.AbstractCREException;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
 import com.laytonsmith.core.exceptions.CRE.CRECausedByWrapper;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
+import com.laytonsmith.core.exceptions.CRE.CRENullPointerException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
@@ -138,7 +139,7 @@ public class Exceptions {
 
 			IVariable ivar = null;
 			if (varName != null) {
-				Construct pivar = that.eval(varName, env);
+				Mixed pivar = that.eval(varName, env);
 				if (pivar instanceof IVariable) {
 					ivar = (IVariable) pivar;
 				} else {
@@ -147,7 +148,7 @@ public class Exceptions {
 			}
 			List<String> interest = new ArrayList<String>();
 			if (types != null) {
-				Construct ptypes = that.seval(types, env);
+				Mixed ptypes = that.seval(types, env);
 				if (ptypes instanceof CString) {
 					interest.add(ptypes.val());
 				} else if (ptypes instanceof CArray) {
@@ -277,30 +278,88 @@ public class Exceptions {
 					throw new CRECastException(ex.getMessage(), t);
 				}
 			} else {
-					if (args[0] instanceof CNull) {
-						CHLog.GetLogger().Log(CHLog.Tags.DEPRECATION, LogLevel.ERROR, "Uncatchable exceptions are no longer supported.", t);
-						throw new CRECastException("An exception type must be specified", t);
-					}
-					Class<Mixed> c;
-					try {
-						c = NativeTypeList.getNativeClass(args[0].val());
-					} catch (ClassNotFoundException ex) {
-						throw ConfigRuntimeException.BuildException("Expected a valid exception type, but found \"" + args[0].val() + "\"", CREFormatException.class, t);
-					}
-					List<Class> classes = new ArrayList<>();
-					List<Object> arguments = new ArrayList<>();
-					classes.add(String.class);
-					classes.add(Target.class);
-					arguments.add(args[1].val());
-					arguments.add(t);
-					if(args.length == 3){
-						classes.add(Throwable.class);
-						arguments.add(new CRECausedByWrapper(Static.getArray(args[2], t)));
-					}
-					CREThrowable throwable = (CREThrowable)ReflectionUtils.newInstance(c, classes.toArray(new Class[classes.size()]), arguments.toArray());
-					throw throwable;
+				if (args[0] instanceof CNull) {
+					CHLog.GetLogger().Log(CHLog.Tags.DEPRECATION, LogLevel.ERROR, "Uncatchable exceptions are no longer supported.", t);
+					throw new CRECastException("An exception type must be specified", t);
+				}
+				CREThrowable throwable = buildException(t, args);
+				throw throwable;
 			}
 		}
+	}
+	
+	static CREThrowable buildException(Target t, Mixed ... args){
+		if (args[0] instanceof CNull) {
+			CHLog.GetLogger().Log(CHLog.Tags.DEPRECATION, LogLevel.ERROR, "Uncatchable exceptions are no longer supported.", t);
+			throw new CRECastException("An exception type must be specified", t);
+		}
+		Class<Mixed> c;
+		try {
+			c = NativeTypeList.getNativeClass(args[0].val());
+		} catch (ClassNotFoundException ex) {
+			throw ConfigRuntimeException.BuildException("Expected a valid exception type, but found \"" + args[0].val() + "\"", CREFormatException.class, t);
+		}
+		List<Class> classes = new ArrayList<>();
+		List<Object> arguments = new ArrayList<>();
+		classes.add(String.class);
+		classes.add(Target.class);
+		arguments.add(args[1].val());
+		arguments.add(t);
+		if(args.length == 3){
+			classes.add(Throwable.class);
+			arguments.add(new CRECausedByWrapper(Static.getArray(args[2], t)));
+		}
+		CREThrowable throwable = (CREThrowable)ReflectionUtils.newInstance(c, classes.toArray(new Class[classes.size()]), arguments.toArray());
+		return throwable;
+	}
+	
+	@api
+	@seealso({_throw.class})
+	public static class build_exception extends AbstractFunction {
+		@Override
+		public Class<? extends CREThrowable>[] thrown() {
+			return new Class[]{CREFormatException.class, CRENullPointerException.class};
+		}
+
+		@Override
+		public boolean isRestricted() {
+			return false;
+		}
+
+		@Override
+		public Boolean runAsync() {
+			return null;
+		}
+
+		@Override
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
+			if (args[0] instanceof CNull) {
+				throw new CRENullPointerException("An exception type must be specified, it cannot be null", t);
+			}
+			CREThrowable throwable = buildException(t, args);
+			return throwable;
+		}
+
+		@Override
+		public String getName() {
+			return "build_exception";
+		}
+
+		@Override
+		public Integer[] numArgs() {
+			return new Integer[]{2, 3};
+		}
+
+		@Override
+		public String docs() {
+			return "Throwable {type, msg, [causedBy]} Returns a new exception of the specified type. This can be stored in a variable, and thrown with {{function|throw}}.";
+		}
+
+		@Override
+		public Version since() {
+			return CHVersion.V3_3_2;
+		}
+		
 	}
 	
 	@api

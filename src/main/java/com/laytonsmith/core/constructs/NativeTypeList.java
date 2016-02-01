@@ -18,11 +18,9 @@ public class NativeTypeList {
 	 */
 	public static Set<String> getNativeTypeList(){
 		Set<String> ret = new HashSet<>();
-		for(ClassMirror<Mixed> c : ClassDiscovery.getDefaultInstance().getClassesWithAnnotationThatExtend(typeof.class, Mixed.class)){
-			ret.add(c.loadAnnotation(typeof.class).value());
+		for(ClassMirror c : ClassDiscovery.getDefaultInstance().getClassesWithAnnotation(typeof.class)){
+			ret.add(((typeof)c.loadAnnotation(typeof.class)).value());
 		}
-		// Also add this one in
-		ret.add("mixed");
 		return ret;
 	}
 
@@ -33,8 +31,8 @@ public class NativeTypeList {
 	 * @return
 	 * @throws ClassNotFoundException If the class can't be found
 	 */
-	public static Class<Mixed> getNativeClass(String methodscriptType) throws ClassNotFoundException {
-		for(ClassMirror<Mixed> c : ClassDiscovery.getDefaultInstance().getClassesWithAnnotationThatExtend(typeof.class, Mixed.class)){
+	public static Class getNativeClass(String methodscriptType) throws ClassNotFoundException {
+		for(ClassMirror c : ClassDiscovery.getDefaultInstance().getClassesWithAnnotation(typeof.class)){
 			if(c.getAnnotation(typeof.class).getProxy(typeof.class).value().equals(methodscriptType)){
 				return c.loadClass();
 			}

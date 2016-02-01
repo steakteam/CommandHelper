@@ -48,12 +48,9 @@ public abstract class Construct implements Cloneable, Comparable<Construct>, Mix
 	 *
 	 * @param target
 	 */
+	@Override
 	public void setTarget(Target target) {
 		this.target = target;
-	}
-
-	public final String getValue() {
-		return val();
 	}
 
 	public int getLineNum() {
@@ -146,11 +143,11 @@ public abstract class Construct implements Cloneable, Comparable<Construct>, Mix
 	 * @param c
 	 * @return
 	 */
-	public static String json_encode(Construct c, Target t) throws MarshalException {
+	public static String json_encode(Mixed c, Target t) throws MarshalException {
 		return JSONValue.toJSONString(json_encode0(c, t));
 	}
 
-	private static Object json_encode0(Construct c, Target t) throws MarshalException {
+	private static Object json_encode0(Mixed c, Target t) throws MarshalException {
 		if (c instanceof CString || c instanceof Command) {
 			return c.val();
 		} else if (c instanceof CVoid) {
@@ -184,12 +181,12 @@ public abstract class Construct implements Cloneable, Comparable<Construct>, Mix
 	}
 
 	/**
-	 * Takes a string and converts it into a Construct
+	 * Takes a string and converts it into a Mixed
 	 *
 	 * @param s
 	 * @return
 	 */
-	public static Construct json_decode(String s, Target t) throws MarshalException {
+	public static Mixed json_decode(String s, Target t) throws MarshalException {
 		if (s == null) {
 			return CNull.NULL;
 		}
@@ -363,7 +360,7 @@ public abstract class Construct implements Cloneable, Comparable<Construct>, Mix
 	 * @return
 	 * @throws ClassCastException
 	 */
-	public static Object GetPOJO(Construct c) throws ClassCastException {
+	public static Object GetPOJO(Mixed c) throws ClassCastException {
 		if (c instanceof CNull) {
 			return null;
 		} else if (c instanceof CString) {
@@ -435,6 +432,7 @@ public abstract class Construct implements Cloneable, Comparable<Construct>, Mix
 	 * @return
 	 * @throws IllegalArgumentException If the class isn't public facing.
 	 */
+	@Override
 	public final String typeof() {
 		typeof ann = this.getClass().getAnnotation(typeof.class);
 		if (ann == null) {

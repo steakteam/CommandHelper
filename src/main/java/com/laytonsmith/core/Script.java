@@ -13,6 +13,7 @@ import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CBoolean;
 import com.laytonsmith.core.constructs.CDouble;
 import com.laytonsmith.core.constructs.CEntry;
+import com.laytonsmith.core.constructs.CFunction;
 import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CLabel;
 import com.laytonsmith.core.constructs.CNull;
@@ -48,6 +49,7 @@ import com.laytonsmith.core.extensions.ExtensionTracker;
 import com.laytonsmith.core.functions.Function;
 import com.laytonsmith.core.functions.FunctionBase;
 import com.laytonsmith.core.functions.FunctionList;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.core.profiler.ProfilePoint;
 
 import java.util.ArrayList;
@@ -191,7 +193,7 @@ public class Script {
 				if(rootNode == null){
 					continue;
 				}
-                for (Construct tempNode : rootNode.getAllData()) {
+                for (Mixed tempNode : rootNode.getAllData()) {
                     if (tempNode instanceof Variable) {
                         if(left_vars == null){
                             ConfigRuntimeException.CreateUncatchableException("$variables may not be used in this context. Only @variables may be.", tempNode.getTarget());
@@ -248,8 +250,8 @@ public class Script {
      * @param env
      * @return
      */
-    public Construct seval(ParseTree c, final Environment env){
-        Construct ret = eval(c, env);
+    public Mixed seval(ParseTree c, final Environment env){
+        Mixed ret = eval(c, env);
         while(ret instanceof IVariable){
             IVariable cur = (IVariable)ret;
             ret = env.getEnv(GlobalEnv.class).GetVarList().get(cur.getVariableName(), cur.getTarget()).ival();
@@ -264,18 +266,18 @@ public class Script {
 	 * @return
 	 * @throws CancelCommandException
 	 */
-    public Construct eval(ParseTree c, final Environment env) throws CancelCommandException {
+    public Mixed eval(ParseTree c, final Environment env) throws CancelCommandException {
 		if(env.getEnv(GlobalEnv.class).IsInterrupted()){
 			//First things first, if we're interrupted, kill the script
 			//unconditionally.
 			throw new CancelCommandException("", Target.UNKNOWN);
 		}
-        final Construct m = c.getData();
+        final Mixed m = c.getData();
         CurrentEnv = env;
 		//TODO: Reevaluate if this line is needed. The script doesn't know the label inherently, the
 		//environment does, and setting it this way taints the environment.
         CurrentEnv.getEnv(GlobalEnv.class).SetLabel(this.label);
-        if (m.getCType() == ConstructType.FUNCTION) {
+        if (m instanceof CFunction) {
 				StackTraceManager stManager = env.getEnv(GlobalEnv.class).GetStackTraceManager();
 				boolean addedRootStackElement = false;
 				boolean caughtException = false;
@@ -298,7 +300,7 @@ public class Script {
 							newEnv = env.clone();
 						} catch(CloneNotSupportedException e){}
 						ProfilePoint pp = env.getEnv(GlobalEnv.class).GetProfiler().start(m.val() + " execution", LogLevel.INFO);
-						Construct ret;
+						Mixed ret;
 						try {
 							ret = p.cexecute(c.getChildren(), newEnv, m.getTarget());
 						} finally {
@@ -314,7 +316,7 @@ public class Script {
 						throw ConfigRuntimeException.CreateUncatchableException("Unable to find function " + m.val(), m.getTarget());
 					}
 
-					ArrayList<Construct> args = new ArrayList<Construct>();
+					ArrayList<Mixed> args = new ArrayList<>();
 					try{
 						if (f.isRestricted()) {
 							boolean perm = Static.hasCHPermission(f.getName(), env);
@@ -329,7 +331,7 @@ public class Script {
 							if(f.shouldProfile() && env.getEnv(GlobalEnv.class).GetProfiler() != null && env.getEnv(GlobalEnv.class).GetProfiler().isLoggable(f.profileAt())){
 								p = env.getEnv(GlobalEnv.class).GetProfiler().start(f.profileMessageS(c.getChildren()), f.profileAt());
 							}
-							Construct ret;
+							Mixed ret;
 							try {
 								ret = f.execs(m.getTarget(), env, this, c.getChildren().toArray(new ParseTree[]{}));
 							} finally {
@@ -344,9 +346,9 @@ public class Script {
 							args.add(eval(c2, env));
 						}
 						Object[] a = args.toArray();
-						Construct[] ca = new Construct[a.length];
+						Mixed[] ca = new Mixed[a.length];
 						for (int i = 0; i < a.length; i++) {
-							ca[i] = (Construct) a[i];
+							ca[i] = (Mixed) a[i];
 							//CArray, CBoolean, CDouble, CInt, CNull, CString, CVoid, CEntry, CLabel (only to sconcat).
 							if (!(ca[i] instanceof CArray || ca[i] instanceof CBoolean || ca[i] instanceof CDouble
 									|| ca[i] instanceof CInt || ca[i] instanceof CNull
@@ -370,7 +372,7 @@ public class Script {
 							if(f.shouldProfile() && env.getEnv(GlobalEnv.class).GetProfiler() != null && env.getEnv(GlobalEnv.class).GetProfiler().isLoggable(f.profileAt())){
 								p = env.getEnv(GlobalEnv.class).GetProfiler().start(f.profileMessage(ca), f.profileAt());
 							}
-							Construct ret;
+							Mixed ret;
 							try {
 								ret = f.exec(m.getTarget(), env, ca);
 							} finally {
@@ -420,19 +422,19 @@ public class Script {
 						List<String> args2 = new ArrayList<>();
 						Map<String, String> vars = new HashMap<>();
 
-						for(Construct cc : args){
+						for(Mixed cc : args){
 							if(cc instanceof IVariable){
-								Construct ccc = env.getEnv(GlobalEnv.class).GetVarList().get(((IVariable)cc).getVariableName(), cc.getTarget()).ival();
+								Mixed ccc = env.getEnv(GlobalEnv.class).GetVarList().get(((IVariable)cc).getVariableName(), cc.getTarget()).ival();
 								String vval = ccc.val();
 								if(ccc instanceof CString){
-									vval = ccc.asString().getQuote();
+									vval = ((CString)ccc).getQuote();
 								}
 								vars.put(((IVariable)cc).getVariableName(), vval);
 							}
 							if(cc == null){
 								args2.add("java-null");
 							} else if(cc instanceof CString){
-								args2.add(cc.asString().getQuote());
+								args2.add(((CString)cc).getQuote());
 							} else if(cc instanceof IVariable){
 								args2.add(((IVariable)cc).getVariableName());
 							} else {
@@ -485,8 +487,6 @@ public class Script {
 						stManager.popStackTraceElement();
 					}
 				}
-        } else if (m.getCType() == ConstructType.VARIABLE) {
-            return new CString(m.val(), m.getTarget());
         } else {
             return m;
         }

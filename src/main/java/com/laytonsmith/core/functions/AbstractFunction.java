@@ -6,6 +6,8 @@ import com.laytonsmith.annotations.core;
 import com.laytonsmith.annotations.hide;
 import com.laytonsmith.annotations.noprofile;
 import com.laytonsmith.annotations.seealso;
+import com.laytonsmith.annotations.typeof;
+import com.laytonsmith.core.CHLog;
 import com.laytonsmith.core.Documentation;
 import com.laytonsmith.core.LogLevel;
 import com.laytonsmith.core.ParseTree;
@@ -20,8 +22,10 @@ import com.laytonsmith.core.constructs.IVariable;
 import com.laytonsmith.core.constructs.IVariableList;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
+import com.laytonsmith.core.exceptions.CRE.CRECastException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.core.snapins.PackagePermission;
 import com.laytonsmith.tools.docgen.DocGenTemplates;
 import java.net.URL;
@@ -50,7 +54,7 @@ public abstract class AbstractFunction implements Function {
 	 * @return
 	 */
 	@Override
-	public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+	public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 		return CVoid.VOID;
 	}
 
@@ -84,7 +88,7 @@ public abstract class AbstractFunction implements Function {
 	 * @param args
 	 * @return
 	 */
-	public Construct optimize(Target t, Construct... args) throws ConfigCompileException {
+	public Mixed optimize(Target t, Mixed... args) throws ConfigCompileException {
 		return null;
 	}
 
@@ -97,7 +101,9 @@ public abstract class AbstractFunction implements Function {
 	 *
 	 * @param t
 	 * @param children
+	 * @param fileOptions
 	 * @return
+	 * @throws com.laytonsmith.core.exceptions.ConfigCompileException
 	 */
 	public ParseTree optimizeDynamic(Target t, List<ParseTree> children, FileOptions fileOptions) throws ConfigCompileException, ConfigRuntimeException {
 		return null;
@@ -137,10 +143,10 @@ public abstract class AbstractFunction implements Function {
 	}
 
 	@Override
-	public String profileMessage(Construct... args) {
+	public String profileMessage(Mixed... args) {
 		StringBuilder b = new StringBuilder();
 		boolean first = true;
-		for (Construct ccc : args) {
+		for (Mixed ccc : args) {
 			if (!first) {
 				b.append(", ");
 			}
@@ -166,6 +172,43 @@ public abstract class AbstractFunction implements Function {
 			}
 		}
 		return "Executing function: " + this.getName() + "(" + b.toString() + ")";
+	}
+	
+	@Override
+	public Mixed exec(Target t, Environment env, Mixed... args){
+		CHLog.GetLogger().Log(CHLog.Tags.DEPRECATION, LogLevel.VERBOSE, getName() + " should change the signature of exec soon.", t);
+		Construct[] cArgs = new Construct[args.length];
+		for(int i = 0; i < args.length; i++){
+			Mixed m = args[i];
+			if(m instanceof Construct){
+				cArgs[i] = (Construct)m;
+			} else {
+				throw new CRECastException(getName() + " does not support values of type " + type(m), t);
+			}
+		}
+		return this.exec(t, env, cArgs);
+	}
+	
+	private String type(Mixed m){
+		typeof t = m.getClass().getAnnotation(typeof.class);
+		if(t == null){
+			throw new Error(m.getClass().getName() + " does not use the typeof annotation");
+		}
+		return t.value();
+	}
+	
+	/**
+	 * Eventually, no methods should override this, but instead should exclusively use the one
+	 * that accepts Mixed parameters.
+	 * @param t
+	 * @param env
+	 * @param args
+	 * @return
+	 * @deprecated
+	 */
+	@Deprecated
+	public Mixed exec(Target t, Environment env, Construct[] args){
+		throw new Error(getName() + " must override one of the exec methods.");
 	}
 
 	/**

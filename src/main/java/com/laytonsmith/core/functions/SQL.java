@@ -36,6 +36,7 @@ import com.laytonsmith.core.Profiles;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
 import com.laytonsmith.core.exceptions.CRE.CRESQLException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.database.SQLProfile;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -301,7 +302,7 @@ public class SQL {
 			//We can check 2 things here, one, that the statement isn't dynamic, and if not, then
 			//2, that the parameter count matches the ? count. No checks can be done for typing,
 			//without making a connection to the db though, so we won't do that here.
-			Construct queryData = children.get(1).getData();
+			Mixed queryData = children.get(1).getData();
 			if(queryData instanceof CFunction){
 				//If it's a concat or sconcat, warn them that this is bad
 				if(doWarn && ("sconcat".equals(queryData.val()) || "concat".equals(queryData.val()))){

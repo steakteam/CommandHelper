@@ -99,6 +99,7 @@ import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.CRE.CREUnageableMobException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -2442,7 +2443,7 @@ public class EntityManagement {
 					throw ConfigRuntimeException.BuildException("The array must not be associative.", CRECastException.class, t);
 				}
 				transparents = new HashSet<Byte>();
-				for (Construct blockID : givenTransparents.asList()) {
+				for (Mixed blockID : givenTransparents.asList()) {
 					transparents.add(Static.getInt8(blockID, t));
 				}
 			}

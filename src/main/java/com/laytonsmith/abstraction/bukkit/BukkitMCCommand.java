@@ -21,6 +21,7 @@ import com.laytonsmith.core.events.EventUtils;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.FunctionReturnException;
 import com.laytonsmith.core.functions.Commands;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.command.Command;
@@ -214,15 +215,15 @@ public class BukkitMCCommand implements MCCommand {
 						new CArray(t) // reserved for an obgen style command array
 				);
 			} catch (FunctionReturnException e) {
-				Construct fret = e.getReturn();
+				Mixed fret = e.getReturn();
 				if (fret instanceof CArray) {
-					List<String> ret = new ArrayList<String>();
+					List<String> ret = new ArrayList<>();
 					if (((CArray) fret).inAssociativeMode()) {
-						for (Construct key : ((CArray) fret).keySet()) {
+						for (Mixed key : ((CArray) fret).keySet()) {
 							ret.add(((CArray) fret).get(key, Target.UNKNOWN).val());
 						}
 					} else {
-						for (Construct value : ((CArray) fret).asList()) {
+						for (Mixed value : ((CArray) fret).asList()) {
 							ret.add(value.val());
 						}
 					}

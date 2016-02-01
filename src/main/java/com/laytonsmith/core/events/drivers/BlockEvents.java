@@ -32,7 +32,6 @@ import com.laytonsmith.core.constructs.CDouble;
 import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.events.AbstractEvent;
 import com.laytonsmith.core.events.BindableEvent;
@@ -44,6 +43,7 @@ import com.laytonsmith.core.exceptions.CRE.CREIllegalArgumentException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.EventException;
 import com.laytonsmith.core.exceptions.PrefilterNonMatchException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -64,7 +64,7 @@ public class BlockEvents {
 	public static abstract class piston_event extends AbstractEvent {
 		
 		@Override
-        public boolean matches(Map<String, Construct> prefilter, BindableEvent e)
+        public boolean matches(Map<String, Mixed> prefilter, BindableEvent e)
                 throws PrefilterNonMatchException {
             return true;
         }
@@ -75,16 +75,16 @@ public class BlockEvents {
         }
 
 		@Override
-        public boolean modifyEvent(String key, Construct value,
+        public boolean modifyEvent(String key, Mixed value,
                 BindableEvent e) {
             return false;
         }
 		
-        public Map<String, Construct> evaluate_stub(BindableEvent e)
+        public Map<String, Mixed> evaluate_stub(BindableEvent e)
                 throws EventException {
 
             MCBlockPistonEvent event = (MCBlockPistonEvent) e;
-            Map<String, Construct> map = evaluate_helper(event);
+            Map<String, Mixed> map = evaluate_helper(event);
 
             CArray blk = CArray.GetAssociativeArray(Target.UNKNOWN);
 
@@ -143,9 +143,9 @@ public class BlockEvents {
         }
 
 		@Override
-        public Map<String, Construct> evaluate(BindableEvent e)
+        public Map<String, Mixed> evaluate(BindableEvent e)
                 throws EventException {
-            Map<String, Construct> map = evaluate_stub(e);
+            Map<String, Mixed> map = evaluate_stub(e);
 			
 			MCBlockPistonExtendEvent event = (MCBlockPistonExtendEvent)e;
 			
@@ -208,9 +208,9 @@ public class BlockEvents {
         }
 
 		@Override
-        public Map<String, Construct> evaluate(BindableEvent e)
+        public Map<String, Mixed> evaluate(BindableEvent e)
                 throws EventException {
-            Map<String, Construct> map = evaluate_stub(e);
+            Map<String, Mixed> map = evaluate_stub(e);
 			
 			MCBlockPistonRetractEvent event = (MCBlockPistonRetractEvent)e;
 			
@@ -263,7 +263,7 @@ public class BlockEvents {
         }
 
 		@Override
-        public boolean matches(Map<String, Construct> prefilter, BindableEvent e)
+        public boolean matches(Map<String, Mixed> prefilter, BindableEvent e)
                 throws PrefilterNonMatchException {
             if (e instanceof MCBlockBreakEvent) {
                 MCBlockBreakEvent event = (MCBlockBreakEvent) e;
@@ -275,7 +275,7 @@ public class BlockEvents {
                 }
 
                 if (prefilter.containsKey("type")) {
-                    Construct v = prefilter.get("type");
+                    Mixed v = prefilter.get("type");
 
                     if (v instanceof CInt) {
                         int val = Integer.parseInt(v.val());
@@ -289,7 +289,7 @@ public class BlockEvents {
                 }
 
                 if (prefilter.containsKey("data")) {
-                    Construct v = prefilter.get("data");
+                    Mixed v = prefilter.get("data");
 
                     if (v instanceof CInt) {
                         int val = Integer.parseInt(v.val());
@@ -312,11 +312,11 @@ public class BlockEvents {
         }
 
 		@Override
-        public Map<String, Construct> evaluate(BindableEvent e)
+        public Map<String, Mixed> evaluate(BindableEvent e)
                 throws EventException {
 
             MCBlockBreakEvent event = (MCBlockBreakEvent) e;
-            Map<String, Construct> map = evaluate_helper(event);
+            Map<String, Mixed> map = evaluate_helper(event);
 
             map.put("player", new CString(event.getPlayer().getName(), Target.UNKNOWN));
 
@@ -354,7 +354,7 @@ public class BlockEvents {
         }
 
 		@Override
-        public boolean modifyEvent(String key, Construct value,
+        public boolean modifyEvent(String key, Mixed value,
                 BindableEvent e) {
 
             MCBlockBreakEvent event = (MCBlockBreakEvent) e;
@@ -432,7 +432,7 @@ public class BlockEvents {
         }
 
 		@Override
-        public boolean matches(Map<String, Construct> prefilter, BindableEvent e)
+        public boolean matches(Map<String, Mixed> prefilter, BindableEvent e)
                 throws PrefilterNonMatchException {
             if (e instanceof MCBlockPlaceEvent) {
                 MCBlockPlaceEvent event = (MCBlockPlaceEvent) e;
@@ -444,7 +444,7 @@ public class BlockEvents {
                 }
 
                 if (prefilter.containsKey("type")) {
-                    Construct v = prefilter.get("type");
+                    Mixed v = prefilter.get("type");
 
                     if (v instanceof CInt) {
                         int val = Integer.parseInt(v.val());
@@ -458,7 +458,7 @@ public class BlockEvents {
                 }
 
                 if (prefilter.containsKey("data")) {
-                    Construct v = prefilter.get("data");
+                    Mixed v = prefilter.get("data");
 
                     if (v instanceof CInt) {
                         int val = Integer.parseInt(v.val());
@@ -481,10 +481,10 @@ public class BlockEvents {
         }
 
 		@Override
-        public Map<String, Construct> evaluate(BindableEvent e)
+        public Map<String, Mixed> evaluate(BindableEvent e)
                 throws EventException {
             MCBlockPlaceEvent event = (MCBlockPlaceEvent) e;
-            Map<String, Construct> map = evaluate_helper(e);
+            Map<String, Mixed> map = evaluate_helper(e);
             MCBlock blk = event.getBlock();
 
             map.put("player", new CString(event.getPlayer().getName(), Target.UNKNOWN));
@@ -525,7 +525,7 @@ public class BlockEvents {
         }
 
 		@Override
-        public boolean modifyEvent(String key, Construct value,
+        public boolean modifyEvent(String key, Mixed value,
                 BindableEvent e) {
             MCBlockPlaceEvent event = (MCBlockPlaceEvent) e;
 
@@ -591,13 +591,13 @@ public class BlockEvents {
         }
 
 		@Override
-        public boolean matches(Map<String, Construct> prefilter, BindableEvent e)
+        public boolean matches(Map<String, Mixed> prefilter, BindableEvent e)
                 throws PrefilterNonMatchException {
             if (e instanceof MCBlockBurnEvent) {
                 MCBlockBurnEvent event = (MCBlockBurnEvent) e;
 
                 if (prefilter.containsKey("type")) {
-                    Construct v = prefilter.get("type");
+                    Mixed v = prefilter.get("type");
 
                     if (v instanceof CInt) {
                         int val = Integer.parseInt(v.val());
@@ -611,7 +611,7 @@ public class BlockEvents {
                 }
 
                 if (prefilter.containsKey("data")) {
-                    Construct v = prefilter.get("data");
+                    Mixed v = prefilter.get("data");
 
                     if (v instanceof CInt) {
                         int val = Integer.parseInt(v.val());
@@ -634,11 +634,11 @@ public class BlockEvents {
         }
 
 		@Override
-        public Map<String, Construct> evaluate(BindableEvent e)
+        public Map<String, Mixed> evaluate(BindableEvent e)
                 throws EventException {
 
             MCBlockBurnEvent event = (MCBlockBurnEvent) e;
-            Map<String, Construct> map = evaluate_helper(event);
+            Map<String, Mixed> map = evaluate_helper(event);
 
             CArray blk = CArray.GetAssociativeArray(Target.UNKNOWN);
 
@@ -663,7 +663,7 @@ public class BlockEvents {
         }
 
 		@Override
-        public boolean modifyEvent(String key, Construct value,
+        public boolean modifyEvent(String key, Mixed value,
                 BindableEvent e) {
 
             MCBlockBreakEvent event = (MCBlockBreakEvent) e;
@@ -703,7 +703,7 @@ public class BlockEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent e)
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent e)
 				throws PrefilterNonMatchException {
 			if (e instanceof MCBlockIgniteEvent) {
 				MCBlockIgniteEvent event = (MCBlockIgniteEvent) e;
@@ -725,10 +725,10 @@ public class BlockEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent e) throws EventException {
+		public Map<String, Mixed> evaluate(BindableEvent e) throws EventException {
 			if (e instanceof MCBlockIgniteEvent) {
 				MCBlockIgniteEvent event = (MCBlockIgniteEvent) e;
-				Map<String, Construct> map = evaluate_helper(e);
+				Map<String, Mixed> map = evaluate_helper(e);
 
 				if (event.getPlayer() != null) {
 					map.put("player", new CString(event.getPlayer().getName(), Target.UNKNOWN));
@@ -752,7 +752,7 @@ public class BlockEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			return false;
 		}
 	}
@@ -789,7 +789,7 @@ public class BlockEvents {
         }
 
 		@Override
-        public boolean matches(Map<String, Construct> prefilter, BindableEvent e) throws PrefilterNonMatchException {
+        public boolean matches(Map<String, Mixed> prefilter, BindableEvent e) throws PrefilterNonMatchException {
             if (e instanceof MCSignChangeEvent) {
                 MCSignChangeEvent sce = (MCSignChangeEvent) e;
 
@@ -810,10 +810,10 @@ public class BlockEvents {
         }
 
 		@Override
-        public Map<String, Construct> evaluate(BindableEvent e) throws EventException {
+        public Map<String, Mixed> evaluate(BindableEvent e) throws EventException {
             if (e instanceof MCSignChangeEvent) {
                 MCSignChangeEvent sce = (MCSignChangeEvent) e;
-                Map<String, Construct> map = evaluate_helper(e);
+                Map<String, Mixed> map = evaluate_helper(e);
 
                 map.put("player", new CString(sce.getPlayer().getName(), Target.UNKNOWN));
 
@@ -831,7 +831,7 @@ public class BlockEvents {
         }
 
 		@Override
-        public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+        public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
             if (event instanceof MCSignChangeEvent) {
                 MCSignChangeEvent sce = (MCSignChangeEvent) event;
 
@@ -924,7 +924,7 @@ public class BlockEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent e)
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent e)
 				throws PrefilterNonMatchException {
 			if (e instanceof MCBlockDispenseEvent) {
 				MCBlockDispenseEvent event = (MCBlockDispenseEvent) e;
@@ -942,10 +942,10 @@ public class BlockEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent e)
+		public Map<String, Mixed> evaluate(BindableEvent e)
 				throws EventException {
 			MCBlockDispenseEvent event = (MCBlockDispenseEvent) e;
-			Map<String, Construct> map = evaluate_helper(e);
+			Map<String, Mixed> map = evaluate_helper(e);
 			MCBlock blk = event.getBlock();
 
 			map.put("type", new CString(StaticLayer.GetConvertor().LookupMaterialName(event.getBlock().getTypeId()), Target.UNKNOWN));
@@ -964,7 +964,7 @@ public class BlockEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			if (event instanceof MCBlockDispenseEvent) {
 				if ("item".equals(key)) {
 					((MCBlockDispenseEvent) event).setItem(ObjectGenerator.GetGenerator().item(value, Target.UNKNOWN));
@@ -1010,7 +1010,7 @@ public class BlockEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent event) throws PrefilterNonMatchException {
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent event) throws PrefilterNonMatchException {
 			if (event instanceof MCBlockGrowEvent) {
 				MCBlockGrowEvent blockGrowEvent = (MCBlockGrowEvent) event;
 				MCBlock oldBlock = blockGrowEvent.getBlock();
@@ -1032,10 +1032,10 @@ public class BlockEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent event) throws EventException {
+		public Map<String, Mixed> evaluate(BindableEvent event) throws EventException {
 			if (event instanceof MCBlockGrowEvent) {
 				MCBlockGrowEvent blockGrowEvent = (MCBlockGrowEvent) event;
-				Map<String, Construct> mapEvent = evaluate_helper(event);
+				Map<String, Mixed> mapEvent = evaluate_helper(event);
 				MCBlock oldBlock = blockGrowEvent.getBlock();
 				CArray oldBlockArray = CArray.GetAssociativeArray(Target.UNKNOWN);
 				oldBlockArray.set("type", new CInt(oldBlock.getTypeId(), Target.UNKNOWN), Target.UNKNOWN);
@@ -1054,7 +1054,7 @@ public class BlockEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent e) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent e) {
 			return false;
 		}
 	}
@@ -1089,7 +1089,7 @@ public class BlockEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent event) throws PrefilterNonMatchException {
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent event) throws PrefilterNonMatchException {
 			return event instanceof MCNotePlayEvent;
 		}
 
@@ -1099,10 +1099,10 @@ public class BlockEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent event) throws EventException {
+		public Map<String, Mixed> evaluate(BindableEvent event) throws EventException {
 			if (event instanceof MCNotePlayEvent) {
 				MCNotePlayEvent e = (MCNotePlayEvent) event;
-				Map<String, Construct> map = new HashMap<>();
+				Map<String, Mixed> map = new HashMap<>();
 				Target t = Target.UNKNOWN;
 				map.put("location", ObjectGenerator.GetGenerator().location(e.getBlock().getLocation(), false));
 				map.put("instrument", new CString(e.getInstrument().name(), t));
@@ -1115,7 +1115,7 @@ public class BlockEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent e) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent e) {
 			if (e instanceof MCNotePlayEvent) {
 				MCNotePlayEvent event = (MCNotePlayEvent) e;
 				try {

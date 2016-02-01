@@ -23,7 +23,6 @@ import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CSlice;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.environments.GlobalEnv;
@@ -45,6 +44,7 @@ import com.laytonsmith.core.functions.BasicLogic.equals_ic;
 import com.laytonsmith.core.functions.BasicLogic.sequals;
 import com.laytonsmith.core.functions.DataHandling.array;
 import com.laytonsmith.core.natives.interfaces.ArrayAccess;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
@@ -77,7 +77,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if (args[0] instanceof CArray && !(args[0] instanceof CMutablePrimitive)) {
 				return new CInt(((CArray) args[0]).size(), t);
 			}
@@ -138,9 +138,9 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
-			Construct index;
-			Construct defaultConstruct = null;
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
+			Mixed index;
+			Mixed defaultConstruct = null;
 			if (args.length >= 2) {
 				index = args[1];
 			} else {
@@ -309,7 +309,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct optimize(Target t, Construct... args) throws ConfigCompileException {
+		public Mixed optimize(Target t, Mixed... args) throws ConfigCompileException {
 			if(args.length == 0) {
 				throw ConfigRuntimeException.BuildException("Argument 1 of array_get must be an array", CRECastException.class, t);
 			}
@@ -366,25 +366,25 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			env.getEnv(GlobalEnv.class).SetFlag("array-special-get", true);
-			Construct array = parent.seval(nodes[0], env);
+			Mixed array = parent.seval(nodes[0], env);
 			env.getEnv(GlobalEnv.class).ClearFlag("array-special-get");
-			Construct index = parent.seval(nodes[1], env);
-			Construct value = parent.seval(nodes[2], env);
+			Mixed index = parent.seval(nodes[1], env);
+			Mixed value = parent.seval(nodes[2], env);
 			if(!(array instanceof CArray)){
 				throw ConfigRuntimeException.BuildException("Argument 1 of array_set must be an array", CRECastException.class, t);
 			}
 			try {
 				((CArray)array).set(index, value, t);
 			} catch (IndexOutOfBoundsException e) {
-				throw ConfigRuntimeException.BuildException("The index " + index.asString().getQuote() + " is out of bounds", CREIndexOverflowException.class, t);
+				throw ConfigRuntimeException.BuildException("The index " + new CString(index.val(), t).getQuote() + " is out of bounds", CREIndexOverflowException.class, t);
 			}
 			return value;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if (args[0] instanceof CArray) {
 				try {
 					((CArray) args[0]).set(args[1], args[2], t);
@@ -447,7 +447,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if(args.length < 2) {
 				throw ConfigRuntimeException.BuildException("At least 2 arguments must be provided to array_push", CREInsufficientArgumentsException.class, t);
 			}
@@ -527,9 +527,9 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray array = Static.getArray(args[0], t);
-			Construct value = args[1];
+			Mixed value = args[1];
 			int index = Static.getInt32(args[2], t);
 			try{
 				array.push(value, index, t);
@@ -607,12 +607,12 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if(!(args[0] instanceof CArray)) {
 				throw ConfigRuntimeException.BuildException("Argument 1 of " + this.getName() + " must be an array", CRECastException.class, t);
 			}
 			CArray ca = (CArray) args[0];
-			for(Construct key : ca.keySet()){
+			for(Mixed key : ca.keySet()){
 				if(new equals().exec(t, env, ca.get(key, t), args[1]).getBoolean()){
 					return CBoolean.TRUE;
 				}
@@ -703,11 +703,11 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if (args[0] instanceof CArray) {
 				CArray ca = (CArray) args[0];
 				for (int i = 0; i < ca.size(); i++) {
-					if (new equals_ic().exec(t, environment, ca.get(i, t), args[1]).getBoolean()) {
+					if (Static.getBoolean(new equals_ic().exec(t, environment, ca.get(i, t), args[1]))) {
 						return CBoolean.TRUE;
 					}
 				}
@@ -747,12 +747,12 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if(!(args[0] instanceof CArray)) {
 				throw ConfigRuntimeException.BuildException("Argument 1 of " + this.getName() + " must be an array", CRECastException.class, t);
 			}
 			CArray ca = (CArray) args[0];
-			for(Construct key : ca.keySet()){
+			for(Mixed key : ca.keySet()){
 				if(new sequals().exec(t, env, ca.get(key, t), args[1]).getBoolean()){
 					return CBoolean.TRUE;
 				}
@@ -844,7 +844,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			if (args[0] instanceof CArray) {
 				if (!((CArray) args[0]).inAssociativeMode()) {
 					try {
@@ -922,11 +922,11 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public CArray exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public CArray exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			if (args[0] instanceof CArray && args[1] instanceof CInt) {
 				CArray original = (CArray) args[0];
 				int size = (int) ((CInt) args[1]).getInt();
-				Construct fill = CNull.NULL;
+				Mixed fill = CNull.NULL;
 				if (args.length == 3) {
 					fill = args[2];
 				}
@@ -989,7 +989,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public CArray exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public CArray exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			long start = 0;
 			long finish = 0;
 			long increment = 1;
@@ -1072,12 +1072,12 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			// As an exception, strings aren't supported here. There's no reason to do this for a string that isn't accidental.
 			if (args[0] instanceof ArrayAccess && !(args[0] instanceof CString)) {
 				ArrayAccess ca = (ArrayAccess) args[0];
 				CArray ca2 = new CArray(t);
-				for (Construct c : ca.keySet()) {
+				for (Mixed c : ca.keySet()) {
 					ca2.push(c, t);
 				}
 				return ca2;
@@ -1140,11 +1140,11 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			if (args[0] instanceof ArrayAccess) {
 				ArrayAccess ca = (ArrayAccess) args[0];
 				CArray ca2 = new CArray(t);
-				for (Construct c : ca.keySet()) {
+				for (Mixed c : ca.keySet()) {
 					ca2.push(ca.get(c.val(), t), t);
 				}
 				return ca2;
@@ -1208,12 +1208,12 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray newArray = new CArray(t);
 			if (args.length < 2) {
 				throw ConfigRuntimeException.BuildException("array_merge must be called with at least two parameters", CREInsufficientArgumentsException.class, t);
 			}
-			for (Construct arg : args) {
+			for (Mixed arg : args) {
 				if (arg instanceof ArrayAccess) {
 					ArrayAccess cur = (ArrayAccess) arg;
 					if (!cur.isAssociative()) {
@@ -1221,7 +1221,7 @@ public class ArrayHandling {
 							newArray.push(cur.get(j, t), t);
 						}
 					} else {
-						for (Construct key : cur.keySet()) {
+						for (Mixed key : cur.keySet()) {
 							if(key instanceof CInt){
 								newArray.set(key, cur.get((int)((CInt)key).getInt(), t), t);
 							} else {
@@ -1293,13 +1293,13 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray array = Static.getArray(args[0], t);
 			if(array.isAssociative()){
 				return array.remove(args[1]);
 			} else {
 				int index = Static.getInt32(args[1], t);
-				Construct removed = array.remove(args[1]);
+				Mixed removed = array.remove(args[1]);
 				//If the removed index is <= the current index, we need to decrement the counter.
 				for(ArrayAccess.ArrayAccessIterator iterator : environment.getEnv(GlobalEnv.class).GetArrayAccessIteratorsFor(array)){
 					if(index <= iterator.getCurrent()){
@@ -1356,7 +1356,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if (!(args[0] instanceof ArrayAccess)) {
 				throw ConfigRuntimeException.BuildException("Expecting argument 1 to be an array", CRECastException.class, t);
 			}
@@ -1367,8 +1367,8 @@ public class ArrayHandling {
 				glue = args[1].val();
 			}
 			boolean first = true;
-			for (Construct key : ca.keySet()) {
-				Construct value = ca.get(key.val(), t);
+			for (Mixed key : ca.keySet()) {
+				Mixed value = ca.get(key.val(), t);
 				if (!first) {
 					b.append(glue).append(value.val());
 				} else {
@@ -1430,7 +1430,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return new CSlice(Static.getInt(args[0], t), Static.getInt(args[1], t), t);
 		}
 
@@ -1472,7 +1472,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if (!(args[0] instanceof CArray)) {
 				throw ConfigRuntimeException.BuildException("The first parameter to array_sort must be an array", CRECastException.class, t);
 			}
@@ -1503,7 +1503,7 @@ public class ArrayHandling {
 				CArray sorted = customSort(ca, customSort, t);
 				//Clear it out and re-apply the values, so this is in place.
 				ca.clear();
-				for(Construct c : sorted.keySet()){
+				for(Mixed c : sorted.keySet()){
 					ca.set(c, sorted.get(c, t), t);
 				}
 			} else {
@@ -1538,9 +1538,9 @@ public class ArrayHandling {
 			while(left.size() > 0 || right.size() > 0){
 				if(left.size() > 0 && right.size() > 0){
 					// Compare the first two elements of each side
-					Construct l = left.get(0, t);
-					Construct r = right.get(0, t);
-					Construct c = null;
+					Mixed l = left.get(0, t);
+					Mixed r = right.get(0, t);
+					Mixed c = null;
 					try {
 						closure.execute(l, r);
 					} catch(FunctionReturnException ex){
@@ -1702,7 +1702,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			startup();
 			final CArray array = Static.getArray(args[0], t);
 			final CString sortType = new CString(args.length > 2?args[1].val():CArray.SortType.REGULAR.name(), t);
@@ -1711,8 +1711,8 @@ public class ArrayHandling {
 
 				@Override
 				public void run() {
-					Construct c = new array_sort().exec(Target.UNKNOWN, null, array, sortType);
-					callback.execute(new Construct[]{c});
+					Mixed c = new array_sort().exec(Target.UNKNOWN, null, array, sortType);
+					callback.execute(new Mixed[]{c});
 				}
 			});
 			return CVoid.VOID;
@@ -1761,7 +1761,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray array = Static.getArray(args[0], t);
 			//This needs to be in terms of array_remove, to ensure that the iteration
 			//logic is followed. We will iterate backwards, however, to make the
@@ -1771,7 +1771,7 @@ public class ArrayHandling {
 			} else {
 				for(long i = array.size() - 1; i >= 0; i--){
 					if(BasicLogic.equals.doEquals(array.get(i, t), args[1])){
-						new array_remove().exec(t, environment, array, new CInt(i, t));
+						new array_remove().exec(t, environment, array, (Mixed)new CInt(i, t));
 					}
 				}
 			}
@@ -1829,7 +1829,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(!(args[0] instanceof CArray)){
 				throw ConfigRuntimeException.BuildException("Expected parameter 1 to be an array, but was " + args[0].val(), CRECastException.class, t);
 			}
@@ -1892,7 +1892,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray ca = (CArray)new array_indexes().exec(t, environment, args);
 			if(ca.isEmpty()){
 				return CNull.NULL;
@@ -1952,7 +1952,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray ca = (CArray)new array_indexes().exec(t, environment, args);
 			if(ca.isEmpty()){
 				return CNull.NULL;
@@ -2012,7 +2012,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(args[0] instanceof CArray){
 				((CArray)args[0]).reverse(t);
 			}
@@ -2069,7 +2069,7 @@ public class ArrayHandling {
 
 		Random r = new Random(System.currentTimeMillis());
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			long number = 1;
 			boolean getKeys = true;
 			CArray array = Static.getArray(args[0], t);
@@ -2094,7 +2094,7 @@ public class ArrayHandling {
 			while(randoms.size() < number){
 				randoms.add(java.lang.Math.abs(r.nextInt() % (int)array.size()));
 			}
-			List<Construct> keySet = new ArrayList<Construct>(array.keySet());
+			List<Mixed> keySet = new ArrayList<Mixed>(array.keySet());
 			for(Integer i : randoms){
 				if(getKeys){
 					newArray.push(keySet.get(i), t);
@@ -2167,7 +2167,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public CArray exec(final Target t, final Environment environment, Construct... args) throws ConfigRuntimeException {
+		public CArray exec(final Target t, final Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray array = Static.getArray(args[0], t);
 			boolean compareTypes = true;
 			if(args.length == 2){
@@ -2177,17 +2177,17 @@ public class ArrayHandling {
 			if(array.inAssociativeMode()){
 				return array.clone();
 			} else {
-				List<Construct> asList = array.asList();
+				List<Mixed> asList = array.asList();
 				CArray newArray = new CArray(t);
-				Set<Construct> set = new LinkedComparatorSet<Construct>(asList, new LinkedComparatorSet.EqualsComparator<Construct>() {
+				Set<Mixed> set = new LinkedComparatorSet<>(asList, new LinkedComparatorSet.EqualsComparator<Mixed>() {
 
 					@Override
-					public boolean checkIfEquals(Construct item1, Construct item2) {
+					public boolean checkIfEquals(Mixed item1, Mixed item2) {
 						return (fCompareTypes && Static.getBoolean(sequals.exec(t, environment, item1, item2)))
 								|| (!fCompareTypes && Static.getBoolean(equals.exec(t, environment, item1, item2)));
 					}
 				});
-				for(Construct c : set){
+				for(Mixed c : set){
 					newArray.push(c, t);
 				}
 				return newArray;
@@ -2252,7 +2252,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			ArrayAccess array;
 			CClosure closure;
 			if(!(args[0] instanceof ArrayAccess)){
@@ -2266,9 +2266,9 @@ public class ArrayHandling {
 			CArray newArray;
 			if(array.isAssociative()){
 				newArray = CArray.GetAssociativeArray(t);
-				for(Construct key : array.keySet()){
-					Construct value = array.get(key, t);
-					Construct ret = null;
+				for(Mixed key : array.keySet()){
+					Mixed value = array.get(key, t);
+					Mixed ret = null;
 					try {
 						closure.execute(key, value);
 					} catch(FunctionReturnException ex){
@@ -2285,9 +2285,9 @@ public class ArrayHandling {
 			} else {
 				newArray = new CArray(t);
 				for(int i = 0; i < array.size(); i++){
-					Construct key = new CInt(i, t);
-					Construct value = array.get(i, t);
-					Construct ret = null;
+					Mixed key = new CInt(i, t);
+					Mixed value = array.get(i, t);
+					Mixed ret = null;
 					try {
 						closure.execute(key, value);
 					} catch(FunctionReturnException ex){
@@ -2367,7 +2367,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(args.length != 1) {
 				throw ConfigRuntimeException.BuildException("Expecting exactly one argument", CREInsufficientArgumentsException.class, t);
 			}
@@ -2435,7 +2435,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(args.length != 1) {
 				throw ConfigRuntimeException.BuildException("Expecting exactly one argument", CREInsufficientArgumentsException.class, t);
 			}
@@ -2444,7 +2444,7 @@ public class ArrayHandling {
 			}
 			CArray array = (CArray) args[0];
 			CArray shallowClone = (array.isAssociative() ? CArray.GetAssociativeArray(t) : new CArray(t));
-			for(Construct key : array.keySet()) {
+			for(Mixed key : array.keySet()) {
 				shallowClone.set(key, array.get(key, t), t);
 			}
 			return shallowClone;
@@ -2507,10 +2507,10 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray array = Static.getArray(args[0], t);
 			CClosure closure = Static.getObject(args[1], t, CClosure.class);
-			for(Construct key : array.keySet()){
+			for(Mixed key : array.keySet()){
 				try {
 					closure.execute(key, array.get(key, t));
 				} catch(ProgramFlowManipulationException ex){
@@ -2581,7 +2581,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray array = Static.getArray(args[0], t);
 			CClosure closure = Static.getObject(args[1], t, CClosure.class);
 			if(array.isEmpty()){
@@ -2590,10 +2590,10 @@ public class ArrayHandling {
 			if(array.size() == 1){
 				// This line looks bad, but all it does is return the first (and since we know only) value in the array,
 				// whether or not it is associative or normal.
-				return array.get(array.keySet().toArray(new Construct[0])[0], t);
+				return array.get(array.keySet().toArray(new Mixed[0])[0], t);
 			}
-			List<Construct> keys = new ArrayList<>(array.keySet());
-			Construct lastValue = array.get(keys.get(0), t);
+			List<Mixed> keys = new ArrayList<>(array.keySet());
+			Mixed lastValue = array.get(keys.get(0), t);
 			for(int i = 1; i < keys.size(); ++i){
 				boolean hadReturn = false;
 				try {
@@ -2674,7 +2674,7 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray array = Static.getArray(args[0], t);
 			CClosure closure = Static.getObject(args[1], t, CClosure.class);
 			if(array.isEmpty()){
@@ -2683,10 +2683,10 @@ public class ArrayHandling {
 			if(array.size() == 1){
 				// This line looks bad, but all it does is return the first (and since we know only) value in the array,
 				// whether or not it is associative or normal.
-				return array.get(array.keySet().toArray(new Construct[0])[0], t);
+				return array.get(array.keySet().toArray(new Mixed[0])[0], t);
 			}
-			List<Construct> keys = new ArrayList<>(array.keySet());
-			Construct lastValue = array.get(keys.get(keys.size() - 1), t);
+			List<Mixed> keys = new ArrayList<>(array.keySet());
+			Mixed lastValue = array.get(keys.get(keys.size() - 1), t);
 			for(int i = keys.size() - 2; i >= 0; --i){
 				boolean hadReturn = false;
 				try {
@@ -2768,10 +2768,10 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray array = Static.getArray(args[0], t);
 			CClosure closure = Static.getObject(args[1], t, CClosure.class);
-			for(Construct c : array.keySet()){
+			for(Mixed c : array.keySet()){
 				boolean hasReturn = false;
 				try {
 					closure.execute(array.get(c, t));
@@ -2849,10 +2849,10 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray array = Static.getArray(args[0], t);
 			CClosure closure = Static.getObject(args[1], t, CClosure.class);
-			for(Construct c : array.keySet()){
+			for(Mixed c : array.keySet()){
 				boolean hasReturn = false;
 				try {
 					closure.execute(array.get(c, t));
@@ -2930,12 +2930,12 @@ public class ArrayHandling {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray array = Static.getArray(args[0], t);
 			CClosure closure = Static.getObject(args[1], t, CClosure.class);
 			CArray newArray = (array.isAssociative()?CArray.GetAssociativeArray(t):new CArray(t, (int)array.size()));
 
-			for(Construct c : array.keySet()){
+			for(Mixed c : array.keySet()){
 				boolean hasReturn = false;
 				try {
 					closure.execute(array.get(c, t));

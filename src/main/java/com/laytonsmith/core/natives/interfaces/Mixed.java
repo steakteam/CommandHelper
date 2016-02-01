@@ -17,4 +17,10 @@ public interface Mixed extends Cloneable, SimpleDocumentation {
 	public void setTarget(Target target);
 
 	public Mixed clone() throws CloneNotSupportedException;
+	
+	public boolean isDynamic();
+	
+	public Target getTarget();
+	
+	public String typeof();
 }

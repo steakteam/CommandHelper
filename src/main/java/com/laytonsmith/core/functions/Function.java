@@ -6,13 +6,13 @@ import com.laytonsmith.core.Documentation;
 import com.laytonsmith.core.LogLevel;
 import com.laytonsmith.core.ParseTree;
 import com.laytonsmith.core.Script;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.List;
 
 /**
@@ -66,13 +66,13 @@ public interface Function extends FunctionBase, Documentation {
      * will only be one of the atomic Constructs. If a code tree is needed instead of a resolved construct,
      * the function should indicate so, and {@code execs} will be called instead. If exec is needed,
      * execs should return CVoid.
-     * @param line_num The line that this function call is being run from
-     * @param f The file that this function call is being run from
+	 * @param t
+	 * @param environment
      * @param args An array of evaluated Constructs
      * @return
      * @throws CancelCommandException
      */
-    public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException;
+    public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException;
 
     /**
      * If a function needs a code tree instead of a resolved construct, it should return true here. Most
@@ -89,7 +89,7 @@ public interface Function extends FunctionBase, Documentation {
      * @param nodes
      * @return
      */
-    public Construct execs(Target t, Environment env, Script parent, ParseTree ... nodes);    
+    public Mixed execs(Target t, Environment env, Script parent, ParseTree ... nodes);    
 
 	/**
 	 * Returns an array of example scripts, which are used for documentation purposes.
@@ -116,7 +116,7 @@ public interface Function extends FunctionBase, Documentation {
 	 * useSpecialExec returns false.
 	 * @return
 	 */
-	public String profileMessage(Construct ... args);
+	public String profileMessage(Mixed ... args);
 
 	/**
 	 * Returns the message to use when this function gets profiled, if

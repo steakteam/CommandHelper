@@ -9,12 +9,14 @@ import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.environments.GlobalEnv;
 import com.laytonsmith.core.exceptions.CRE.AbstractCREException;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
+import com.laytonsmith.core.exceptions.CRE.CREClassNotFoundException;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.FunctionReturnException;
 import com.laytonsmith.core.exceptions.LoopManipulationException;
 import com.laytonsmith.core.exceptions.ProgramFlowManipulationException;
 import com.laytonsmith.core.exceptions.StackTraceManager;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -25,12 +27,12 @@ import java.util.logging.Logger;
  */
 @typeof("iclosure")
 public class CIClosure extends CClosure {
-	public CIClosure(ParseTree node, Environment env, CClassType returnType, String[] names, Construct[] defaults, CClassType[] types, Target t) {
+	public CIClosure(ParseTree node, Environment env, CClassType returnType, String[] names, Mixed[] defaults, CClassType[] types, Target t) {
         super(node, env, returnType, names, defaults, types, t);
     }
 
 	@Override
-	public void execute(Construct... values) throws ConfigRuntimeException, ProgramFlowManipulationException, FunctionReturnException, CancelCommandException {
+	public void execute(Mixed... values) throws ConfigRuntimeException, ProgramFlowManipulationException, FunctionReturnException, CancelCommandException {
 		if(node == null){
 			return;
 		}
@@ -48,7 +50,7 @@ public class CIClosure extends CClosure {
             if (values != null) {
                 for (int i = 0; i < names.length; i++) {
                     String name = names[i];
-                    Construct value;
+                    Mixed value;
                     try {
                         value = values[i];
                     }
@@ -69,7 +71,7 @@ public class CIClosure extends CClosure {
 			if(!hasArgumentsParam){
 				CArray arguments = new CArray(node.getData().getTarget());
 				if (values != null) {
-					for (Construct value : values) {
+					for (Mixed value : values) {
 						arguments.push(value, node.getData().getTarget());
 					}
 				}
@@ -94,10 +96,14 @@ public class CIClosure extends CClosure {
 				// Normal. Pop element
 				stManager.popStackTraceElement();
 				// Check the return type of the closure to see if it matches the defined type
-				Construct ret = ex.getReturn();
-				if(!InstanceofUtil.isInstanceof(ret, returnType)){
-					throw new CRECastException("Expected closure to return a value of type " + returnType.val()
-							 + " but a value of type " + ret.typeof() + " was returned instead", ret.getTarget());
+				Mixed ret = ex.getReturn();
+				try {
+					if(!InstanceofUtil.isInstanceof(ret, returnType)){
+						throw new CRECastException("Expected closure to return a value of type " + returnType.val()
+								+ " but a value of type " + ret.typeof() + " was returned instead", ret.getTarget());
+					}
+				} catch (ClassNotFoundException ex1) {
+					throw new CREClassNotFoundException("Could not find class of type " + returnType.val(), returnType.getTarget(), ex1);
 				}
 				// Now rethrow it
 				throw ex;

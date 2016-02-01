@@ -35,6 +35,7 @@ import com.laytonsmith.core.exceptions.CRE.CREPlayerOfflineException;
 import com.laytonsmith.core.exceptions.CRE.CRERangeException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.Map;
 
 /**
@@ -96,7 +97,7 @@ public class InventoryManagement {
         }
 
 		@Override
-        public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+        public Mixed exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
             MCCommandSender p = env.getEnv(CommandHelperEnvironment.class).GetCommandSender();
             Integer index = -1;
             boolean all = false;
@@ -133,7 +134,7 @@ public class InventoryManagement {
             }
         }
 
-        private Construct getInvSlot(MCPlayer m, Integer slot, Target t) {
+        private Mixed getInvSlot(MCPlayer m, Integer slot, Target t) {
             if(slot == null){
                 return ObjectGenerator.GetGenerator().item(m.getItemInHand(), t);
             }
@@ -1219,7 +1220,7 @@ public class InventoryManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
 			MCCommandSender p = env.getEnv(CommandHelperEnvironment.class).GetCommandSender();
 
 			Integer index = -1;
@@ -1262,7 +1263,7 @@ public class InventoryManagement {
 			}
 		}
 
-		private Construct getInvSlot(MCPlayer m, Integer slot, Target t) {
+		private Mixed getInvSlot(MCPlayer m, Integer slot, Target t) {
 			MCInventory inv = m.getEnderChest();
 			if (inv == null) {
 				throw ConfigRuntimeException.BuildException(
@@ -1297,7 +1298,7 @@ public class InventoryManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
 			MCWorld w = null;
 			MCPlayer p = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			if(p != null){
@@ -1613,7 +1614,7 @@ public class InventoryManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
 
 			MCInventory inventory = InventoryManagement.GetInventory(args[0], null, t);
 

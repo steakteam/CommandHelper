@@ -6,11 +6,11 @@ import com.laytonsmith.core.CHVersion;
 /**
  * 
  */
-@TypeofRunnerFor(Sizeable.class)
-public class SizableTypeofRunner implements TypeofRunnerIface {
+@TypeofRunnerFor(ArrayAccess.class)
+public class ArrayAccessTypeofRunner implements TypeofRunnerIface {
 	@Override
 	public String docs() {
-		return "Any object that can report a size should implement this.";
+		return "An ArrayAccess object is one that can be accessed with brackets ([]).";
 	}
 
 	@Override

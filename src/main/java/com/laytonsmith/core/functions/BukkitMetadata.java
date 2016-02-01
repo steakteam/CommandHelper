@@ -27,6 +27,7 @@ import com.laytonsmith.core.exceptions.CRE.CREPlayerOfflineException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.util.List;
 
@@ -105,7 +106,7 @@ public class BukkitMetadata {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
 			List<MCMetadataValue> metadata;
 			if (args.length == 1) {
 				metadata = Static.getPlayer(environment, t).getMetadata(args[0].val());

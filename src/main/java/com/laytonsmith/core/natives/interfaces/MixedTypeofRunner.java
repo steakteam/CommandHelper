@@ -11,7 +11,7 @@ public class MixedTypeofRunner implements TypeofRunnerIface {
 	
 	@Override
 	public String docs(){
-		return "";
+		return "All values ultimately extend from mixed.";
 	}
 	
 	@Override

@@ -62,6 +62,7 @@ import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.CRE.CREUntameableMobException;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -1299,7 +1300,7 @@ public class Minecraft {
 			return new CString(fw.launch(loc).getUniqueId().toString(), t);
 		}
 
-		private Set<MCColor> parseColors(Construct c, Target t){
+		private Set<MCColor> parseColors(Mixed c, Target t){
 			Set<MCColor> colors = new HashSet<MCColor>();
 			if(c instanceof CArray){
 				CArray ca = ((CArray)c);
@@ -1312,7 +1313,7 @@ public class Minecraft {
 					colors.add(parseColor(ca, t));
 				} else {
 					for(String key : ca.stringKeySet()){
-						Construct val = ca.get(key, t);
+						Mixed val = ca.get(key, t);
 						if(val instanceof CArray){
 							colors.add(parseColor(((CArray)val), t));
 						} else if(val instanceof CString){

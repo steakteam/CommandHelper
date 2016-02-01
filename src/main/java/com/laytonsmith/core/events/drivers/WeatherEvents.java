@@ -10,7 +10,6 @@ import com.laytonsmith.core.ObjectGenerator;
 import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CBoolean;
 import com.laytonsmith.core.constructs.CString;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.events.AbstractEvent;
 import com.laytonsmith.core.events.BindableEvent;
@@ -18,6 +17,7 @@ import com.laytonsmith.core.events.Driver;
 import com.laytonsmith.core.events.Prefilters;
 import com.laytonsmith.core.exceptions.EventException;
 import com.laytonsmith.core.exceptions.PrefilterNonMatchException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.util.Map;
 
@@ -46,7 +46,7 @@ public class WeatherEvents {
         }
 
         @Override
-        public boolean matches(Map<String, Construct> prefilter, BindableEvent event) throws PrefilterNonMatchException {
+        public boolean matches(Map<String, Mixed> prefilter, BindableEvent event) throws PrefilterNonMatchException {
             if (event instanceof MCLightningStrikeEvent) {
                 MCLightningStrikeEvent e = (MCLightningStrikeEvent) event;
                 Prefilters.match(prefilter, "world", e.getWorld().getName(), Prefilters.PrefilterType.MACRO);
@@ -63,11 +63,11 @@ public class WeatherEvents {
         }
 
         @Override
-        public Map<String, Construct> evaluate(BindableEvent event) throws EventException {
+        public Map<String, Mixed> evaluate(BindableEvent event) throws EventException {
             if (event instanceof MCLightningStrikeEvent) {
                 MCLightningStrikeEvent e = (MCLightningStrikeEvent) event;
                 Target t = Target.UNKNOWN;
-                Map<String, Construct> ret = evaluate_helper(e);
+                Map<String, Mixed> ret = evaluate_helper(e);
                 ret.put("world", new CString(e.getWorld().getName(), t));
                 ret.put("id", new CString(e.getLightning().getUniqueId().toString(), t));
                 ret.put("location", ObjectGenerator.GetGenerator().location(e.getLightning().getLocation()));
@@ -84,7 +84,7 @@ public class WeatherEvents {
         }
 
         @Override
-        public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+        public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
             return false;
         }
 
@@ -114,7 +114,7 @@ public class WeatherEvents {
         }
 
         @Override
-        public boolean matches(Map<String, Construct> prefilter, BindableEvent event) throws PrefilterNonMatchException {
+        public boolean matches(Map<String, Mixed> prefilter, BindableEvent event) throws PrefilterNonMatchException {
             if (event instanceof MCThunderChangeEvent) {
                 MCThunderChangeEvent e = (MCThunderChangeEvent) event;
                 Prefilters.match(prefilter, "world", e.getWorld().getName(), Prefilters.PrefilterType.MACRO);
@@ -130,11 +130,11 @@ public class WeatherEvents {
         }
 
         @Override
-        public Map<String, Construct> evaluate(BindableEvent event) throws EventException {
+        public Map<String, Mixed> evaluate(BindableEvent event) throws EventException {
             if (event instanceof MCThunderChangeEvent) {
                 MCThunderChangeEvent e = (MCThunderChangeEvent) event;
                 Target t = Target.UNKNOWN;
-                Map<String, Construct> ret = evaluate_helper(e);
+                Map<String, Mixed> ret = evaluate_helper(e);
                 ret.put("world", new CString(e.getWorld().getName(), t));
                 ret.put("has_thunder", CBoolean.GenerateCBoolean(e.toThunderState(), t));
                 return ret;
@@ -149,7 +149,7 @@ public class WeatherEvents {
         }
 
         @Override
-        public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+        public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
             return false;
         }
 
@@ -178,7 +178,7 @@ public class WeatherEvents {
         }
 
         @Override
-        public boolean matches(Map<String, Construct> prefilter, BindableEvent event) throws PrefilterNonMatchException {
+        public boolean matches(Map<String, Mixed> prefilter, BindableEvent event) throws PrefilterNonMatchException {
             if (event instanceof MCWeatherChangeEvent) {
                 MCWeatherChangeEvent e = (MCWeatherChangeEvent) event;
                 Prefilters.match(prefilter, "world", e.getWorld().getName(), Prefilters.PrefilterType.MACRO);
@@ -194,11 +194,11 @@ public class WeatherEvents {
         }
 
         @Override
-        public Map<String, Construct> evaluate(BindableEvent event) throws EventException {
+        public Map<String, Mixed> evaluate(BindableEvent event) throws EventException {
             if (event instanceof MCWeatherChangeEvent) {
                 MCWeatherChangeEvent e = (MCWeatherChangeEvent) event;
                 Target t = Target.UNKNOWN;
-                Map<String, Construct> ret = evaluate_helper(e);
+                Map<String, Mixed> ret = evaluate_helper(e);
                 ret.put("world", new CString(e.getWorld().getName(), t));
                 ret.put("has_rain", CBoolean.GenerateCBoolean(e.toWeatherState(), t));
                 return ret;
@@ -213,7 +213,7 @@ public class WeatherEvents {
         }
 
         @Override
-        public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+        public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
             return false;
         }
 

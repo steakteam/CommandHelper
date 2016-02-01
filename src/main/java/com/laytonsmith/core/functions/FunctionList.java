@@ -4,10 +4,10 @@ package com.laytonsmith.core.functions;
 
 import com.laytonsmith.annotations.api;
 import com.laytonsmith.core.constructs.CFunction;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.extensions.ExtensionManager;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.Set;
 
 /**
@@ -22,11 +22,11 @@ public class FunctionList {
 		return getFunction(new CFunction(s, t), platform);
 	}
 
-    public static FunctionBase getFunction(Construct c) throws ConfigCompileException{
+    public static FunctionBase getFunction(Mixed c) throws ConfigCompileException{
         return getFunction(c, api.Platforms.INTERPRETER_JAVA);
     }
 
-    public static FunctionBase getFunction(Construct c, api.Platforms platform) throws ConfigCompileException {
+    public static FunctionBase getFunction(Mixed c, api.Platforms platform) throws ConfigCompileException {
         return ExtensionManager.GetFunction(c, platform);
     }
 

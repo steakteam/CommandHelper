@@ -2,7 +2,7 @@
 
 package com.laytonsmith.core.exceptions;
 
-import com.laytonsmith.core.constructs.Construct;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 /**
  *
@@ -25,11 +25,11 @@ public class MarshalException extends Exception {
     }
     
     /**
-     * This is caused when a particular Construct was given that is incompatible.
+     * This is caused when a particular Mixed was given that is incompatible.
      * @param msg
      * @param c 
      */
-    public MarshalException(String msg, Construct c){
+    public MarshalException(String msg, Mixed c){
         super(msg + ": " + c.toString());
     }
 }

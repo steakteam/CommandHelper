@@ -16,12 +16,12 @@ public abstract class CPrimitive extends Construct {
 
 	@Override
 	public String docs() {
-		return "A primitive is any non-object and non-array data type. All primitives are pass by value.";
+		return new CPrimitiveTypeofRunner().docs();
 	}
 
 	@Override
 	public Version since() {
-		return CHVersion.V3_0_1;
+		return new CPrimitiveTypeofRunner().since();
 	}
 
 }

@@ -26,7 +26,6 @@ import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CBoolean;
 import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CString;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.events.AbstractEvent;
 import com.laytonsmith.core.events.BindableEvent;
@@ -38,6 +37,7 @@ import com.laytonsmith.core.exceptions.CRE.CREFormatException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.EventException;
 import com.laytonsmith.core.exceptions.PrefilterNonMatchException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.Map;
 
 /**
@@ -78,7 +78,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent event)
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent event)
 				throws PrefilterNonMatchException {
 			if (event instanceof MCInventoryClickEvent) {
 				MCInventoryClickEvent e = (MCInventoryClickEvent) event;
@@ -100,10 +100,10 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent event) throws EventException {
+		public Map<String, Mixed> evaluate(BindableEvent event) throws EventException {
 			if (event instanceof MCInventoryClickEvent) {
 				MCInventoryClickEvent e = (MCInventoryClickEvent) event;
-				Map<String, Construct> map = evaluate_helper(event);
+				Map<String, Mixed> map = evaluate_helper(event);
 
 				map.put("player", new CString(e.getWhoClicked().getName(), Target.UNKNOWN));
 				CArray viewers = new CArray(Target.UNKNOWN);
@@ -148,7 +148,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			if (event instanceof MCInventoryClickEvent) {
 				MCInventoryClickEvent e = (MCInventoryClickEvent) event;
 
@@ -199,7 +199,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent event)
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent event)
 				throws PrefilterNonMatchException {
 			if (event instanceof MCInventoryDragEvent) {
 				MCInventoryDragEvent e = (MCInventoryDragEvent) event;
@@ -219,11 +219,11 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent event)
+		public Map<String, Mixed> evaluate(BindableEvent event)
 				throws EventException {
 			if (event instanceof MCInventoryDragEvent) {
 				MCInventoryDragEvent e = (MCInventoryDragEvent) event;
-				Map<String, Construct> map = evaluate_helper(event);
+				Map<String, Mixed> map = evaluate_helper(event);
 
 				map.put("player", new CString(e.getWhoClicked().getName(), Target.UNKNOWN));
 				map.put("newcursoritem", ObjectGenerator.GetGenerator().item(e.getCursor(), Target.UNKNOWN));
@@ -272,7 +272,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value,
+		public boolean modifyEvent(String key, Mixed value,
 				BindableEvent event) {
 			if (event instanceof MCInventoryDragEvent) {
 				MCInventoryDragEvent e = (MCInventoryDragEvent) event;
@@ -319,7 +319,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent event)
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent event)
 				throws PrefilterNonMatchException {
 			return true;
 		}
@@ -330,11 +330,11 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent event)
+		public Map<String, Mixed> evaluate(BindableEvent event)
 				throws EventException {
 			if (event instanceof MCInventoryOpenEvent) {
 				MCInventoryOpenEvent e = (MCInventoryOpenEvent) event;
-				Map<String, Construct> map = evaluate_helper(event);
+				Map<String, Mixed> map = evaluate_helper(event);
 
 				map.put("player", new CString(e.getPlayer().getName(), Target.UNKNOWN));
 
@@ -342,7 +342,7 @@ public class InventoryEvents {
 				MCInventory inv = e.getInventory();
 
 				for (int i = 0; i < inv.getSize(); i++) {
-					Construct c = ObjectGenerator.GetGenerator().item(inv.getItem(i), Target.UNKNOWN);
+					Mixed c = ObjectGenerator.GetGenerator().item(inv.getItem(i), Target.UNKNOWN);
 					items.set(i, c, Target.UNKNOWN);
 				}
 
@@ -362,7 +362,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value,
+		public boolean modifyEvent(String key, Mixed value,
 				BindableEvent event) {
 			return false;
 		}
@@ -394,7 +394,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent event)
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent event)
 				throws PrefilterNonMatchException {
 			return true;
 		}
@@ -405,11 +405,11 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent event)
+		public Map<String, Mixed> evaluate(BindableEvent event)
 				throws EventException {
 			if (event instanceof MCInventoryCloseEvent) {
 				MCInventoryCloseEvent e = (MCInventoryCloseEvent) event;
-				Map<String, Construct> map = evaluate_helper(event);
+				Map<String, Mixed> map = evaluate_helper(event);
 
 				map.put("player", new CString(e.getPlayer().getName(), Target.UNKNOWN));
 
@@ -417,7 +417,7 @@ public class InventoryEvents {
 				MCInventory inv = e.getInventory();
 
 				for (int i = 0; i < inv.getSize(); i++) {
-					Construct c = ObjectGenerator.GetGenerator().item(inv.getItem(i), Target.UNKNOWN);
+					Mixed c = ObjectGenerator.GetGenerator().item(inv.getItem(i), Target.UNKNOWN);
 					items.set(i, c, Target.UNKNOWN);
 				}
 
@@ -437,7 +437,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value,
+		public boolean modifyEvent(String key, Mixed value,
 				BindableEvent event) {
 			return false;
 		}
@@ -475,7 +475,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent e) throws PrefilterNonMatchException {
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent e) throws PrefilterNonMatchException {
 			return true;
 		}
 
@@ -485,10 +485,10 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent event) throws EventException {
+		public Map<String, Mixed> evaluate(BindableEvent event) throws EventException {
 			if (event instanceof MCEnchantItemEvent) {
 				MCEnchantItemEvent e = (MCEnchantItemEvent) event;
-				Map<String, Construct> map = evaluate_helper(event);
+				Map<String, Mixed> map = evaluate_helper(event);
 
 				map.put("player", new CString(e.GetEnchanter().getName(), Target.UNKNOWN));
 				map.put("item", ObjectGenerator.GetGenerator().item(e.getItem(), Target.UNKNOWN));
@@ -519,7 +519,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			if (event instanceof MCEnchantItemEvent) {
 				MCEnchantItemEvent e = (MCEnchantItemEvent) event;
 
@@ -571,7 +571,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent e) throws PrefilterNonMatchException {
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent e) throws PrefilterNonMatchException {
 			return true;
 		}
 
@@ -581,10 +581,10 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent event) throws EventException {
+		public Map<String, Mixed> evaluate(BindableEvent event) throws EventException {
 			if (event instanceof MCPrepareItemEnchantEvent) {
 				MCPrepareItemEnchantEvent e = (MCPrepareItemEnchantEvent) event;
-				Map<String, Construct> map = evaluate_helper(event);
+				Map<String, Mixed> map = evaluate_helper(event);
 
 				map.put("player", new CString(e.getEnchanter().getName(), Target.UNKNOWN));
 				map.put("item", ObjectGenerator.GetGenerator().item(e.getItem(), Target.UNKNOWN));
@@ -622,7 +622,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			if (event instanceof MCPrepareItemEnchantEvent) {
 				MCPrepareItemEnchantEvent e = (MCPrepareItemEnchantEvent) event;
 
@@ -680,7 +680,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent event) throws PrefilterNonMatchException {
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent event) throws PrefilterNonMatchException {
 			if (event instanceof MCItemHeldEvent) {
 				return true;
 			}
@@ -693,10 +693,10 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent event) throws EventException {
+		public Map<String, Mixed> evaluate(BindableEvent event) throws EventException {
 			if (event instanceof MCItemHeldEvent) {
 				MCItemHeldEvent e = (MCItemHeldEvent) event;
-				Map<String, Construct> ret = evaluate_helper(e);
+				Map<String, Mixed> ret = evaluate_helper(e);
 				ret.put("to", new CInt(e.getNewSlot(), Target.UNKNOWN));
 				ret.put("from", new CInt(e.getPreviousSlot(), Target.UNKNOWN));
 				return ret;
@@ -711,7 +711,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			if (event instanceof MCItemHeldEvent) {
 				MCItemHeldEvent e = (MCItemHeldEvent) event;
 				if ("to".equals(key)) {
@@ -748,7 +748,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent event) throws PrefilterNonMatchException {
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent event) throws PrefilterNonMatchException {
 			if (event instanceof MCPrepareItemCraftEvent) {
 				return true;
 			}
@@ -761,10 +761,10 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent event) throws EventException {
+		public Map<String, Mixed> evaluate(BindableEvent event) throws EventException {
 			if (event instanceof MCPrepareItemCraftEvent) {
 				MCPrepareItemCraftEvent e = (MCPrepareItemCraftEvent) event;
-				Map<String, Construct> ret = evaluate_helper(e);
+				Map<String, Mixed> ret = evaluate_helper(e);
 				Target t = Target.UNKNOWN;
 				CArray viewers = new CArray(t);
 				for (MCHumanEntity v : e.getViewers()) {
@@ -792,7 +792,7 @@ public class InventoryEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			/*if (event instanceof MCPrepareItemCraftEvent) {
 				MCPrepareItemCraftEvent e = (MCPrepareItemCraftEvent) event;
 				if ("result".equals(key)) {

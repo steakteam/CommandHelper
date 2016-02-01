@@ -352,7 +352,7 @@ public class ReflectionUtils {
 	}
 
 	/**
-	 * Gets a set of all classes that this class extends or implements. In other words,
+	 * Gets an exhaustive set of all classes that this class extends or implements. In other words,
 	 * {@link Class#isAssignableFrom(java.lang.Class)} will return true for
 	 * all returned classes.
 	 * @param c
@@ -365,6 +365,7 @@ public class ReflectionUtils {
 			cs.add(cc);
 			for(Class ccc : cc.getInterfaces()){
 				cs.addAll(getAllExtensions(ccc));
+				cs.add(ccc);
 			}
 			cc = cc.getSuperclass();
 
@@ -374,6 +375,25 @@ public class ReflectionUtils {
 			cs.add(i);
 		}
 		return cs;
+	}
+	
+	/**
+	 * Returns a list of all the superclasses for a given class. For interfaces,
+	 * this will return an empty list.
+	 * @param c The class to check
+	 * @return A list of all the classes this class directly extends.
+	 */
+	public static List<Class> getSuperClasses(Class c){
+		List<Class> classList = new ArrayList<>();
+		if(c.isInterface()){
+			return classList;
+		}
+		Class cc = c.getSuperclass();
+		while(cc != null){
+			classList.add(cc);
+			cc = cc.getSuperclass();
+		}
+		return classList;
 	}
 
 	/**
@@ -406,15 +426,16 @@ public class ReflectionUtils {
 	 * Instantiates a class without calling its constructor. In general, the object
 	 * will be in an unknown state. This method should not generally be relied on, and
 	 * only used in limited cases.
+	 * @param <T>
 	 * @param cls The class to instantiate
 	 * @return The newly instantiated object.
 	 * @throws RuntimeException If the underlying code throws an InstantiationException, it is
 	 * wrapped and re-thrown in a RuntimeException.
 	 */
-	public static Object instantiateUnsafe(Class cls) throws RuntimeException{
+	public static <T> T instantiateUnsafe(Class<T> cls) throws RuntimeException{
 		sun.misc.Unsafe unsafe = (sun.misc.Unsafe) ReflectionUtils.get(sun.misc.Unsafe.class, "theUnsafe");
 		try {
-			return unsafe.allocateInstance(cls);
+			return (T)unsafe.allocateInstance(cls);
 		} catch(InstantiationException ex){
 			// I mean, why not, we're already abusing things.
 			throw new RuntimeException(ex);

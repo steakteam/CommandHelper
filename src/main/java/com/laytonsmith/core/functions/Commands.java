@@ -23,6 +23,7 @@ import com.laytonsmith.core.exceptions.CRE.CRENotFoundException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -85,7 +86,7 @@ public class Commands {
 		 * @param cmd
 		 * @param arg
 		 */
-		public static void customExec(Target t, Environment environment, MCCommand cmd, Construct arg) {
+		public static void customExec(Target t, Environment environment, MCCommand cmd, Mixed arg) {
 			if (arg instanceof CClosure) {
 				onTabComplete.remove(cmd.getName());
 				onTabComplete.put(cmd.getName(), (CClosure) arg);
@@ -222,9 +223,9 @@ public class Commands {
 				}
 				if (ops.containsKey("aliases")) {
 					if (ops.get("aliases", t) instanceof CArray) {
-						List<Construct> ca = ((CArray) ops.get("aliases", t)).asList();
+						List<Mixed> ca = ((CArray) ops.get("aliases", t)).asList();
 						List<String> aliases = new ArrayList<String>();
-						for (Construct c : ca) {
+						for (Mixed c : ca) {
 							aliases.add(c.val());
 						}
 						cmd.setAliases(aliases);
@@ -355,7 +356,7 @@ public class Commands {
 		 * @param cmd
 		 * @param arg
 		 */
-		public static void customExec(Target t, Environment environment, MCCommand cmd, Construct arg) {
+		public static void customExec(Target t, Environment environment, MCCommand cmd, Mixed arg) {
 			if (arg instanceof CClosure) {
 				onCommand.remove(cmd.getName());
 				onCommand.put(cmd.getName(), (CClosure) arg);

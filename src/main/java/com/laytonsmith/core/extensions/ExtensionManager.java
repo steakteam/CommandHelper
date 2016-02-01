@@ -19,13 +19,13 @@ import com.laytonsmith.core.LogLevel;
 import com.laytonsmith.core.Prefs;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CFunction;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.events.Driver;
 import com.laytonsmith.core.events.Event;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.functions.Function;
 import com.laytonsmith.core.functions.FunctionBase;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -713,7 +713,7 @@ public class ExtensionManager {
 		}
 	}
 	
-    public static FunctionBase GetFunction(Construct c, api.Platforms platform) throws ConfigCompileException {
+    public static FunctionBase GetFunction(Mixed c, api.Platforms platform) throws ConfigCompileException {
         if(platform == null){
             //Default to the Java interpreter
             platform = api.Platforms.INTERPRETER_JAVA;

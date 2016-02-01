@@ -34,6 +34,7 @@ import com.laytonsmith.core.exceptions.CRE.CREInsufficientArgumentsException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.persistence.DataSourceFactory;
 import com.laytonsmith.persistence.PersistenceNetwork;
 
@@ -69,7 +70,7 @@ public class Reflection {
 	@api(environments={CommandHelperEnvironment.class})
 	public static class reflect_pull extends AbstractFunction {
 
-		private static Set<Construct> protocols;
+		private static Set<Mixed> protocols;
 		@Override
 		public String getName() {
 			return "reflect_pull";
@@ -116,7 +117,7 @@ public class Reflection {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			if (args.length < 1) {
 				throw ConfigRuntimeException.BuildException("Not enough parameters was sent to " + getName(), CREInsufficientArgumentsException.class, t);
 			}
@@ -155,7 +156,7 @@ public class Reflection {
 				return new CInt(t.col(), t);
 			} else if("datasources".equalsIgnoreCase(param)){
 				if(protocols == null){
-					protocols = new HashSet<Construct>();
+					protocols = new HashSet<>();
 					for(String s : DataSourceFactory.GetSupportedProtocols()){
 						protocols.add(new CString(s, Target.UNKNOWN));
 					}

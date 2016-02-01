@@ -36,6 +36,7 @@ import com.laytonsmith.core.functions.Function;
 import com.laytonsmith.core.functions.FunctionBase;
 import com.laytonsmith.core.functions.FunctionList;
 import com.laytonsmith.core.functions.IncludeCache;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.persistence.DataSourceException;
 import java.io.File;
 import java.io.IOException;
@@ -1282,7 +1283,7 @@ public final class MethodScriptCompiler {
 					throw new ConfigCompileException(ex);
 				}
 			} else if (t.type == TType.LIT) {
-				Construct c = Static.resolveConstruct(t.val(), t.target);
+				Mixed c = Static.resolveConstruct(t.val(), t.target);
 				if(c instanceof CString && fileOptions.isStrict()){
 					compilerErrors.add(new ConfigCompileException("Bare strings are not allowed in strict mode", t.target));
 				} else if(c instanceof CInt && next1.type == TType.DOT && next2.type == TType.LIT) {
@@ -1614,7 +1615,7 @@ public final class MethodScriptCompiler {
 			//Add the child to the identifier
 			ParseTree c = ((CIdentifier) cFunction).contained();
 			tree.addChild(c);
-			c.getData().setWasIdentifier(true);
+			((Construct)c.getData()).setWasIdentifier(true);
 		}
 
 		List<ParseTree> children = tree.getChildren();
@@ -1737,7 +1738,7 @@ public final class MethodScriptCompiler {
 			}
 			if (p != null) {
 				try {
-					Construct c = DataHandling.proc.optimizeProcedure(p.getTarget(), p, children);
+					Mixed c = DataHandling.proc.optimizeProcedure(p.getTarget(), p, children);
 					if (c != null) {
 						tree.setData(c);
 						tree.removeChildren();
@@ -1804,7 +1805,7 @@ public final class MethodScriptCompiler {
 					tree.setData(tempNode.getData());
 					tree.setOptimized(tempNode.isOptimized());
 					tree.setChildren(tempNode.getChildren());
-					tree.getData().setWasIdentifier(tempNode.getData().wasIdentifier());
+					((Construct)tree.getData()).setWasIdentifier(((Construct)tempNode.getData()).wasIdentifier());
 					optimize(tree, procs, compilerErrors);
 					tree.setOptimized(true);
 					//Some functions can actually make static the arguments, for instance, by pulling up a hardcoded
@@ -1829,15 +1830,15 @@ public final class MethodScriptCompiler {
 		}
 			//It could have optimized by changing the name, in that case, we
 		//don't want to run this now
-		if (tree.getData().getValue().equals(oldFunctionName)
+		if (tree.getData().val().equals(oldFunctionName)
 				&& (options.contains(OptimizationOption.OPTIMIZE_CONSTANT) || options.contains(OptimizationOption.CONSTANT_OFFLINE))) {
-			Construct[] constructs = new Construct[tree.getChildren().size()];
+			Mixed[] constructs = new Mixed[tree.getChildren().size()];
 			for (int i = 0; i < tree.getChildren().size(); i++) {
 				constructs[i] = tree.getChildAt(i).getData();
 			}
 			try {
 				try {
-					Construct result;
+					Mixed result;
 					if (options.contains(OptimizationOption.CONSTANT_OFFLINE)) {
 						List<Integer> numArgsList = Arrays.asList(func.numArgs());
 						if (!numArgsList.contains(Integer.MAX_VALUE) &&
@@ -1854,7 +1855,7 @@ public final class MethodScriptCompiler {
 
 					//If the result is null, it was just a check, it can't optimize further.
 					if (result != null) {
-						result.setWasIdentifier(tree.getData().wasIdentifier());
+						((Construct)result).setWasIdentifier(((Construct)tree.getData()).wasIdentifier());
 						tree.setData(result);
 						tree.removeChildren();
 					}
@@ -1913,7 +1914,7 @@ public final class MethodScriptCompiler {
 	 * @throws com.laytonsmith.core.exceptions.ConfigCompileGroupException This indicates
 	 * that a group of compile errors occurred.
 	 */
-	public static Construct execute(String script, File file, boolean inPureMScript, Environment env, MethodScriptComplete done, Script s, List<Variable> vars) throws ConfigCompileException, ConfigCompileGroupException{
+	public static Mixed execute(String script, File file, boolean inPureMScript, Environment env, MethodScriptComplete done, Script s, List<Variable> vars) throws ConfigCompileException, ConfigCompileGroupException{
 		return execute(compile(lex(script, file, inPureMScript)), env, done, s, vars);
 	}
 
@@ -1929,7 +1930,7 @@ public final class MethodScriptCompiler {
 	 * @param script
 	 * @return
 	 */
-	public static Construct execute(ParseTree root, Environment env, MethodScriptComplete done, Script script) {
+	public static Mixed execute(ParseTree root, Environment env, MethodScriptComplete done, Script script) {
 		return execute(root, env, done, script, null);
 	}
 
@@ -1945,7 +1946,7 @@ public final class MethodScriptCompiler {
 	 * @param vars
 	 * @return
 	 */
-	public static Construct execute(ParseTree root, Environment env, MethodScriptComplete done, Script script, List<Variable> vars) {
+	public static Mixed execute(ParseTree root, Environment env, MethodScriptComplete done, Script script, List<Variable> vars) {
 		if(root == null){
 			return CVoid.VOID;
 		}
@@ -1957,7 +1958,7 @@ public final class MethodScriptCompiler {
 			for (Variable v : vars) {
 				varMap.put(v.getVariableName(), v);
 			}
-			for (Construct tempNode : root.getAllData()) {
+			for (Mixed tempNode : root.getAllData()) {
 				if (tempNode instanceof Variable) {
 					Variable vv = varMap.get(((Variable) tempNode).getVariableName());
 					if(vv != null){
@@ -1970,10 +1971,10 @@ public final class MethodScriptCompiler {
 			}
 		}
 		StringBuilder b = new StringBuilder();
-		Construct returnable = null;
+		Mixed returnable = null;
 		for (ParseTree gg : root.getChildren()) {
 			script.setLabel(env.getEnv(GlobalEnv.class).GetLabel());
-			Construct retc = script.eval(gg, env);
+			Mixed retc = script.eval(gg, env);
 			if (root.numberOfChildren() == 1) {
 				returnable = retc;
 			}

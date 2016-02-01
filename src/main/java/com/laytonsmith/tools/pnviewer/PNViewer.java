@@ -16,6 +16,7 @@ import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.exceptions.MarshalException;
 import com.laytonsmith.core.functions.DataHandling;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.persistence.DataSourceException;
 import com.laytonsmith.persistence.PersistenceNetwork;
 import com.laytonsmith.persistence.io.ConnectionMixinFactory;
@@ -330,7 +331,7 @@ public class PNViewer extends javax.swing.JFrame {
 					});
 				}
 			}).start();
-			Construct c = CNull.NULL;
+			Mixed c = CNull.NULL;
 			try {
 				c = Construct.json_decode(value, Target.UNKNOWN);
 			} catch (MarshalException ex) {

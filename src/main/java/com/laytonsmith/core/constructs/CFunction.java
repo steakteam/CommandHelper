@@ -8,6 +8,7 @@ import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.functions.Function;
 import com.laytonsmith.core.functions.FunctionBase;
 import com.laytonsmith.core.functions.FunctionList;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 /**
  *
@@ -24,7 +25,7 @@ public class CFunction extends Construct {
 
     @Override
     public String toString() {
-        return getValue();
+        return val();
     }
 
     @Override
@@ -63,7 +64,7 @@ public class CFunction extends Construct {
 	 * @param ofType
 	 * @return
 	 */
-	public static boolean IsFunction(Construct possibleFunction, Class<? extends Function> ofType){
+	public static boolean IsFunction(Mixed possibleFunction, Class<? extends Function> ofType){
 		Function f = ReflectionUtils.newInstance(ofType);
 		return possibleFunction instanceof CFunction && possibleFunction.val().equals(f.getName());
 	}

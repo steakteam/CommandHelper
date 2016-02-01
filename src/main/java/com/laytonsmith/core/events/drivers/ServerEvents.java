@@ -15,7 +15,6 @@ import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CBoolean;
 import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CString;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.events.AbstractEvent;
 import com.laytonsmith.core.events.BindableEvent;
@@ -25,6 +24,7 @@ import com.laytonsmith.core.events.Prefilters.PrefilterType;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.EventException;
 import com.laytonsmith.core.exceptions.PrefilterNonMatchException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,7 +62,7 @@ public class ServerEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent e)
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent e)
 				throws PrefilterNonMatchException {
 			if (e instanceof MCServerPingEvent) {
 				MCServerPingEvent event = (MCServerPingEvent) e;
@@ -79,12 +79,12 @@ public class ServerEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent e)
+		public Map<String, Mixed> evaluate(BindableEvent e)
 				throws EventException {
 			if (e instanceof MCServerPingEvent) {
 				MCServerPingEvent event = (MCServerPingEvent) e;
 				Target t = Target.UNKNOWN;
-				Map<String, Construct> ret = evaluate_helper(event);
+				Map<String, Mixed> ret = evaluate_helper(event);
 				String ip;
 				try {
 					ip = event.getAddress().getHostAddress();
@@ -107,7 +107,7 @@ public class ServerEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			if (event instanceof MCServerPingEvent) {
 				MCServerPingEvent e = (MCServerPingEvent) event;
 				switch (key.toLowerCase()) {
@@ -119,7 +119,7 @@ public class ServerEvents {
 						return true;
 					case "list":
 						Set<MCPlayer> players = new HashSet<>();
-						for (Construct construct : ArgumentValidation.getArray(value, Target.UNKNOWN).asList()) {
+						for (Mixed construct : ArgumentValidation.getArray(value, Target.UNKNOWN).asList()) {
 							players.add(Static.GetPlayer(construct, Target.UNKNOWN));
 						}
 						e.setPlayers(players);
@@ -162,7 +162,7 @@ public class ServerEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent event) throws PrefilterNonMatchException {
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent event) throws PrefilterNonMatchException {
 			return event instanceof MCCommandTabCompleteEvent;
 		}
 
@@ -172,11 +172,11 @@ public class ServerEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent event) throws EventException {
+		public Map<String, Mixed> evaluate(BindableEvent event) throws EventException {
 			if (event instanceof MCCommandTabCompleteEvent) {
 				MCCommandTabCompleteEvent e = (MCCommandTabCompleteEvent) event;
 				Target t = Target.UNKNOWN;
-				Map<String, Construct> ret = evaluate_helper(event);
+				Map<String, Mixed> ret = evaluate_helper(event);
 				ret.put("sender", new CString(e.getCommandSender().getName(), t));
 				CArray comp = new CArray(t);
 				if(e.getCompletions() != null){
@@ -204,18 +204,18 @@ public class ServerEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			if (event instanceof MCCommandTabCompleteEvent) {
 				MCCommandTabCompleteEvent e = (MCCommandTabCompleteEvent) event;
 				if ("completions".equals(key)) {
 					if (value instanceof CArray) {
 						List<String> comp = new ArrayList<>();
 						if (((CArray) value).inAssociativeMode()) {
-							for (Construct k : ((CArray) value).keySet()) {
+							for (Mixed k : ((CArray) value).keySet()) {
 								comp.add(((CArray) value).get(k, Target.UNKNOWN).val());
 							}
 						} else {
-							for (Construct v : ((CArray) value).asList()) {
+							for (Mixed v : ((CArray) value).asList()) {
 								comp.add(v.val());
 							}
 						}
@@ -268,7 +268,7 @@ public class ServerEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent e) throws PrefilterNonMatchException {
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent e) throws PrefilterNonMatchException {
 			if(e instanceof MCRedstoneChangedEvent){
 				MCRedstoneChangedEvent event = (MCRedstoneChangedEvent) e;
 				Prefilters.match(prefilter, "location", event.getLocation(), PrefilterType.LOCATION_MATCH);
@@ -283,9 +283,9 @@ public class ServerEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent e) throws EventException {
+		public Map<String, Mixed> evaluate(BindableEvent e) throws EventException {
 			MCRedstoneChangedEvent event = (MCRedstoneChangedEvent) e;
-			Map<String, Construct> map = evaluate_helper(e);
+			Map<String, Mixed> map = evaluate_helper(e);
 			map.put("location", ObjectGenerator.GetGenerator().location(event.getLocation()));
 			map.put("active", CBoolean.get(event.isActive()));
 			return map;
@@ -297,7 +297,7 @@ public class ServerEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			return false;
 		}
 

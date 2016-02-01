@@ -11,10 +11,10 @@ import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.IVariable;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.constructs.Variable;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 /**
  * This class provides methods for more easily creating different Constructs for testing purposes.
@@ -34,7 +34,7 @@ public class C {
     public static Class Variable = Variable.class;
 
 
-    public static CArray Array(Construct ... elems){
+    public static CArray Array(Mixed ... elems){
         return new CArray(Target.UNKNOWN, elems);
     }
     public static CBoolean Boolean(boolean b){
@@ -55,7 +55,7 @@ public class C {
     public static CVoid Void(){
         return CVoid.VOID;
     }
-    public static IVariable IVariable(String name, Construct val){
+    public static IVariable IVariable(String name, Mixed val){
         return new IVariable(CClassType.AUTO, name, val, Target.UNKNOWN);
     }
     public static Variable Variable(String name, String val){
@@ -66,16 +66,16 @@ public class C {
      * @param val
      * @return
      */
-    public static Construct onstruct(String val){
+    public static Mixed onstruct(String val){
         return Static.resolveConstruct(val, Target.UNKNOWN);
     }
-    public static Construct onstruct(long val){
+    public static Mixed onstruct(long val){
         return Static.resolveConstruct(Long.toString(val), Target.UNKNOWN);
     }
-    public static Construct onstruct(boolean val){
+    public static Mixed onstruct(boolean val){
         return Static.resolveConstruct((val?"true":"false"), Target.UNKNOWN);
     }
-    public static Construct onstruct(double val){
+    public static Mixed onstruct(double val){
         return Static.resolveConstruct(java.lang.Double.toString(val), Target.UNKNOWN);
     }
 }

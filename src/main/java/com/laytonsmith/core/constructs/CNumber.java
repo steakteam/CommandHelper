@@ -16,12 +16,12 @@ public abstract class CNumber extends CPrimitive {
 
 	@Override
 	public String docs() {
-		return "A number is any double or integer number.";
+		return new CNumberTypeofRunner().docs();
 	}
 
 	@Override
 	public Version since() {
-		return CHVersion.V3_0_1;
+		return new CNumberTypeofRunner().since();
 	}
 
 }

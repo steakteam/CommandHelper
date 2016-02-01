@@ -1,8 +1,12 @@
 package com.laytonsmith.core.constructs;
 
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
+import com.laytonsmith.core.exceptions.CRE.CREClassNotFoundException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -11,7 +15,7 @@ import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 public class IVariable extends Construct implements Cloneable {
 
     public static final long serialVersionUID = 1L;
-    private Construct var_value;
+    private Mixed var_value;
     final private String name;
 	final private CClassType type;
 	final private Target definedTarget;
@@ -27,12 +31,16 @@ public class IVariable extends Construct implements Cloneable {
 		this.definedTarget = t;
     }
 
-    public IVariable(CClassType type, String name, Construct value, Target t) {
+    public IVariable(CClassType type, String name, Mixed value, Target t) {
         super(name, ConstructType.IVARIABLE, t);
 		if(!type.equals(CClassType.AUTO) && !(value instanceof CNull)){
-			if(!InstanceofUtil.isInstanceof(value, type.val())){
-				throw ConfigRuntimeException.BuildException(name + " is of type " + type.val() + ", but a value of type "
-						+ value.typeof() + " was assigned to it.", CRECastException.class, t);
+			try {
+				if(!InstanceofUtil.isInstanceof(value, type.val())){
+					throw ConfigRuntimeException.BuildException(name + " is of type " + type.val() + ", but a value of type "
+							+ value.typeof() + " was assigned to it.", CRECastException.class, t);
+				}
+			} catch (ClassNotFoundException ex) {
+				throw new CREClassNotFoundException("Could not find class of type " + type.val(), t, ex);
 			}
 		}
 		if(type.equals(CClassType.VOID)){
@@ -52,7 +60,7 @@ public class IVariable extends Construct implements Cloneable {
         return var_value.val();
     }
 
-    public Construct ival() {
+    public Mixed ival() {
         var_value.setTarget(getTarget());
         return var_value;
     }
@@ -61,7 +69,7 @@ public class IVariable extends Construct implements Cloneable {
         return name;
     }
 
-    public void setIval(Construct c) {
+    public void setIval(Mixed c) {
         var_value = c;
     }
 

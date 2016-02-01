@@ -9,6 +9,7 @@ import com.laytonsmith.core.exceptions.CRE.CRERangeException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.functions.ArrayHandling;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.List;
@@ -64,8 +65,8 @@ public class CSlice extends CArray {
     }
 
 	@Override
-	public List<Construct> asList() {
-		CArray ca = new ArrayHandling.range().exec(Target.UNKNOWN, null, new CInt(start, Target.UNKNOWN), new CInt(finish, Target.UNKNOWN));
+	public List<Mixed> asList() {
+		CArray ca = (CArray)(new ArrayHandling.range()).exec(Target.UNKNOWN, null, (Mixed)new CInt(start, Target.UNKNOWN), (Mixed)new CInt(finish, Target.UNKNOWN));
 		return ca.asList();
 	}
 
@@ -111,12 +112,12 @@ public class CSlice extends CArray {
 	}
 
 	@Override
-	public void set(Construct index, Construct c, Target t) {
+	public void set(Mixed index, Mixed c, Target t) {
 		throw ConfigRuntimeException.BuildException("CSlices cannot set values", CRECastException.class, t);
 	}
 
 	@Override
-	public Construct get(Construct index, Target t) {
+	public Mixed get(Mixed index, Target t) {
 		long i = Static.getInt(index, t);
 		if(i > max){
 			throw ConfigRuntimeException.BuildException("Index out of bounds. Index: " + i + " Size: " + max, CRERangeException.class, t);
@@ -125,15 +126,15 @@ public class CSlice extends CArray {
 	}
 
 	@Override
-	public Set<Construct> keySet() {
+	public Set<Mixed> keySet() {
 		// To keep our memory footprint down, we create a "fake" keyset here, which doesn't
 		// require actually creating an entire Set. Removing items from the set isn't supported,
 		// but all iteration options are.
-		return new AbstractSet<Construct>() {
+		return new AbstractSet<Mixed>() {
 
 			@Override
-			public Iterator<Construct> iterator() {
-				return new Iterator<Construct>() {
+			public Iterator<Mixed> iterator() {
+				return new Iterator<Mixed>() {
 
 					int index = 0;
 
@@ -143,7 +144,7 @@ public class CSlice extends CArray {
 					}
 
 					@Override
-					public Construct next() {
+					public Mixed next() {
 						return new CInt(index++, Target.UNKNOWN);
 					}
 
@@ -167,7 +168,7 @@ public class CSlice extends CArray {
 	}
 
 	@Override
-	public boolean contains(Construct c) {
+	public boolean contains(Mixed c) {
 		try{
 			long i = Static.getInt(c, Target.UNKNOWN);
 			if(start < finish){

@@ -12,6 +12,7 @@ import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.testing.C;
 import com.laytonsmith.testing.StaticTest;
 import static com.laytonsmith.testing.StaticTest.GetFakeServer;
@@ -217,41 +218,41 @@ public class BasicLogicTest {
     @Test(timeout = 10000)
     public void testGt() throws CancelCommandException {
         BasicLogic.gt a = new BasicLogic.gt();
-        assertCFalse(a.exec(Target.UNKNOWN, env, arg1_1, arg1_2));
-        assertCTrue(a.exec(Target.UNKNOWN, env, arg2_1, arg1_1));
-        assertCFalse(a.exec(Target.UNKNOWN, env, arg1_1, arg2_1));
-        assertCFalse(a.exec(Target.UNKNOWN, env, argn1_1, arg1_1));
-        assertCTrue(a.exec(Target.UNKNOWN, env, arg1_1, argn1_1));
+        assertCFalse(a.exec(Target.UNKNOWN, env, (Mixed)arg1_1, arg1_2));
+        assertCTrue(a.exec(Target.UNKNOWN, env, (Mixed)arg2_1, arg1_1));
+        assertCFalse(a.exec(Target.UNKNOWN, env, (Mixed)arg1_1, arg2_1));
+        assertCFalse(a.exec(Target.UNKNOWN, env, (Mixed)argn1_1, arg1_1));
+        assertCTrue(a.exec(Target.UNKNOWN, env, (Mixed)arg1_1, argn1_1));
     }
 
     @Test(timeout = 10000)
     public void testGte() throws CancelCommandException {
         BasicLogic.gte a = new BasicLogic.gte();
-        assertCTrue(a.exec(Target.UNKNOWN, env, arg1_1, arg1_2));
-        assertCTrue(a.exec(Target.UNKNOWN, env, arg2_1, arg1_1));
-        assertCFalse(a.exec(Target.UNKNOWN, env, arg1_1, arg2_1));
-        assertCFalse(a.exec(Target.UNKNOWN, env, argn1_1, arg1_1));
-        assertCTrue(a.exec(Target.UNKNOWN, env, arg1_1, argn1_1));
+        assertCTrue(a.exec(Target.UNKNOWN, env, (Mixed)arg1_1, arg1_2));
+        assertCTrue(a.exec(Target.UNKNOWN, env, (Mixed)arg2_1, arg1_1));
+        assertCFalse(a.exec(Target.UNKNOWN, env, (Mixed)arg1_1, arg2_1));
+        assertCFalse(a.exec(Target.UNKNOWN, env, (Mixed)argn1_1, arg1_1));
+        assertCTrue(a.exec(Target.UNKNOWN, env, (Mixed)arg1_1, argn1_1));
     }
 
     @Test(timeout = 10000)
     public void testLt() throws CancelCommandException {
         BasicLogic.lt a = new BasicLogic.lt();
-        assertCFalse(a.exec(Target.UNKNOWN, env, arg1_1, arg1_2));
-        assertCFalse(a.exec(Target.UNKNOWN, env, arg2_1, arg1_1));
-        assertCTrue(a.exec(Target.UNKNOWN, env, arg1_1, arg2_1));
-        assertCTrue(a.exec(Target.UNKNOWN, env, argn1_1, arg1_1));
-        assertCFalse(a.exec(Target.UNKNOWN, env, arg1_1, argn1_1));
+        assertCFalse(a.exec(Target.UNKNOWN, env, (Mixed)arg1_1, arg1_2));
+        assertCFalse(a.exec(Target.UNKNOWN, env, (Mixed)arg2_1, arg1_1));
+        assertCTrue(a.exec(Target.UNKNOWN, env, (Mixed)arg1_1, arg2_1));
+        assertCTrue(a.exec(Target.UNKNOWN, env, (Mixed)argn1_1, arg1_1));
+        assertCFalse(a.exec(Target.UNKNOWN, env, (Mixed)arg1_1, argn1_1));
     }
 
     @Test(timeout = 10000)
     public void testLte() throws CancelCommandException {
         BasicLogic.lte a = new BasicLogic.lte();
-        assertCTrue(a.exec(Target.UNKNOWN, env, arg1_1, arg1_2));
-        assertCFalse(a.exec(Target.UNKNOWN, env, arg2_1, arg1_1));
-        assertCTrue(a.exec(Target.UNKNOWN, env, arg1_1, arg2_1));
-        assertCTrue(a.exec(Target.UNKNOWN, env, argn1_1, arg1_1));
-        assertCFalse(a.exec(Target.UNKNOWN, env, arg1_1, argn1_1));
+        assertCTrue(a.exec(Target.UNKNOWN, env, (Mixed)arg1_1, arg1_2));
+        assertCFalse(a.exec(Target.UNKNOWN, env, (Mixed)arg2_1, arg1_1));
+        assertCTrue(a.exec(Target.UNKNOWN, env, (Mixed)arg1_1, arg2_1));
+        assertCTrue(a.exec(Target.UNKNOWN, env, (Mixed)argn1_1, arg1_1));
+        assertCFalse(a.exec(Target.UNKNOWN, env, (Mixed)arg1_1, argn1_1));
     }
 
     @Test(timeout = 10000)

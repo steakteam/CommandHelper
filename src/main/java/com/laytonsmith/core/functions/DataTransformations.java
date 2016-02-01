@@ -17,6 +17,7 @@ import com.laytonsmith.core.exceptions.CRE.CREFormatException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.MarshalException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -111,7 +112,7 @@ public class DataTransformations {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			String s = args[0].val();
 			try {
 				return Construct.json_decode(s, t);
@@ -290,7 +291,7 @@ public class DataTransformations {
 				throw new CRECastException("Expecting an associative array", t);
 			}
 			for(String key : arr.stringKeySet()){
-				Construct c = arr.get(key, t);
+				Mixed c = arr.get(key, t);
 				String val;
 				if(c instanceof CNull){
 					val = "";
@@ -424,7 +425,7 @@ public class DataTransformations {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
 			XMLDocument doc;
 			try {
 				doc = new XMLDocument(args[0].val());

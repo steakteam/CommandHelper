@@ -17,7 +17,6 @@ import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CBoolean;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.events.AbstractEvent;
 import com.laytonsmith.core.events.BindableEvent;
@@ -25,6 +24,7 @@ import com.laytonsmith.core.events.Driver;
 import com.laytonsmith.core.events.Prefilters;
 import com.laytonsmith.core.exceptions.EventException;
 import com.laytonsmith.core.exceptions.PrefilterNonMatchException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.util.List;
 import java.util.Map;
 
@@ -44,8 +44,8 @@ public class WorldEvents {
 	public static abstract class WorldEvent extends AbstractEvent {
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent e) throws EventException {
-			Map<String, Construct> r = evaluate_helper(e);
+		public Map<String, Mixed> evaluate(BindableEvent e) throws EventException {
+			Map<String, Mixed> r = evaluate_helper(e);
 			r.put("world", new CString(((MCWorldEvent) e).getWorld().getName(), Target.UNKNOWN));
 			return r;
 		}
@@ -79,7 +79,7 @@ public class WorldEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent e) throws PrefilterNonMatchException {
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent e) throws PrefilterNonMatchException {
 			if (e instanceof MCWorldLoadEvent) {
 				Prefilters.match(prefilter, "world", ((MCWorldEvent) e).getWorld().getName(), Prefilters.PrefilterType.MACRO);
 				return true;
@@ -89,7 +89,7 @@ public class WorldEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			return false;
 		}
 
@@ -127,7 +127,7 @@ public class WorldEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent e) throws PrefilterNonMatchException {
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent e) throws PrefilterNonMatchException {
 			if (e instanceof MCWorldUnloadEvent) {
 				Prefilters.match(prefilter, "world", ((MCWorldEvent) e).getWorld().getName(), Prefilters.PrefilterType.MACRO);
 				return true;
@@ -137,7 +137,7 @@ public class WorldEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			return false;
 		}
 
@@ -175,7 +175,7 @@ public class WorldEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent e) throws PrefilterNonMatchException {
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent e) throws PrefilterNonMatchException {
 			if (e instanceof MCWorldSaveEvent) {
 				Prefilters.match(prefilter, "world", ((MCWorldEvent) e).getWorld().getName(), Prefilters.PrefilterType.MACRO);
 				return true;
@@ -185,7 +185,7 @@ public class WorldEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			return false;
 		}
 
@@ -224,7 +224,7 @@ public class WorldEvents {
 		}
 
 		@Override
-		public boolean matches(Map<String, Construct> prefilter, BindableEvent e) throws PrefilterNonMatchException {
+		public boolean matches(Map<String, Mixed> prefilter, BindableEvent e) throws PrefilterNonMatchException {
 			if (e instanceof MCStructureGrowEvent) {
 				MCStructureGrowEvent event = (MCStructureGrowEvent) e;
 				Prefilters.match(prefilter, "world", event.getWorld().getName(), Prefilters.PrefilterType.MACRO);
@@ -239,8 +239,8 @@ public class WorldEvents {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate(BindableEvent e) throws EventException {
-			Map<String, Construct> r = super.evaluate(e);
+		public Map<String, Mixed> evaluate(BindableEvent e) throws EventException {
+			Map<String, Mixed> r = super.evaluate(e);
 			MCStructureGrowEvent event = (MCStructureGrowEvent) e;
 			List<MCBlockState> blocks = event.getBlocks();
 			CArray a = new CArray(Target.UNKNOWN, blocks.size());
@@ -257,7 +257,7 @@ public class WorldEvents {
 		}
 
 		@Override
-		public boolean modifyEvent(String key, Construct value, BindableEvent event) {
+		public boolean modifyEvent(String key, Mixed value, BindableEvent event) {
 			return false;
 		}
 
