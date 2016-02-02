@@ -230,8 +230,6 @@ public class Main {
 			if (args.length == 0) {
 				args = new String[]{"--help"};
 			}
-			
-			AnnotationChecks.checkForceImplementation();
 
 			ArgumentParser mode;
 			ArgumentParser.ArgumentParserResults parsedArgs;

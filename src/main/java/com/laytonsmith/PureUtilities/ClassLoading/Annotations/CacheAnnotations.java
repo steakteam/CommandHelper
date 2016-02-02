@@ -49,7 +49,7 @@ public class CacheAnnotations {
 		ClassDiscovery.getDefaultInstance().addPreCache(cacheFile, cache);
 		ClassDiscovery.getDefaultInstance().addDiscoveryLocation(cacheFile);
 		StreamUtils.GetSystemOut().println("-- Checking for custom compile errors --");
-		AnnotationChecks.checkForceImplementation();
+		AnnotationChecks.checkAnnotations();
 		
 		Implementation.setServerType(Implementation.Type.SHELL);
 		List<String> uhohs = new ArrayList<>();

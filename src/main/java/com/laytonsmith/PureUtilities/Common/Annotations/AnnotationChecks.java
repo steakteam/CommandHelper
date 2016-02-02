@@ -2,6 +2,8 @@ package com.laytonsmith.PureUtilities.Common.Annotations;
 
 import com.laytonsmith.PureUtilities.ClassLoading.ClassDiscovery;
 import com.laytonsmith.PureUtilities.Common.StringUtils;
+import com.laytonsmith.annotations.typeof;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -19,7 +21,7 @@ import java.util.Set;
  */
 public class AnnotationChecks {
 
-	public static void checkForceImplementation() throws Exception{
+	public static void checkAnnotations() throws Exception{
 		Set<String> uhohs = new HashSet<>();
 		Set<Constructor> set = ClassDiscovery.getDefaultInstance().loadConstructorsWithAnnotation(ForceImplementation.class);
 		for(Constructor cons : set){
@@ -55,6 +57,12 @@ public class AnnotationChecks {
 					}
 				}
 				uhohs.add(c.getName() + " must implement the method with signature " + cons.getName() + "(" + getSignature(cons) + "), but doesn't.");
+			}
+		}
+		
+		for(Class c : ClassDiscovery.getDefaultInstance().loadClassesWithAnnotation(typeof.class)){
+			if(!Mixed.class.isAssignableFrom(c)){
+				uhohs.add(c.getName() + " must extend from Mixed");
 			}
 		}
 		
