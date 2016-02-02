@@ -63,7 +63,7 @@ public class Commands {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCServer s = Static.getServer();
 			MCCommandMap map = s.getCommandMap();
 			if (map == null) {
@@ -140,7 +140,7 @@ public class Commands {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCCommandMap map = Static.getServer().getCommandMap();
 			if (map == null) {
 				throw ConfigRuntimeException.BuildException(this.getName() + " is not supported in this mode (CommandMap not found).",
@@ -195,7 +195,7 @@ public class Commands {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCCommandMap map = Static.getServer().getCommandMap();
 			if (map == null) {
 				throw ConfigRuntimeException.BuildException(this.getName() + " is not supported in this mode (CommandMap not found).",
@@ -334,7 +334,7 @@ public class Commands {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCCommandMap map = Static.getServer().getCommandMap();
 			if (map == null) {
 				throw ConfigRuntimeException.BuildException(this.getName() + " is not supported in this mode (CommandMap not found).",
@@ -409,7 +409,7 @@ public class Commands {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCCommandMap map = Static.getServer().getCommandMap();
 			if (map == null) {
 				return CNull.NULL;
@@ -481,7 +481,7 @@ public class Commands {
 
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCCommandMap map = Static.getServer().getCommandMap();
 			if (map != null) {
 				map.clearCommands();

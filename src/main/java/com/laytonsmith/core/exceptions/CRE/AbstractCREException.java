@@ -158,7 +158,7 @@ public abstract class AbstractCREException extends ConfigRuntimeException implem
 
 	@Override
 	public String val() {
-		return getName() + ":" + getMessage();
+		return getExceptionObject().val();
 	}
 
 

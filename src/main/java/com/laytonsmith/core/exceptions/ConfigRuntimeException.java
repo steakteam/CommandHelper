@@ -15,7 +15,6 @@ import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CClosure;
 import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CNull;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
@@ -101,9 +100,9 @@ public class ConfigRuntimeException extends RuntimeException {
 		if (env.getEnv(GlobalEnv.class).GetExceptionHandler() != null) {
 			CClosure c = env.getEnv(GlobalEnv.class).GetExceptionHandler();
 			CArray ex = ObjectGenerator.GetGenerator().exception(e, env, Target.UNKNOWN);
-			Construct ret = CNull.NULL;
+			Mixed ret = CNull.NULL;
 			try {
-				c.execute(new Construct[]{ex});
+				c.execute(new Mixed[]{ex});
 			} catch (FunctionReturnException retException) {
 				ret = retException.getReturn();
 			}
