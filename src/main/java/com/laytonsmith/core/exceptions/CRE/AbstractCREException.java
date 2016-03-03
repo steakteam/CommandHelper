@@ -136,7 +136,7 @@ public abstract class AbstractCREException extends ConfigRuntimeException implem
 	}
 	
 	private static Mixed getCausedBy(Throwable causedBy){
-		if(causedBy == null){
+		if(causedBy == null || !(causedBy instanceof CRECausedByWrapper)){
 			return CNull.NULL;
 		}
 		CRECausedByWrapper cre = (CRECausedByWrapper) causedBy;

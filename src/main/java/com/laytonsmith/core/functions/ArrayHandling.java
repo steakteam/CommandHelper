@@ -112,7 +112,7 @@ public class ArrayHandling {
 		@Override
 		public ExampleScript[] examples() throws ConfigCompileException {
 			return new ExampleScript[]{
-				new ExampleScript("Demonstrates usage", "array_size(array(1, 2, 3, 4, 5))"),
+				new ExampleScript("Demonstrates usage", "array_size(array(1, 2, 3, 4, 5));"),
 			};
 		}
 
@@ -124,7 +124,7 @@ public class ArrayHandling {
 	}
 
 	@api(environments={GlobalEnv.class})
-	@seealso({array_set.class, array.class})
+	@seealso({array_set.class, array.class, com.laytonsmith.tools.docgen.templates.Arrays.class})
 	public static class array_get extends AbstractFunction implements Optimizable {
 
 		@Override
@@ -331,10 +331,11 @@ public class ArrayHandling {
 		@Override
 		public ExampleScript[] examples() throws ConfigCompileException {
 			return new ExampleScript[]{
-				new ExampleScript("Demonstrates basic usage", "array_get(array(1, 2, 3), 2)"),
-				new ExampleScript("Demonstrates exception", "array_get(array(), 1)"),
-				new ExampleScript("Demonstrates default", "array_get(array(), 1, 'default')"),
-				new ExampleScript("Demonstrates bracket notation", "array(0, 1, 2)[2]"),
+				new ExampleScript("Demonstrates basic usage", "msg(array(0, 1, 2)[2]);"),
+				new ExampleScript("Demonstrates exception", "msg(array()[1]);"),
+				new ExampleScript("Demonstrates basic functional usage", "msg(array_get(array(1, 2, 3), 2));"),
+				new ExampleScript("Demonstrates default (note that you cannot use the bracket syntax with this)",
+						"msg(array_get(array(), 1, 'default'));"),
 			};
 		}
 
@@ -348,7 +349,7 @@ public class ArrayHandling {
 	}
 
 	@api
-	@seealso({array_get.class, array.class, array_push.class})
+	@seealso({array_get.class, array.class, array_push.class, com.laytonsmith.tools.docgen.templates.Arrays.class})
 	public static class array_set extends AbstractFunction {
 
 		@Override
@@ -427,8 +428,16 @@ public class ArrayHandling {
 		@Override
 		public ExampleScript[] examples() throws ConfigCompileException {
 			return new ExampleScript[]{
-				new ExampleScript("Demonstrates usage", "assign(@array, array(null))\nmsg(@array)\narray_set(@array, 0, 'value0')\nmsg(@array)"),
-				new ExampleScript("Demonstrates using assign", "assign(@array, array(null))\nmsg(@array)\nassign(@array[0], 'value0')\nmsg(@array)"),
+				new ExampleScript("Demonstrates using assignment",
+						"array @array = array(null);\n"
+						+ "msg(@array);\n"
+						+ "@array[0] = 'value0';\n"
+						+ "msg(@array);"),
+				new ExampleScript("Demonstrates functional usage", 
+						"array @array = array(null);\n"
+						+ "msg(@array);\n"
+						+ "array_set(@array, 0, 'value0');\n"
+						+ "msg(@array);"),
 			};
 		}
 	}
@@ -500,11 +509,21 @@ public class ArrayHandling {
 		@Override
 		public ExampleScript[] examples() throws ConfigCompileException {
 			return new ExampleScript[]{
-				new ExampleScript("Demonstrates usage", "assign(@array, array())\nmsg(@array)\narray_push(@array, 0)\nmsg(@array)"),
-				new ExampleScript("Demonstrates pushing multiple values", "assign(@array, array())\nmsg(@array)\narray_push(@array, 0, 1, 2)\nmsg(@array)"),
 				new ExampleScript("Operator syntax. Note the difference between this and the array clone"
 						+ " operator is that this occurs on the Left Hand Side (LHS) of the assignment.",
-						"@array = array();\n@array[] = 'new value';"),
+						"array @array = array();\n"
+								+ "@array[] = 'new value';"),
+				new ExampleScript("Demonstrates functional usage", 
+						"array @array = array();\n"
+								+ "msg(@array);\n"
+								+ "array_push(@array, 0);\n"
+								+ "msg(@array);"),
+				new ExampleScript("Demonstrates pushing multiple values (note that it is not possible to use the bracket notation"
+						+ " and push multiple values)", 
+						"array @array = array();\n"
+								+ "msg(@array);\n"
+								+ "array_push(@array, 0, 1, 2);\n"
+								+ "msg(@array);"),
 			};
 		}
 	}
@@ -582,12 +601,12 @@ public class ArrayHandling {
 		@Override
 		public ExampleScript[] examples() throws ConfigCompileException {
 			return new ExampleScript[]{
-				new ExampleScript("Basic usage", "@array = array(1, 3, 4)\n"
-					+ "array_insert(@array, 2, 1)\n"
-					+ "msg(@array)"),
-				new ExampleScript("Usage as if it were array_push", "@array = array(1, 2, 3)\n"
-					+ "array_insert(@array, 4, array_size(@array))\n"
-					+ "msg(@array)")
+				new ExampleScript("Basic usage", "array @array = array(1, 3, 4);\n"
+					+ "array_insert(@array, 2, 1);\n"
+					+ "msg(@array);"),
+				new ExampleScript("Usage as if it were array_push", "@array = array(1, 2, 3);\n"
+					+ "array_insert(@array, 4, array_size(@array));\n"
+					+ "msg(@array);")
 			};
 		}
 
@@ -943,8 +962,16 @@ public class ArrayHandling {
 		@Override
 		public ExampleScript[] examples() throws ConfigCompileException {
 			return new ExampleScript[]{
-				new ExampleScript("Demonstrates basic usage", "assign(@array, array())\nmsg(@array)\narray_resize(@array, 2)\nmsg(@array)"),
-				new ExampleScript("Demonstrates custom fill", "assign(@array, array())\nmsg(@array)\narray_resize(@array, 2, 'a')\nmsg(@array)"),
+				new ExampleScript("Demonstrates basic usage", 
+						"array @array = array();\n"
+						+ "msg(@array);\n"
+						+ "array_resize(@array, 2);\n"
+						+ "msg(@array);"),
+				new ExampleScript("Demonstrates custom fill", 
+						"array @array = array();\n"
+								+ "msg(@array);\n"
+								+ "array_resize(@array, 2, 'a');\n"
+								+ "msg(@array);"),
 			};
 		}
 	}
