@@ -194,10 +194,14 @@ public class CClosure extends Construct {
 			} catch (FunctionReturnException ex){
 				// Check the return type of the closure to see if it matches the defined type
 				// Normal execution.
-				Construct ret = ex.getReturn();
-				if(!InstanceofUtil.isInstanceof(ret, returnType)){
-					throw new CRECastException("Expected closure to return a value of type " + returnType.val()
-							 + " but a value of type " + ret.typeof() + " was returned instead", ret.getTarget());
+				Mixed ret = ex.getReturn();
+				try {
+					if(!InstanceofUtil.isInstanceof(ret, returnType)){
+						throw new CRECastException("Expected closure to return a value of type " + returnType.val()
+								+ " but a value of type " + ret.typeof() + " was returned instead", ret.getTarget());
+					}
+				} catch (ClassNotFoundException ex1) {
+					throw new CREClassNotFoundException("Could not find " + returnType, ret.getTarget());
 				}
 				// Now rethrow it
 				throw ex;

@@ -17,7 +17,7 @@ public class InstanceofUtil {
 	 * @param value The value to check for
 	 * @param instanceofThis The string type to check
 	 * @return
-	 * @throws java.lang.ClassNotFoundException
+	 * @throws java.lang.ClassNotFoundException If {@code instanceofThis} could not be found.
 	 */
 	public static boolean isInstanceof(Mixed value, String instanceofThis) throws ClassNotFoundException{
 		Static.AssertNonNull(instanceofThis, "instanceofThis may not be null");
@@ -33,7 +33,7 @@ public class InstanceofUtil {
 	 * @param value The value to check for
 	 * @param instanceofThis The CClassType to check
 	 * @return
-	 * @throws java.lang.ClassNotFoundException
+	 * @throws java.lang.ClassNotFoundException If {@code instanceofThis} could not be found.
 	 */
 	public static boolean isInstanceof(Mixed value, CClassType instanceofThis) throws ClassNotFoundException{
 		return isInstanceof(value, instanceofThis.val());
