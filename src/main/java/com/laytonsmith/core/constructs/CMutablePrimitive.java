@@ -42,7 +42,7 @@ public class CMutablePrimitive extends CArray implements Sizeable {
 	 */
 	public void set(Mixed value, Target t){
 		if(value instanceof CArray){
-			throw ConfigRuntimeException.BuildException("mutable_primitives can only store primitive values.", CREFormatException.class, t);
+			throw new CREFormatException("mutable_primitives can only store primitive values.", t);
 		}
 		this.value = value;
 	}
@@ -136,7 +136,7 @@ public class CMutablePrimitive extends CArray implements Sizeable {
 
 	@Override
 	public void set(Mixed index, Mixed c, Target t) {
-		throw ConfigRuntimeException.BuildException("mutable_primitives cannot have values set in them", CRECastException.class, t);
+		throw new CRECastException("mutable_primitives cannot have values set in them", t);
 	}
 
 	@Override

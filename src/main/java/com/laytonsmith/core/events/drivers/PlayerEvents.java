@@ -42,14 +42,17 @@ import com.laytonsmith.core.events.drivers.EntityEvents.entity_death;
 import com.laytonsmith.core.exceptions.CRE.CREBindException;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
+import com.laytonsmith.core.exceptions.CRE.CRENullPointerException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.EventException;
 import com.laytonsmith.core.exceptions.PrefilterNonMatchException;
+import com.laytonsmith.core.functions.EventBinding.modify_event;
 import com.laytonsmith.core.functions.StringHandling;
 import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.FormatFlagsConversionMismatchException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IllegalFormatConversionException;
@@ -1539,16 +1542,31 @@ public class PlayerEvents {
                         }
                         e.setRecipients(list);
                     } else {
-                        throw ConfigRuntimeException.BuildException("recipients must be an array", CRECastException.class, value.getTarget());
+                        throw new CRECastException("recipients must be an array", value.getTarget());
                     }
                 }
 				if("format".equals(key)){
+					String format = Static.GetValOrNull(value);
+					if(format == null) {
+						throw new CRENullPointerException("The \"format\" key in " + new modify_event().getName() + " for the " + this.getName()
+								+ " event may not be null.", Target.UNKNOWN);
+					}
 					try{
-						e.setFormat(Static.GetValOrNull(value));
-					} catch(UnknownFormatConversionException|IllegalFormatConversionException ex){
-						throw new CREFormatException(ex.getMessage(), Target.UNKNOWN);
+						// Throws UnknownFormatConversionException, MissingFormatException,
+						// IllegalFormatConversionException, FormatFlagsConversionMismatchException, NullPointerException and possibly more.
+						e.setFormat(format); 
+					} catch(Exception ex){
+						// Check the format to give a better exception message.
+						if(format.replaceAll("%%", "").replaceAll("\\%\\%|\\%[12]\\$s", "").contains("%")) {
+							throw new CREFormatException("The \"format\" key in " + modify_event.class.getSimpleName() + " for the " + this.getName()
+									+ " event only accepts %1$s and %2$s as format specifiers. Use a \"%%\" to display a single \"%\".", Target.UNKNOWN);
+						} else {
+							throw new CREFormatException("The \"format\" key in " + modify_event.class.getSimpleName() + " for the " + this.getName()
+									+ " event was set to an invalid value: " + format + ". The original exception message is: " + ex.getMessage(), Target.UNKNOWN);
+						}
 					}
 				}
+				
                 return true;
             }
             return false;
@@ -1654,7 +1672,7 @@ public class PlayerEvents {
                         }
                         e.setRecipients(list);
                     } else {
-                        throw ConfigRuntimeException.BuildException("recipients must be an array", CRECastException.class, value.getTarget());
+                        throw new CRECastException("recipients must be an array", value.getTarget());
                     }
                 }
 				if("format".equals(key)){
@@ -2119,7 +2137,7 @@ public class PlayerEvents {
 
 		@Override
 		public BindableEvent convert(CArray manualObject, Target t) {
-			throw ConfigRuntimeException.BuildException("Unsupported Operation", CREBindException.class, Target.UNKNOWN);
+			throw new CREBindException("Unsupported Operation", Target.UNKNOWN);
 		}
 
 		@Override
@@ -2180,7 +2198,7 @@ public class PlayerEvents {
 
 		@Override
 		public BindableEvent convert(CArray manualObject, Target t) {
-			throw ConfigRuntimeException.BuildException("Unsupported Operation", CREBindException.class, Target.UNKNOWN);
+			throw new CREBindException("Unsupported Operation", Target.UNKNOWN);
 		}
 
 		@Override
@@ -2425,7 +2443,7 @@ public class PlayerEvents {
 				} else if (key.equalsIgnoreCase("pages")) {
 					CArray pageArray = Static.getArray(value, value.getTarget());
 					if (pageArray.inAssociativeMode()) {
-						throw ConfigRuntimeException.BuildException("The page array must not be associative.", CRECastException.class, pageArray.getTarget());
+						throw new CRECastException("The page array must not be associative.", pageArray.getTarget());
 					} else {
 						List<String> pages = new ArrayList<String>();
 						for (Mixed page : pageArray.asList()) {

@@ -67,13 +67,11 @@ public class Commands {
 			MCServer s = Static.getServer();
 			MCCommandMap map = s.getCommandMap();
 			if (map == null) {
-				throw ConfigRuntimeException.BuildException(this.getName() + " is not supported in this mode (CommandMap not found).",
-						CRENotFoundException.class, t);
+				throw new CRENotFoundException(this.getName() + " is not supported in this mode (CommandMap not found).", t);
 			}
 			MCCommand cmd = map.getCommand(args[0].val());
 			if (cmd == null) {
-				throw ConfigRuntimeException.BuildException("Command not found, did you forget to register it?",
-						CRENotFoundException.class, t);
+				throw new CRENotFoundException("Command not found, did you forget to register it?", t);
 			}
 			customExec(t, environment, cmd, args[1]);
 			return CVoid.VOID;
@@ -91,8 +89,7 @@ public class Commands {
 				onTabComplete.remove(cmd.getName());
 				onTabComplete.put(cmd.getName(), (CClosure) arg);
 			} else {
-				throw ConfigRuntimeException.BuildException("At this time, only closures are accepted as tabcompleters",
-						CREFormatException.class, t);
+				throw new CREFormatException("At this time, only closures are accepted as tabcompleters", t);
 			}
 		}
 
@@ -143,13 +140,11 @@ public class Commands {
 		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCCommandMap map = Static.getServer().getCommandMap();
 			if (map == null) {
-				throw ConfigRuntimeException.BuildException(this.getName() + " is not supported in this mode (CommandMap not found).",
-						CRENotFoundException.class, t);
+				throw new CRENotFoundException(this.getName() + " is not supported in this mode (CommandMap not found).", t);
 			}
 			MCCommand cmd = map.getCommand(args[0].val());
 			if (cmd == null) {
-				throw ConfigRuntimeException.BuildException("Command not found, did you forget to register it?",
-						CRENotFoundException.class, t);
+				throw new CRENotFoundException("Command not found, did you forget to register it?", t);
 			}
 			return CBoolean.get(map.unregister(cmd));
 		}
@@ -198,8 +193,7 @@ public class Commands {
 		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCCommandMap map = Static.getServer().getCommandMap();
 			if (map == null) {
-				throw ConfigRuntimeException.BuildException(this.getName() + " is not supported in this mode (CommandMap not found).",
-						CRENotFoundException.class, t);
+				throw new CRENotFoundException(this.getName() + " is not supported in this mode (CommandMap not found).", t);
 			}
 			MCCommand cmd = map.getCommand(args[0].val().toLowerCase());
 			boolean isnew = false;
@@ -243,7 +237,7 @@ public class Commands {
 				}
 				return CBoolean.get(success);
 			} else {
-				throw ConfigRuntimeException.BuildException("Arg 2 was expected to be an array.", CREFormatException.class, t);
+				throw new CREFormatException("Arg 2 was expected to be an array.", t);
 			}
 		}
 
@@ -337,13 +331,11 @@ public class Commands {
 		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCCommandMap map = Static.getServer().getCommandMap();
 			if (map == null) {
-				throw ConfigRuntimeException.BuildException(this.getName() + " is not supported in this mode (CommandMap not found).",
-						CRENotFoundException.class, t);
+				throw new CRENotFoundException(this.getName() + " is not supported in this mode (CommandMap not found).", t);
 			}
 			MCCommand cmd = map.getCommand(args[0].val());
 			if (cmd == null) {
-				throw ConfigRuntimeException.BuildException("Command not found did you forget to register it?",
-						CRENotFoundException.class, t);
+				throw new CRENotFoundException("Command not found did you forget to register it?", t);
 			}
 			customExec(t, environment, cmd, args[1]);
 			return CVoid.VOID;
@@ -361,8 +353,7 @@ public class Commands {
 				onCommand.remove(cmd.getName());
 				onCommand.put(cmd.getName(), (CClosure) arg);
 			} else {
-				throw ConfigRuntimeException.BuildException("At this time, only closures are accepted as command executors.",
-						CREFormatException.class, t);
+				throw new CREFormatException("At this time, only closures are accepted as command executors.", t);
 			}
 		}
 

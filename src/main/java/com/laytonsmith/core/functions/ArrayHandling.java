@@ -81,7 +81,7 @@ public class ArrayHandling {
 			if (args[0] instanceof CArray && !(args[0] instanceof CMutablePrimitive)) {
 				return new CInt(((CArray) args[0]).size(), t);
 			}
-			throw ConfigRuntimeException.BuildException("Argument 1 of array_size must be an array", CRECastException.class, t);
+			throw new CRECastException("Argument 1 of array_size must be an array", t);
 		}
 
 		@Override
@@ -158,7 +158,7 @@ public class ArrayHandling {
 					if (((CSlice) index).getStart() == 0 && ((CSlice) index).getFinish() == -1) {
 						return ca.deepClone(t);
 					} else if(ca.inAssociativeMode()) {
-						throw ConfigRuntimeException.BuildException("Array slices are not allowed with an associative array", CRECastException.class, t);
+						throw new CRECastException("Array slices are not allowed with an associative array", t);
 					}
 					
 					//It's a range
@@ -186,7 +186,7 @@ public class ArrayHandling {
 						}
 						return na;
 					} catch (NumberFormatException e) {
-						throw ConfigRuntimeException.BuildException("Ranges must be integer numbers, i.e., [0..5]", CRECastException.class, t);
+						throw new CRECastException("Ranges must be integer numbers, i.e., [0..5]", t);
 					}
 				} else {
 					try {
@@ -252,7 +252,7 @@ public class ArrayHandling {
 						}
 						return new CString(b.toString(), t);
 					} catch (NumberFormatException e) {
-						throw ConfigRuntimeException.BuildException("Ranges must be integer numbers, i.e., [0..5]", CRECastException.class, t);
+						throw new CRECastException("Ranges must be integer numbers, i.e., [0..5]", t);
 					}
 				} else {
 					try {
@@ -261,20 +261,20 @@ public class ArrayHandling {
 					} catch (ConfigRuntimeException e) {
 						if (e instanceof CRECastException) {
 							if(args[0] instanceof CArray){
-								throw ConfigRuntimeException.BuildException("Expecting an integer index for the array, but found \"" + index
-										+ "\". (Array is not associative, and cannot accept string keys here.)", CRECastException.class, t);
+								throw new CRECastException("Expecting an integer index for the array, but found \"" + index
+										+ "\". (Array is not associative, and cannot accept string keys here.)", t);
 							} else {
-								throw ConfigRuntimeException.BuildException("Expecting an array, but \"" + args[0] + "\" was found.", CRECastException.class, t);
+								throw new CRECastException("Expecting an array, but \"" + args[0] + "\" was found.", t);
 							}
 						} else {
 							throw e;
 						}
 					} catch (StringIndexOutOfBoundsException e) {
-						throw ConfigRuntimeException.BuildException("No index at " + index, CRERangeException.class, t);
+						throw new CRERangeException("No index at " + index, t);
 					}
 				}
 			} else {
-				throw ConfigRuntimeException.BuildException("Argument 1 of array_get must be an array", CRECastException.class, t);
+				throw new CRECastException("Argument 1 of array_get must be an array", t);
 			}
 		}
 
@@ -312,7 +312,7 @@ public class ArrayHandling {
 		@Override
 		public Mixed optimize(Target t, Mixed... args) throws ConfigCompileException {
 			if(args.length == 0) {
-				throw ConfigRuntimeException.BuildException("Argument 1 of array_get must be an array", CRECastException.class, t);
+				throw new CRECastException("Argument 1 of array_get must be an array", t);
 			}
 			if (args[0] instanceof ArrayAccess) {
 				ArrayAccess aa = (ArrayAccess) args[0];
@@ -375,12 +375,12 @@ public class ArrayHandling {
 			Mixed index = parent.seval(nodes[1], env);
 			Mixed value = parent.seval(nodes[2], env);
 			if(!(array instanceof CArray)){
-				throw ConfigRuntimeException.BuildException("Argument 1 of array_set must be an array", CRECastException.class, t);
+				throw new CRECastException("Argument 1 of array_set must be an array", t);
 			}
 			try {
 				((CArray)array).set(index, value, t);
 			} catch (IndexOutOfBoundsException e) {
-				throw ConfigRuntimeException.BuildException("The index " + new CString(index.val(), t).getQuote() + " is out of bounds", CREIndexOverflowException.class, t);
+				throw new CREIndexOverflowException("The index " + new CString(index.val(), t).getQuote() + " is out of bounds", t);
 			}
 			return value;
 		}
@@ -391,11 +391,11 @@ public class ArrayHandling {
 				try {
 					((CArray) args[0]).set(args[1], args[2], t);
 				} catch (IndexOutOfBoundsException e) {
-					throw ConfigRuntimeException.BuildException("The index " + args[1].val() + " is out of bounds", CREIndexOverflowException.class, t);
+					throw new CREIndexOverflowException("The index " + args[1].val() + " is out of bounds", t);
 				}
 				return args[2];
 			}
-			throw ConfigRuntimeException.BuildException("Argument 1 of array_set must be an array", CRECastException.class, t);
+			throw new CRECastException("Argument 1 of array_set must be an array", t);
 		}
 
 		@Override
@@ -459,7 +459,7 @@ public class ArrayHandling {
 		@Override
 		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if(args.length < 2) {
-				throw ConfigRuntimeException.BuildException("At least 2 arguments must be provided to array_push", CREInsufficientArgumentsException.class, t);
+				throw new CREInsufficientArgumentsException("At least 2 arguments must be provided to array_push", t);
 			}
 			if (args[0] instanceof CArray) {
 				CArray array = (CArray)args[0];
@@ -475,7 +475,7 @@ public class ArrayHandling {
 				}
 				return CVoid.VOID;
 			}
-			throw ConfigRuntimeException.BuildException("Argument 1 of array_push must be an array", CRECastException.class, t);
+			throw new CRECastException("Argument 1 of array_push must be an array", t);
 		}
 
 		@Override
@@ -570,7 +570,7 @@ public class ArrayHandling {
 			} catch(IllegalArgumentException e){
 				throw new CRECastException(e.getMessage(), t);
 			} catch(IndexOutOfBoundsException ex){
-				throw ConfigRuntimeException.BuildException(ex.getMessage(), CREIndexOverflowException.class, t);
+				throw new CREIndexOverflowException(ex.getMessage(), t);
 			}
 			return CVoid.VOID;
 		}
@@ -629,7 +629,7 @@ public class ArrayHandling {
 		@Override
 		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if(!(args[0] instanceof CArray)) {
-				throw ConfigRuntimeException.BuildException("Argument 1 of " + this.getName() + " must be an array", CRECastException.class, t);
+				throw new CRECastException("Argument 1 of " + this.getName() + " must be an array", t);
 			}
 			CArray ca = (CArray) args[0];
 			for(Mixed key : ca.keySet()){
@@ -733,7 +733,7 @@ public class ArrayHandling {
 				}
 				return CBoolean.FALSE;
 			} else {
-				throw ConfigRuntimeException.BuildException("Argument 1 of " + this.getName() + " must be an array", CRECastException.class, t);
+				throw new CRECastException("Argument 1 of " + this.getName() + " must be an array", t);
 			}
 		}
 
@@ -769,7 +769,7 @@ public class ArrayHandling {
 		@Override
 		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if(!(args[0] instanceof CArray)) {
-				throw ConfigRuntimeException.BuildException("Argument 1 of " + this.getName() + " must be an array", CRECastException.class, t);
+				throw new CRECastException("Argument 1 of " + this.getName() + " must be an array", t);
 			}
 			CArray ca = (CArray) args[0];
 			for(Mixed key : ca.keySet()){
@@ -880,7 +880,7 @@ public class ArrayHandling {
 					return CBoolean.get(ca.containsKey(args[1].val()));
 				}
 			} else {
-				throw ConfigRuntimeException.BuildException("Expecting argument 1 to be an array", CRECastException.class, t);
+				throw new CRECastException("Expecting argument 1 to be an array", t);
 			}
 		}
 
@@ -954,7 +954,7 @@ public class ArrayHandling {
 					original.push(fill, t);
 				}
 			} else {
-				throw ConfigRuntimeException.BuildException("Argument 1 must be an array, and argument 2 must be an integer in array_resize", CRECastException.class, t);
+				throw new CRECastException("Argument 1 must be an array, and argument 2 must be an integer in array_resize", t);
 			}
 			return (CArray)args[0];
 		}
@@ -1110,7 +1110,7 @@ public class ArrayHandling {
 				}
 				return ca2;
 			} else {
-				throw ConfigRuntimeException.BuildException(this.getName() + " expects arg 1 to be an array", CRECastException.class, t);
+				throw new CRECastException(this.getName() + " expects arg 1 to be an array", t);
 			}
 		}
 
@@ -1177,7 +1177,7 @@ public class ArrayHandling {
 				}
 				return ca2;
 			} else {
-				throw ConfigRuntimeException.BuildException(this.getName() + " expects arg 1 to be an array", CRECastException.class, t);
+				throw new CRECastException(this.getName() + " expects arg 1 to be an array", t);
 			}
 		}
 
@@ -1239,7 +1239,7 @@ public class ArrayHandling {
 		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray newArray = new CArray(t);
 			if (args.length < 2) {
-				throw ConfigRuntimeException.BuildException("array_merge must be called with at least two parameters", CREInsufficientArgumentsException.class, t);
+				throw new CREInsufficientArgumentsException("array_merge must be called with at least two parameters", t);
 			}
 			for (Mixed arg : args) {
 				if (arg instanceof ArrayAccess) {
@@ -1258,7 +1258,7 @@ public class ArrayHandling {
 						}
 					}
 				} else {
-					throw ConfigRuntimeException.BuildException("All arguments to array_merge must be arrays", CRECastException.class, t);
+					throw new CRECastException("All arguments to array_merge must be arrays", t);
 				}
 			}
 			return newArray;
@@ -1386,7 +1386,7 @@ public class ArrayHandling {
 		@Override
 		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if (!(args[0] instanceof ArrayAccess)) {
-				throw ConfigRuntimeException.BuildException("Expecting argument 1 to be an array", CRECastException.class, t);
+				throw new CRECastException("Expecting argument 1 to be an array", t);
 			}
 			StringBuilder b = new StringBuilder();
 			ArrayAccess ca = (ArrayAccess) args[0];
@@ -1502,7 +1502,7 @@ public class ArrayHandling {
 		@Override
 		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if (!(args[0] instanceof CArray)) {
-				throw ConfigRuntimeException.BuildException("The first parameter to array_sort must be an array", CRECastException.class, t);
+				throw new CRECastException("The first parameter to array_sort must be an array", t);
 			}
 			CArray ca = (CArray) args[0];
 			CArray.SortType sortType = CArray.SortType.REGULAR;
@@ -1520,8 +1520,7 @@ public class ArrayHandling {
 					}
 				}
 			} catch (IllegalArgumentException e) {
-				throw ConfigRuntimeException.BuildException("The sort type must be one of either: " + StringUtils.Join(CArray.SortType.values(), ", ", " or "),
-						CREFormatException.class, t);
+				throw new 						CREFormatException("The sort type must be one of either: " + StringUtils.Join(CArray.SortType.values(), ", ", " or "), t);
 			}
 			if(sortType == null){
 				// It's a custom sort, which we have implemented below.
@@ -1584,7 +1583,7 @@ public class ArrayHandling {
 							value = -1;
 						}
 					} else {
-						throw ConfigRuntimeException.BuildException("The custom closure did not return a value. It must always return true, false, or null.", CRECastException.class, t);
+						throw new CRECastException("The custom closure did not return a value. It must always return true, false, or null.", t);
 					}
 					if(value <= 0){
 						result.push(left.get(0, t), t);
@@ -1859,7 +1858,7 @@ public class ArrayHandling {
 		@Override
 		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(!(args[0] instanceof CArray)){
-				throw ConfigRuntimeException.BuildException("Expected parameter 1 to be an array, but was " + args[0].val(), CRECastException.class, t);
+				throw new CRECastException("Expected parameter 1 to be an array, but was " + args[0].val(), t);
 			}
 			return ((CArray)args[0]).indexesOf(args[1]);
 		}
@@ -2109,10 +2108,10 @@ public class ArrayHandling {
 				number = Static.getInt(args[1], t);
 			}
 			if(number < 1){
-				throw ConfigRuntimeException.BuildException("number may not be less than 1.", CRERangeException.class, t);
+				throw new CRERangeException("number may not be less than 1.", t);
 			}
 			if(number > Integer.MAX_VALUE){
-				throw ConfigRuntimeException.BuildException("Overflow detected. Number cannot be larger than " + Integer.MAX_VALUE, CRERangeException.class, t);
+				throw new CRERangeException("Overflow detected. Number cannot be larger than " + Integer.MAX_VALUE, t);
 			}
 			if(args.length > 2){
 				getKeys = Static.getBoolean(args[2]);
@@ -2397,10 +2396,10 @@ public class ArrayHandling {
 		@Override
 		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(args.length != 1) {
-				throw ConfigRuntimeException.BuildException("Expecting exactly one argument", CREInsufficientArgumentsException.class, t);
+				throw new CREInsufficientArgumentsException("Expecting exactly one argument", t);
 			}
 			if(!(args[0] instanceof CArray)) {
-				throw ConfigRuntimeException.BuildException("Expecting argument 1 to be an array", CRECastException.class, t);
+				throw new CRECastException("Expecting argument 1 to be an array", t);
 			}
 			return ((CArray) args[0]).deepClone(t);
 		}
@@ -2465,10 +2464,10 @@ public class ArrayHandling {
 		@Override
 		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(args.length != 1) {
-				throw ConfigRuntimeException.BuildException("Expecting exactly one argument", CREInsufficientArgumentsException.class, t);
+				throw new CREInsufficientArgumentsException("Expecting exactly one argument", t);
 			}
 			if(!(args[0] instanceof CArray)) {
-				throw ConfigRuntimeException.BuildException("Expecting argument 1 to be an array", CRECastException.class, t);
+				throw new CRECastException("Expecting argument 1 to be an array", t);
 			}
 			CArray array = (CArray) args[0];
 			CArray shallowClone = (array.isAssociative() ? CArray.GetAssociativeArray(t) : new CArray(t));
@@ -2629,12 +2628,12 @@ public class ArrayHandling {
 				} catch(FunctionReturnException ex){
 					lastValue = ex.getReturn();
 					if(lastValue instanceof CVoid){
-						throw ConfigRuntimeException.BuildException("The closure passed to " + getName() + " cannot return void.", CREIllegalArgumentException.class, t);
+						throw new CREIllegalArgumentException("The closure passed to " + getName() + " cannot return void.", t);
 					}
 					hadReturn = true;
 				}
 				if(!hadReturn){
-					throw ConfigRuntimeException.BuildException("The closure passed to " + getName() + " must return a value, but one was not returned.", CREIllegalArgumentException.class, t);
+					throw new CREIllegalArgumentException("The closure passed to " + getName() + " must return a value, but one was not returned.", t);
 				}
 			}
 			return lastValue;
@@ -2722,12 +2721,12 @@ public class ArrayHandling {
 				} catch(FunctionReturnException ex){
 					lastValue = ex.getReturn();
 					if(lastValue instanceof CVoid){
-						throw ConfigRuntimeException.BuildException("The closure passed to " + getName() + " cannot return void.", CREIllegalArgumentException.class, t);
+						throw new CREIllegalArgumentException("The closure passed to " + getName() + " cannot return void.", t);
 					}
 					hadReturn = true;
 				}
 				if(!hadReturn){
-					throw ConfigRuntimeException.BuildException("The closure passed to " + getName() + " must return a value, but one was not returned.", CREIllegalArgumentException.class, t);
+					throw new CREIllegalArgumentException("The closure passed to " + getName() + " must return a value, but one was not returned.", t);
 				}
 			}
 			return lastValue;
@@ -2811,7 +2810,7 @@ public class ArrayHandling {
 					}
 				}
 				if(!hasReturn){
-					throw ConfigRuntimeException.BuildException("The closure passed to " + getName() + " must return a boolean.", CREIllegalArgumentException.class, t);
+					throw new CREIllegalArgumentException("The closure passed to " + getName() + " must return a boolean.", t);
 				}
 			}
 			return CBoolean.TRUE;
@@ -2892,7 +2891,7 @@ public class ArrayHandling {
 					}
 				}
 				if(!hasReturn){
-					throw ConfigRuntimeException.BuildException("The closure passed to " + getName() + " must return a boolean.", CREIllegalArgumentException.class, t);
+					throw new CREIllegalArgumentException("The closure passed to " + getName() + " must return a boolean.", t);
 				}
 			}
 			return CBoolean.FALSE;
@@ -2972,7 +2971,7 @@ public class ArrayHandling {
 					newArray.set(c, ex.getReturn(), t);
 				}
 				if(!hasReturn){
-					throw ConfigRuntimeException.BuildException("The closure passed to " + getName() + " must return a value.", CREIllegalArgumentException.class, t);
+					throw new CREIllegalArgumentException("The closure passed to " + getName() + " must return a value.", t);
 				}
 			}
 

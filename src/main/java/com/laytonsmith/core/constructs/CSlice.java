@@ -52,7 +52,7 @@ public class CSlice extends CArray {
             start = Long.parseLong(sstart.trim());
             finish = Long.parseLong(sfinish.trim());
         } catch(NumberFormatException e){
-            throw ConfigRuntimeException.BuildException("Expecting integer in a slice, but was given \"" + sstart + "\" and \"" + sfinish + "\"", CRECastException.class,  t);
+            throw new CRECastException("Expecting integer in a slice, but was given \"" + sstart + "\" and \"" + sfinish + "\"",  t);
         }
 		calculateCaches();
     }
@@ -113,14 +113,14 @@ public class CSlice extends CArray {
 
 	@Override
 	public void set(Mixed index, Mixed c, Target t) {
-		throw ConfigRuntimeException.BuildException("CSlices cannot set values", CRECastException.class, t);
+		throw new CRECastException("CSlices cannot set values", t);
 	}
 
 	@Override
 	public Mixed get(Mixed index, Target t) {
 		long i = Static.getInt(index, t);
 		if(i > max){
-			throw ConfigRuntimeException.BuildException("Index out of bounds. Index: " + i + " Size: " + max, CRERangeException.class, t);
+			throw new CRERangeException("Index out of bounds. Index: " + i + " Size: " + max, t);
 		}
 		return new CInt(start + (direction * i), t);
 	}
