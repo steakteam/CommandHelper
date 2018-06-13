@@ -61,6 +61,7 @@ import com.laytonsmith.abstraction.events.MCPlayerToggleSneakEvent;
 import com.laytonsmith.abstraction.events.MCPlayerToggleSprintEvent;
 import com.laytonsmith.abstraction.events.MCWorldChangedEvent;
 import com.laytonsmith.annotations.abstraction;
+import com.laytonsmith.core.Static;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.TravelAgent;
@@ -464,7 +465,7 @@ public class BukkitPlayerEvents {
 
 		public static BukkitMCPlayerChatEvent _instantiate(MCPlayer player, String message, String format) {
 			AsyncPlayerChatEvent apce = new AsyncPlayerChatEvent(false, ((BukkitMCPlayer) player)._Player(), message,
-					new HashSet<>(Bukkit.getServer().getOnlinePlayers()));
+					new HashSet<>(Static.getOnlinePlayers()));
 			apce.setFormat(format);
 			return new BukkitMCPlayerChatEvent(apce);
 		}

@@ -379,7 +379,7 @@ public class CommandHelperPlugin extends JavaPlugin {
 				return new Thread(r, "CommandHelperHostnameLookup-" + (++hostnameThreadPoolID));
 			}
 		});
-		for(Player p : getServer().getOnlinePlayers()) {
+		for(Player p : Static.getOnlinePlayers()) {
 			//Repopulate our cache for currently online players.
 			//New players that join later will get a lookup done
 			//on them at that time.

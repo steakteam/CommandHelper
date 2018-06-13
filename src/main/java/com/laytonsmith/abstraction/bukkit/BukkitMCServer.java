@@ -51,6 +51,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class BukkitMCServer implements MCServer {
 
@@ -81,12 +82,9 @@ public class BukkitMCServer implements MCServer {
 
 	@Override
 	public Collection<MCPlayer> getOnlinePlayers() {
-		Collection<? extends Player> players = s.getOnlinePlayers();
-		Set<MCPlayer> mcpa = new HashSet<>();
-		for(Player p : players) {
-			mcpa.add(new BukkitMCPlayer(p));
-		}
-		return mcpa;
+		return Static.getOnlinePlayers().stream()
+				.map(BukkitMCPlayer::new)
+				.collect(Collectors.toSet());
 	}
 
 	public static MCServer Get() {

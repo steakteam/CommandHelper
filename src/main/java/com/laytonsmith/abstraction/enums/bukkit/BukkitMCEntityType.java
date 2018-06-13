@@ -161,7 +161,7 @@ public class BukkitMCEntityType extends MCEntityType<EntityType> {
 				}
 				try {
 					wrapperClass = (Class<? extends MCEntity>) Class.forName(name);
-				} catch(ClassNotFoundException e) {
+				} catch(Throwable e) {
 					String url = "https://github.com/sk89q/CommandHelper/tree/master/src/main/java/"
 							+ "com/laytonsmith/abstraction/bukkit/entities";
 					CHLog.GetLogger().d(CHLog.Tags.RUNTIME, "While trying to find the correct entity class for "

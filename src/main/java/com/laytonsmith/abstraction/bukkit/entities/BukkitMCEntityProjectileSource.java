@@ -8,6 +8,7 @@ import com.laytonsmith.abstraction.bukkit.BukkitConvertor;
 import com.laytonsmith.abstraction.enums.MCProjectileType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
@@ -18,28 +19,26 @@ import org.bukkit.util.Vector;
  * @author jb_aero
  */
 public class BukkitMCEntityProjectileSource extends BukkitMCEntity implements MCProjectileSource {
+	static boolean projectileSource;
+	Entity eps;
 
-	ProjectileSource eps;
+	static {
+		try {
+			Class.forName(ProjectileSource.class.getName());
+			projectileSource = true;
+		} catch (NoClassDefFoundError | ClassNotFoundException ex) {
+			projectileSource = false;
+		}
+	}
 
 	public BukkitMCEntityProjectileSource(Entity source) {
 		super(source);
-		if(!(source instanceof ProjectileSource)) {
-			throw new IllegalArgumentException("Tried to construct BukkitMCEntityProjectileSource from invalid source.");
-		}
-		eps = (ProjectileSource) source;
+		eps = source;
 	}
 
 	@Override
 	public MCProjectile launchProjectile(MCProjectileType projectile) {
-		EntityType et = EntityType.valueOf(projectile.name());
-		Class<? extends Entity> c = et.getEntityClass();
-		Projectile proj = eps.launchProjectile(c.asSubclass(Projectile.class));
-		MCEntity mcproj = BukkitConvertor.BukkitGetCorrectEntity(proj);
-		if(mcproj instanceof MCProjectile) {
-			return (MCProjectile) mcproj;
-		} else {
-			return null;
-		}
+		return launchProjectile(projectile, null);
 	}
 
 	@Override
@@ -47,9 +46,15 @@ public class BukkitMCEntityProjectileSource extends BukkitMCEntity implements MC
 		EntityType et = EntityType.valueOf(projectile.name());
 		Class<? extends Entity> c = et.getEntityClass();
 		Vector vector = new Vector(init.X(), init.Y(), init.Z());
-		Projectile proj = eps.launchProjectile(c.asSubclass(Projectile.class), vector);
+		Class<? extends Projectile> projectileClass = c.asSubclass(Projectile.class);
+		Projectile proj = null;
+		if (projectileSource) {
+			proj = ((ProjectileSource) eps).launchProjectile(projectileClass, vector);
+		} else if (eps instanceof Player) {
+			proj = ((Player) eps).launchProjectile(projectileClass);
+		}
 		MCEntity mcproj = BukkitConvertor.BukkitGetCorrectEntity(proj);
-		if(mcproj instanceof MCProjectile) {
+		if (mcproj instanceof MCProjectile) {
 			return (MCProjectile) mcproj;
 		} else {
 			return null;

@@ -60,6 +60,8 @@ import com.laytonsmith.core.taskmanager.TaskManager;
 import com.laytonsmith.persistence.DataSourceException;
 import com.laytonsmith.persistence.PersistenceNetwork;
 import com.laytonsmith.persistence.io.ConnectionMixinFactory;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -67,13 +69,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1575,5 +1581,16 @@ public final class Static {
 			}
 		}
 		return null;
+	}
+
+	public static Collection<? extends Player> getOnlinePlayers() {
+		try {
+			Method method = Bukkit.class.getMethod("getOnlinePlayers");
+			return method.getReturnType() == Collection.class
+					? Bukkit.getOnlinePlayers()
+					: new HashSet<>(Arrays.asList((Player[]) method.invoke(null)));
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 }
