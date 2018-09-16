@@ -15,15 +15,10 @@ import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.environments.GlobalEnv;
 import com.laytonsmith.core.events.EventUtils;
-import com.laytonsmith.core.exceptions.CancelCommandException;
-import com.laytonsmith.core.exceptions.ConfigCompileException;
-import com.laytonsmith.core.exceptions.ConfigCompileGroupException;
-import com.laytonsmith.core.exceptions.ConfigRuntimeException;
-import com.laytonsmith.core.exceptions.ProgramFlowManipulationException;
+import com.laytonsmith.core.exceptions.*;
 import com.laytonsmith.core.extensions.ExtensionManager;
 import com.laytonsmith.core.functions.IncludeCache;
 import com.laytonsmith.core.functions.Scheduling;
-import com.laytonsmith.core.packetjumper.PacketJumper;
 import com.laytonsmith.core.profiler.ProfilePoint;
 import com.laytonsmith.core.profiler.Profiler;
 import com.laytonsmith.core.taskmanager.TaskManager;
@@ -32,24 +27,10 @@ import com.laytonsmith.persistence.MemoryDataSource;
 import com.laytonsmith.persistence.PersistenceNetwork;
 import com.laytonsmith.persistence.io.ConnectionMixinFactory;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.nio.charset.Charset;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -541,14 +522,14 @@ public class AliasCore {
 	 * @throws Exception if the file cannot be found
 	 */
 	public static String file_get_contents(String file_location) throws IOException {
-		BufferedReader in = new BufferedReader(new FileReader(file_location));
-		String ret = "";
-		String str;
-		while ((str = in.readLine()) != null) {
-			ret += str + "\n";
+		StringBuilder ret = new StringBuilder();
+		try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file_location), Charset.forName("UTF-8")))) {
+			String str;
+			while ((str = in.readLine()) != null) {
+				ret.append(str).append("\n");
+			}
 		}
-		in.close();
-		return ret;
+		return ret.toString();
 	}
 
 	/**
