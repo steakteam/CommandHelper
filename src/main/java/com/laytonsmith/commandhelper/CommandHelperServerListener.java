@@ -4,7 +4,6 @@ import com.laytonsmith.abstraction.MCCommandSender;
 import com.laytonsmith.abstraction.bukkit.BukkitMCBlockCommandSender;
 import com.laytonsmith.abstraction.bukkit.BukkitMCCommandSender;
 import com.laytonsmith.abstraction.bukkit.BukkitMCConsoleCommandSender;
-import com.laytonsmith.abstraction.bukkit.entities.BukkitMCCommandMinecart;
 import com.laytonsmith.abstraction.bukkit.events.BukkitMiscEvents;
 import com.laytonsmith.abstraction.enums.MCChatColor;
 import com.laytonsmith.core.InternalException;
@@ -14,7 +13,6 @@ import com.laytonsmith.core.events.EventUtils;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -32,21 +30,12 @@ public class CommandHelperServerListener implements Listener {
             sender = new BukkitMCConsoleCommandSender((ConsoleCommandSender) event.getSender());
         } else if (event.getSender() instanceof BlockCommandSender) { // Commandblock blocks.
             sender = new BukkitMCBlockCommandSender((BlockCommandSender) event.getSender());
-        } else if (event.getSender() instanceof CommandMinecart) { // Commandblock minecarts.
-            sender = new BukkitMCCommandMinecart((CommandMinecart) event.getSender());
         } else { // other CommandSenders.
             sender = new BukkitMCCommandSender(event.getSender());
         }
 
         BukkitMiscEvents.BukkitMCServerCommandEvent cce = new BukkitMiscEvents.BukkitMCServerCommandEvent(event, sender);
         EventUtils.TriggerListener(Driver.SERVER_COMMAND, "server_command", cce);
-        try {
-            if (event.isCancelled()) {
-                return;
-            }
-        } catch (NoSuchMethodError ex) {
-            // not cancellable before 1.8.8
-        }
 
         boolean match = false;
         try {

@@ -3,13 +3,10 @@ package com.laytonsmith.abstraction.bukkit.entities;
 import com.laytonsmith.abstraction.MCEntity;
 import com.laytonsmith.abstraction.MCProjectile;
 import com.laytonsmith.abstraction.MCProjectileSource;
-import com.laytonsmith.abstraction.blocks.MCBlockProjectileSource;
 import com.laytonsmith.abstraction.bukkit.BukkitConvertor;
-import com.laytonsmith.abstraction.bukkit.blocks.BukkitMCBlockProjectileSource;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
-import org.bukkit.projectiles.BlockProjectileSource;
-import org.bukkit.projectiles.ProjectileSource;
 
 public class BukkitMCProjectile extends BukkitMCEntity implements MCProjectile {
 
@@ -27,19 +24,13 @@ public class BukkitMCProjectile extends BukkitMCEntity implements MCProjectile {
 
     @Override
     public MCProjectileSource getShooter() {
-        ProjectileSource source = proj.getShooter();
-
-        if (source instanceof BlockProjectileSource) {
-            return new BukkitMCBlockProjectileSource((BlockProjectileSource) source);
-        }
-
-        if (source instanceof Entity) {
-            MCEntity e = BukkitConvertor.BukkitGetCorrectEntity((Entity) source);
+        LivingEntity source = proj.getShooter();
+        if (source != null) {
+            MCEntity e = BukkitConvertor.BukkitGetCorrectEntity(source);
             if (e instanceof MCProjectileSource) {
                 return (MCProjectileSource) e;
             }
         }
-
         return null;
     }
 
@@ -52,10 +43,8 @@ public class BukkitMCProjectile extends BukkitMCEntity implements MCProjectile {
     public void setShooter(MCProjectileSource shooter) {
         if (shooter == null) {
             proj.setShooter(null);
-        } else if (shooter instanceof MCBlockProjectileSource) {
-            proj.setShooter((BlockProjectileSource) shooter.getHandle());
-        } else {
-            proj.setShooter((ProjectileSource) shooter.getHandle());
+        } else if (shooter instanceof LivingEntity) {
+            proj.setShooter((LivingEntity) shooter.getHandle());
         }
     }
 

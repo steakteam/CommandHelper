@@ -44,7 +44,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 public class BukkitMCServer implements MCServer {
 
@@ -75,9 +74,8 @@ public class BukkitMCServer implements MCServer {
 
     @Override
     public Collection<MCPlayer> getOnlinePlayers() {
-        Collection<? extends Player> players = s.getOnlinePlayers();
         Set<MCPlayer> mcpa = new HashSet<>();
-        for (Player p : players) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
             mcpa.add(new BukkitMCPlayer(p));
         }
         return mcpa;
@@ -171,15 +169,6 @@ public class BukkitMCServer implements MCServer {
     }
 
     @Override
-    public MCPlayer getPlayer(UUID uuid) {
-        Player p = s.getPlayer(uuid);
-        if (p == null) {
-            return null;
-        }
-        return new BukkitMCPlayer(p);
-    }
-
-    @Override
     public MCWorld getWorld(String name) {
         World w = s.getWorld(name);
         if (w == null) {
@@ -225,11 +214,6 @@ public class BukkitMCServer implements MCServer {
     @Override
     public MCOfflinePlayer getOfflinePlayer(String player) {
         return new BukkitMCOfflinePlayer(s.getOfflinePlayer(player));
-    }
-
-    @Override
-    public MCOfflinePlayer getOfflinePlayer(UUID uuid) {
-        return new BukkitMCOfflinePlayer(s.getOfflinePlayer(uuid));
     }
 
     @Override
@@ -412,12 +396,12 @@ public class BukkitMCServer implements MCServer {
 
     @Override
     public void banName(String name) {
-        s.getBanList(BanList.Type.NAME).addBan(name, null, null, null);
+        Bukkit.getOfflinePlayer(name).setBanned(true);
     }
 
     @Override
     public void unbanName(String name) {
-        s.getBanList(BanList.Type.NAME).pardon(name);
+        Bukkit.getOfflinePlayer(name).setBanned(false);
     }
 
     @Override

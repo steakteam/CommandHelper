@@ -15,10 +15,8 @@ import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents;
 import com.laytonsmith.abstraction.enums.MCEntityEffect;
 import com.laytonsmith.abstraction.enums.MCEntityType;
 import com.laytonsmith.abstraction.enums.MCTeleportCause;
-import com.laytonsmith.abstraction.enums.MCVersion;
 import com.laytonsmith.abstraction.enums.bukkit.BukkitMCEntityType;
 import com.laytonsmith.abstraction.events.MCEntityDamageEvent;
-import com.laytonsmith.core.Static;
 import org.bukkit.EntityEffect;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -29,9 +27,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -251,54 +247,6 @@ public class BukkitMCEntity extends BukkitMCMetadatable implements MCEntity {
         return e.teleport(((BukkitMCLocation) location).asLocation(), TeleportCause.valueOf(cause.name()));
     }
 
-    @Override
-    public String getCustomName() {
-        if (Static.getServer().getMinecraftVersion().ordinal() < MCVersion.MC1_8.ordinal()) {
-            if (e instanceof LivingEntity) {
-                return ((LivingEntity) e).getCustomName();
-            } else {
-                throw new IllegalArgumentException("This can only be used on LivingEntities prior to MC1.8.");
-            }
-        }
-        return e.getCustomName();
-    }
-
-    @Override
-    public boolean isCustomNameVisible() {
-        if (Static.getServer().getMinecraftVersion().ordinal() < MCVersion.MC1_8.ordinal()) {
-            if (e instanceof LivingEntity) {
-                return ((LivingEntity) e).isCustomNameVisible();
-            } else {
-                throw new IllegalArgumentException("This can only be used on LivingEntities prior to MC1.8.");
-            }
-        }
-        return e.isCustomNameVisible();
-    }
-
-    @Override
-    public void setCustomName(String name) {
-        if (Static.getServer().getMinecraftVersion().ordinal() < MCVersion.MC1_8.ordinal()) {
-            if (e instanceof LivingEntity) {
-                ((LivingEntity) e).setCustomName(name);
-            } else {
-                throw new IllegalArgumentException("This can only be used on LivingEntities prior to MC1.8.");
-            }
-        }
-        e.setCustomName(name);
-    }
-
-    @Override
-    public void setCustomNameVisible(boolean visible) {
-        if (Static.getServer().getMinecraftVersion().ordinal() < MCVersion.MC1_8.ordinal()) {
-            if (e instanceof LivingEntity) {
-                ((LivingEntity) e).setCustomNameVisible(visible);
-            } else {
-                throw new IllegalArgumentException("This can only be used on LivingEntities prior to MC1.8.");
-            }
-        }
-        e.setCustomNameVisible(visible);
-    }
-
     /**
      * This only works with craftbukkit
      *
@@ -308,111 +256,4 @@ public class BukkitMCEntity extends BukkitMCMetadatable implements MCEntity {
     public MCLocation asyncGetLocation() {
         return new BukkitMCLocation(e.getLocation());
     }
-
-    @Override
-    public boolean isGlowing() {
-        try {
-            return e.isGlowing();
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.9
-            return false;
-        }
-    }
-
-    @Override
-    public void setGlowing(Boolean glow) {
-        try {
-            e.setGlowing(glow);
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.9
-        }
-    }
-
-    @Override
-    public boolean hasGravity() {
-        try {
-            return e.hasGravity();
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.10
-            return true;
-        }
-    }
-
-    @Override
-    public void setHasGravity(boolean gravity) {
-        try {
-            e.setGravity(gravity);
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.10
-        }
-    }
-
-    @Override
-    public boolean isSilent() {
-        try {
-            return e.isSilent();
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.9.4
-            return false;
-        }
-    }
-
-    @Override
-    public void setSilent(boolean silent) {
-        try {
-            e.setSilent(silent);
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.9.4
-        }
-    }
-
-    @Override
-    public boolean isInvulnerable() {
-        try {
-            return e.isInvulnerable();
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.9.2
-            return false;
-        }
-    }
-
-    @Override
-    public void setInvulnerable(boolean invulnerable) {
-        try {
-            e.setInvulnerable(invulnerable);
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.9.2
-        }
-    }
-
-    @Override
-    public Set<String> getScoreboardTags() {
-        try {
-            return e.getScoreboardTags();
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.10.2
-            return Collections.emptySet();
-        }
-    }
-
-    @Override
-    public boolean addScoreboardTag(String tag) {
-        try {
-            return e.addScoreboardTag(tag);
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.10.2
-            return false;
-        }
-    }
-
-    @Override
-    public boolean removeScoreboardTag(String tag) {
-        try {
-            return e.removeScoreboardTag(tag);
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.10.2
-            return false;
-        }
-    }
-
 }

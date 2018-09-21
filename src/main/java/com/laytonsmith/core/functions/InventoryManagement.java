@@ -172,8 +172,6 @@ public class InventoryManagement {
                 is = inv.getChestplate();
             } else if (slot.equals(103)) {
                 is = inv.getHelmet();
-            } else if (slot.equals(-106)) {
-                is = inv.getItemInOffHand();
             } else {
                 throw new CRERangeException("Slot index must be 0-35, or 100-103, or -106", t);
             }
@@ -528,8 +526,6 @@ public class InventoryManagement {
                 inv.setChestplate(is);
             } else if (index == 103) {
                 inv.setHelmet(is);
-            } else if (index == -106) {
-                inv.setItemInOffHand(is);
             } else {
                 ConfigRuntimeException.DoWarning("Ignoring out of range slot (" + index + ") passed to set_pinv().");
             }
@@ -603,9 +599,6 @@ public class InventoryManagement {
             total += total(is, inv.getLeggings());
             total += total(is, inv.getChestplate());
             total += total(is, inv.getHelmet());
-            if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)) {
-                total += total(is, inv.getItemInOffHand());
-            }
             return new CInt(total, t);
         }
 
@@ -697,9 +690,6 @@ public class InventoryManagement {
             }
             if (match(is, inv.getHelmet())) {
                 ca.push(new CInt(103, t), t);
-            }
-            if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9) && match(is, inv.getItemInOffHand())) {
-                ca.push(new CInt(-106, t), t);
             }
             return ca;
         }

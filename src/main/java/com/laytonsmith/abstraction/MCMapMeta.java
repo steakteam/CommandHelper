@@ -1,9 +1,7 @@
 package com.laytonsmith.abstraction;
 
 public interface MCMapMeta extends MCItemMeta {
+    boolean isScaling();
 
-    MCColor getColor();
-
-    void setColor(MCColor color);
-
+    void setScaling(boolean bool);
 }

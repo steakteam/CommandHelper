@@ -12,17 +12,9 @@ public interface MCPlayerDeathEvent extends MCEntityDeathEvent {
     @Override
     public MCPlayer getEntity();
 
-    public String getDeathMessage();
-
     public void setDeathMessage(String nval);
 
-    public boolean getKeepLevel();
-
-    public void setKeepLevel(boolean keepLevel);
-
-    public boolean getKeepInventory();
-
-    public void setKeepInventory(boolean keepLevel);
+    public String getDeathMessage();
 
     public int getNewExp();
 
@@ -35,6 +27,10 @@ public interface MCPlayerDeathEvent extends MCEntityDeathEvent {
     public int getNewTotalExp();
 
     public void setNewTotalExp(int totalExp);
+
+    public boolean getKeepLevel();
+
+    public void setKeepLevel(boolean keepLevel);
 
     public MCEntity getKiller();
 }

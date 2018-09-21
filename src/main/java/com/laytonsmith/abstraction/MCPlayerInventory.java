@@ -13,8 +13,6 @@ public interface MCPlayerInventory extends MCInventory {
 
     public void setBoots(MCItemStack stack);
 
-    public void setItemInOffHand(MCItemStack stack);
-
     public MCItemStack getHelmet();
 
     public MCItemStack getChestplate();
@@ -22,8 +20,6 @@ public interface MCPlayerInventory extends MCInventory {
     public MCItemStack getLeggings();
 
     public MCItemStack getBoots();
-
-    public MCItemStack getItemInOffHand();
 
     public int getHeldItemSlot();
 

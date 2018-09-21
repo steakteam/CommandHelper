@@ -747,11 +747,11 @@ public class Minecraft {
         @Override
         public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
             MCLivingEntity e = Static.getLivingEntity(args[0], t);
-            double percent = Static.getDouble(args[1], t);
+            int percent = Static.getInt32(args[1], t);
             if (percent < 0 || percent > 100) {
                 throw new CRERangeException("Health was expected to be a percentage between 0 and 100", t);
             } else {
-                e.setHealth(percent / 100.0 * e.getMaxHealth());
+                e.setHealth(percent / 100 * e.getMaxHealth());
             }
             return CVoid.VOID;
         }

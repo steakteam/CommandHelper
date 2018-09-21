@@ -20,11 +20,9 @@ import com.laytonsmith.abstraction.MCItemStack;
 import com.laytonsmith.abstraction.MCLocation;
 import com.laytonsmith.abstraction.MCMetadataValue;
 import com.laytonsmith.abstraction.MCNote;
-import com.laytonsmith.abstraction.MCPattern;
 import com.laytonsmith.abstraction.MCPlayer;
 import com.laytonsmith.abstraction.MCPlugin;
 import com.laytonsmith.abstraction.MCPluginMeta;
-import com.laytonsmith.abstraction.MCPotionData;
 import com.laytonsmith.abstraction.MCRecipe;
 import com.laytonsmith.abstraction.MCServer;
 import com.laytonsmith.abstraction.MCWorld;
@@ -32,9 +30,6 @@ import com.laytonsmith.abstraction.blocks.MCMaterial;
 import com.laytonsmith.abstraction.bukkit.BukkitConvertor;
 import com.laytonsmith.abstraction.bukkit.BukkitMCLocation;
 import com.laytonsmith.abstraction.bukkit.BukkitMCWorld;
-import com.laytonsmith.abstraction.enums.MCDyeColor;
-import com.laytonsmith.abstraction.enums.MCPatternShape;
-import com.laytonsmith.abstraction.enums.MCPotionType;
 import com.laytonsmith.abstraction.enums.MCRecipeType;
 import com.laytonsmith.abstraction.enums.MCTone;
 import com.laytonsmith.annotations.convert;
@@ -743,12 +738,6 @@ public class StaticTest {
 		}
 
 		@Override
-		public MCPotionData GetPotionData(MCPotionType type, boolean extended, boolean upgraded) {
-			Convertor c = new BukkitConvertor();
-			return c.GetPotionData(type, extended, upgraded);
-		}
-
-		@Override
 		public int SetFutureRunnable(DaemonManager dm, long ms, Runnable r) {
 			//This needs fixing later
 			queue.invokeLater(dm, r);
@@ -814,11 +803,6 @@ public class StaticTest {
 					return GetColor(red, green, blue);
 				}
 			};
-		}
-
-		@Override
-		public MCPattern GetPattern(MCDyeColor color, MCPatternShape shape) {
-			throw new UnsupportedOperationException("Not supported yet.");
 		}
 
 		@Override

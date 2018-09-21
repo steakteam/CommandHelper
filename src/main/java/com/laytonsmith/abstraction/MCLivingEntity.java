@@ -25,9 +25,9 @@ public interface MCLivingEntity extends MCEntity, MCProjectileSource {
 
     public List<MCEffect> getEffects();
 
-    public void damage(double amount);
+    public void damage(int amount);
 
-    public void damage(double amount, MCEntity source);
+    public void damage(int amount, MCEntity source);
 
     public boolean getCanPickupItems();
 
@@ -45,13 +45,11 @@ public interface MCLivingEntity extends MCEntity, MCProjectileSource {
 
     public MCLocation getEyeLocation();
 
-    public double getHealth();
+    public int getHealth();
 
     public MCPlayer getKiller();
 
     public double getLastDamage();
-
-    public MCEntity getLeashHolder();
 
     public MCLivingEntity getTarget(Target t);
 
@@ -63,7 +61,7 @@ public interface MCLivingEntity extends MCEntity, MCProjectileSource {
 
     public boolean hasLineOfSight(MCEntity other);
 
-    public double getMaxHealth();
+    public int getMaxHealth();
 
     public int getMaximumAir();
 
@@ -73,25 +71,17 @@ public interface MCLivingEntity extends MCEntity, MCProjectileSource {
 
     public int getRemainingAir();
 
-    public boolean isGliding();
-
-    public boolean isLeashed();
-
-    public boolean hasAI();
-
     public void resetMaxHealth();
 
     public void setCanPickupItems(boolean pickup);
 
     public void setRemoveWhenFarAway(boolean remove);
 
-    public void setHealth(double health);
+    public void setHealth(int health);
 
-    public void setLastDamage(double damage);
+    public void setLastDamage(int damage);
 
-    public void setLeashHolder(MCEntity holder);
-
-    public void setMaxHealth(double health);
+    public void setMaxHealth(int health);
 
     public void setMaximumAir(int ticks);
 
@@ -102,10 +92,6 @@ public interface MCLivingEntity extends MCEntity, MCProjectileSource {
     public void setRemainingAir(int ticks);
 
     public void setTarget(MCLivingEntity target, Target t);
-
-    public void setGliding(Boolean glide);
-
-    public void setAI(Boolean ai);
 
     /**
      * Kills the entity. In some cases, this will be equivalent to setHealth(0), but

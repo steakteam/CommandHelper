@@ -1,7 +1,6 @@
 package com.laytonsmith.abstraction;
 
 import com.laytonsmith.abstraction.enums.MCInstrument;
-import com.laytonsmith.abstraction.enums.MCParticle;
 import com.laytonsmith.abstraction.enums.MCSound;
 import com.laytonsmith.abstraction.enums.MCSoundCategory;
 import com.laytonsmith.abstraction.enums.MCWeather;
@@ -57,8 +56,6 @@ public interface MCPlayer extends MCCommandSender, MCHumanEntity,
 
     public int getExpAtLevel();
 
-    public MCEntity getSpectatorTarget();
-
     public float getWalkSpeed();
 
     public void setWalkSpeed(float speed);
@@ -79,8 +76,6 @@ public interface MCPlayer extends MCCommandSender, MCHumanEntity,
     public void resetPlayerWeather();
 
     public void sendResourcePack(String url);
-
-    public void sendTitle(String title, String subtitle, int fadein, int stay, int fadeout);
 
     public void setAllowFlight(boolean flight);
 
@@ -103,8 +98,6 @@ public interface MCPlayer extends MCCommandSender, MCHumanEntity,
     public void setRemainingFireTicks(int i);
 
     public void setScoreboard(MCScoreboard board);
-
-    public void setSpectatorTarget(MCEntity entity);
 
     public void setTempOp(Boolean value) throws Exception;
 
@@ -138,16 +131,6 @@ public interface MCPlayer extends MCCommandSender, MCHumanEntity,
     public void playSound(MCLocation l, MCSound sound, MCSoundCategory category, float volume, float pitch);
 
     public void playSound(MCLocation l, String sound, MCSoundCategory category, float volume, float pitch);
-
-    public void stopSound(MCSound sound);
-
-    public void stopSound(String sound);
-
-    public void stopSound(MCSound sound, MCSoundCategory category);
-
-    public void stopSound(String sound, MCSoundCategory category);
-
-    void spawnParticle(MCLocation l, MCParticle pa, int count, double offsetX, double offsetY, double offsetZ, double velocity, Object data);
 
     int getFoodLevel();
 

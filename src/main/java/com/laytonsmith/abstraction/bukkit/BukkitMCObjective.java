@@ -1,5 +1,6 @@
 package com.laytonsmith.abstraction.bukkit;
 
+import com.github.teamsteak.commandhelper.MockOfflinePlayer;
 import com.laytonsmith.abstraction.MCObjective;
 import com.laytonsmith.abstraction.MCScore;
 import com.laytonsmith.abstraction.MCScoreboard;
@@ -42,7 +43,7 @@ public class BukkitMCObjective implements MCObjective {
 
     @Override
     public MCScore getScore(String entry) {
-        return new BukkitMCScore(o.getScore(entry));
+        return new BukkitMCScore(o.getScore(new MockOfflinePlayer(entry)));
     }
 
     @Override

@@ -9,23 +9,19 @@ import com.laytonsmith.abstraction.MCItemStack;
 import com.laytonsmith.abstraction.MCLightningStrike;
 import com.laytonsmith.abstraction.MCLivingEntity;
 import com.laytonsmith.abstraction.MCLocation;
-import com.laytonsmith.abstraction.MCMaterialData;
 import com.laytonsmith.abstraction.MCPlayer;
 import com.laytonsmith.abstraction.MCWorld;
-import com.laytonsmith.abstraction.MCWorldBorder;
 import com.laytonsmith.abstraction.blocks.MCBlock;
 import com.laytonsmith.abstraction.bukkit.blocks.BukkitMCBlock;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCEntity;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCFallingBlock;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCFirework;
-import com.laytonsmith.abstraction.bukkit.entities.BukkitMCHorse;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCItem;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCLightningStrike;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCLivingEntity;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCPlayer;
 import com.laytonsmith.abstraction.entities.MCFallingBlock;
 import com.laytonsmith.abstraction.entities.MCFirework;
-import com.laytonsmith.abstraction.entities.MCHorse;
 import com.laytonsmith.abstraction.enums.MCBiomeType;
 import com.laytonsmith.abstraction.enums.MCCreeperType;
 import com.laytonsmith.abstraction.enums.MCDifficulty;
@@ -35,7 +31,6 @@ import com.laytonsmith.abstraction.enums.MCEntityType;
 import com.laytonsmith.abstraction.enums.MCGameRule;
 import com.laytonsmith.abstraction.enums.MCMobs;
 import com.laytonsmith.abstraction.enums.MCOcelotType;
-import com.laytonsmith.abstraction.enums.MCParticle;
 import com.laytonsmith.abstraction.enums.MCPigType;
 import com.laytonsmith.abstraction.enums.MCProfession;
 import com.laytonsmith.abstraction.enums.MCSkeletonType;
@@ -55,7 +50,6 @@ import com.laytonsmith.abstraction.enums.bukkit.BukkitMCOcelotType;
 import com.laytonsmith.abstraction.enums.bukkit.BukkitMCProfession;
 import com.laytonsmith.abstraction.enums.bukkit.BukkitMCSkeletonType;
 import com.laytonsmith.abstraction.enums.bukkit.BukkitMCSound;
-import com.laytonsmith.abstraction.enums.bukkit.BukkitMCSoundCategory;
 import com.laytonsmith.abstraction.enums.bukkit.BukkitMCTreeType;
 import com.laytonsmith.abstraction.enums.bukkit.BukkitMCWorldEnvironment;
 import com.laytonsmith.abstraction.enums.bukkit.BukkitMCWorldType;
@@ -105,7 +99,6 @@ import org.bukkit.entity.Witch;
 import org.bukkit.entity.Wither;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.material.MaterialData;
 
@@ -227,11 +220,6 @@ public class BukkitMCWorld extends BukkitMCMetadatable implements MCWorld {
     }
 
     @Override
-    public MCWorldBorder getWorldBorder() {
-        return new BukkitMCWorldBorder(w.getWorldBorder());
-    }
-
-    @Override
     public MCWorldEnvironment getEnvironment() {
         return BukkitMCWorldEnvironment.getConvertor().getAbstractedEnum(w.getEnvironment());
     }
@@ -295,26 +283,6 @@ public class BukkitMCWorld extends BukkitMCMetadatable implements MCWorld {
     }
 
     @Override
-    public void spawnParticle(MCLocation l, MCParticle pa, int count, double offsetX, double offsetY, double offsetZ, double velocity, Object data) {
-        try {
-            Particle type = Particle.valueOf(pa.name());
-            if (data != null) {
-                Object particleData = null;
-                if (type.getDataType().equals(MaterialData.class) && data instanceof MCMaterialData) {
-                    particleData = ((MCMaterialData) data).getHandle();
-                } else if (type.getDataType().equals(ItemStack.class) && data instanceof MCItemStack) {
-                    particleData = ((MCItemStack) data).getHandle();
-                }
-                w.spawnParticle(type, ((BukkitMCLocation) l).asLocation(), count, offsetX, offsetY, offsetZ, velocity, particleData);
-            } else {
-                w.spawnParticle(type, ((BukkitMCLocation) l).asLocation(), count, offsetX, offsetY, offsetZ, velocity);
-            }
-        } catch (NoClassDefFoundError ex) {
-            // probably prior to 1.9
-        }
-    }
-
-    @Override
     public void playSound(MCLocation l, MCSound sound, float volume, float pitch) {
         w.playSound(((BukkitMCLocation) l).asLocation(),
                 ((BukkitMCSound) sound).getConcrete(), volume, pitch);
@@ -322,36 +290,19 @@ public class BukkitMCWorld extends BukkitMCMetadatable implements MCWorld {
 
     @Override
     public void playSound(MCLocation l, String sound, float volume, float pitch) {
-        try {
-            w.playSound((Location) l.getHandle(), sound, volume, pitch);
-        } catch (NoSuchMethodError ex) {
-            // probably prior to 1.9, so send to all players in world
-            for (Player p : w.getPlayers()) {
-                p.playSound(((BukkitMCLocation) l).asLocation(), sound, volume, pitch);
-            }
+        for (Player p : w.getPlayers()) {
+            playSound(l, MCSound.valueOf(sound), volume, pitch);
         }
     }
 
     @Override
     public void playSound(MCLocation l, MCSound sound, MCSoundCategory category, float volume, float pitch) {
-        try {
-            w.playSound((Location) l.getHandle(), ((BukkitMCSound) sound).getConcrete(),
-                    BukkitMCSoundCategory.getConvertor().getConcreteEnum(category), volume, pitch);
-        } catch (NoClassDefFoundError ex) {
-            // probably before 1.11, ignore category
-            playSound(l, sound, volume, pitch);
-        }
+        playSound(l, sound, volume, pitch);
     }
 
     @Override
     public void playSound(MCLocation l, String sound, MCSoundCategory category, float volume, float pitch) {
-        try {
-            w.playSound((Location) l.getHandle(), sound,
-                    BukkitMCSoundCategory.getConvertor().getConcreteEnum(category), volume, pitch);
-        } catch (NoClassDefFoundError ex) {
-            // probably before 1.11, ignore category
-            playSound(l, sound, volume, pitch);
-        }
+        playSound(l, sound, volume, pitch);
     }
 
     @Override
@@ -470,66 +421,20 @@ public class BukkitMCWorld extends BukkitMCMetadatable implements MCWorld {
                 case CREEPER:
                     mobType = Creeper.class;
                     break;
-                case ELDERGUARDIAN:
-                    mobType = ElderGuardian.class;
-                    break;
                 case ENDERDRAGON:
                     mobType = EnderDragon.class;
                     break;
                 case ENDERMAN:
                     mobType = Enderman.class;
                     break;
-                case ENDERMITE:
-                    mobType = Endermite.class;
-                    break;
-                case EVOKER:
-                    mobType = Evoker.class;
-                    break;
                 case GHAST:
                     mobType = Ghast.class;
-                    break;
-                case GUARDIAN:
-                    mobType = Guardian.class;
                     break;
                 case GIANT:
                     mobType = Giant.class;
                     break;
-                case HORSE:
-                    mobType = Horse.class;
-                    if (!(subClass.equals("")) && version.gte(MCVersion.MC1_11)) {
-                        for (String type : subTypes) {
-                            try {
-                                MCHorse.MCHorseVariant htype = MCHorse.MCHorseVariant.valueOf(type);
-                                switch (htype) {
-                                    case DONKEY:
-                                        mobType = Donkey.class;
-                                        break;
-                                    case MULE:
-                                        mobType = Mule.class;
-                                        break;
-                                    case SKELETON:
-                                        mobType = SkeletonHorse.class;
-                                        break;
-                                    case ZOMBIE:
-                                        mobType = ZombieHorse.class;
-                                        break;
-                                }
-                                subClass = "";
-                                break;
-                            } catch (IllegalArgumentException notVar) {
-                                // not variant
-                            }
-                        }
-                    }
-                    break;
-                case ILLUSIONER:
-                    mobType = Illusioner.class;
-                    break;
                 case IRONGOLEM:
                     mobType = IronGolem.class;
-                    break;
-                case LLAMA:
-                    mobType = Llama.class;
                     break;
                 case MAGMACUBE:
                     mobType = MagmaCube.class;
@@ -540,48 +445,20 @@ public class BukkitMCWorld extends BukkitMCMetadatable implements MCWorld {
                 case OCELOT:
                     mobType = Ocelot.class;
                     break;
-                case PARROT:
-                    mobType = Parrot.class;
-                    break;
                 case PIG:
                     mobType = Pig.class;
                     break;
                 case PIGZOMBIE:
                     mobType = PigZombie.class;
                     break;
-                case POLARBEAR:
-                    mobType = PolarBear.class;
-                    break;
-                case RABBIT:
-                    mobType = Rabbit.class;
-                    break;
                 case SHEEP:
                     mobType = Sheep.class;
-                    break;
-                case SHULKER:
-                    mobType = Shulker.class;
                     break;
                 case SILVERFISH:
                     mobType = Silverfish.class;
                     break;
                 case SKELETON:
                     mobType = Skeleton.class;
-                    if (!(subClass.equals("")) && version.gte(MCVersion.MC1_11)) {
-                        MCSkeletonType stype = MCSkeletonType.NORMAL;
-                        for (String type : subTypes) {
-                            try {
-                                stype = MCSkeletonType.valueOf(type);
-                            } catch (IllegalArgumentException ex) {
-                                throw new CREFormatException(type + " is not a skeleton type", t);
-                            }
-                        }
-                        if (stype == MCSkeletonType.WITHER) {
-                            mobType = WitherSkeleton.class;
-                        } else if (stype == MCSkeletonType.STRAY) {
-                            mobType = Stray.class;
-                        }
-                        subClass = "";
-                    }
                     break;
                 case SLIME:
                     mobType = Slime.class;
@@ -598,14 +475,8 @@ public class BukkitMCWorld extends BukkitMCMetadatable implements MCWorld {
                 case SQUID:
                     mobType = Squid.class;
                     break;
-                case VEX:
-                    mobType = Vex.class;
-                    break;
                 case VILLAGER:
                     mobType = Villager.class;
-                    break;
-                case VINDICATOR:
-                    mobType = Vindicator.class;
                     break;
                 case WITCH:
                     mobType = Witch.class;
@@ -623,8 +494,6 @@ public class BukkitMCWorld extends BukkitMCMetadatable implements MCWorld {
                             try {
                                 MCZombieType ztype = MCZombieType.valueOf(subTypes[i]);
                                 switch (ztype) {
-                                    case HUSK:
-                                        mobType = Husk.class;
                                     case BABY:
                                         continue;
                                     case VILLAGER_BLACKSMITH:
@@ -643,7 +512,6 @@ public class BukkitMCWorld extends BukkitMCMetadatable implements MCWorld {
                                         subTypes[i] = "FARMER";
                                         break;
                                 }
-                                mobType = ZombieVillager.class;
                             } catch (IllegalArgumentException ex) {
                                 // not a ZombieType
                             }
@@ -774,20 +642,6 @@ public class BukkitMCWorld extends BukkitMCMetadatable implements MCWorld {
                                 throw new CREFormatException(value + " is not a number.", t);
                             }
                         }
-                    } else if (version.gte(MCVersion.MC1_11) && e instanceof ZombieVillager) {
-                        ZombieVillager zv = (ZombieVillager) e;
-                        for (String type : subTypes) {
-                            if (type.equals("BABY")) {
-                                zv.setBaby(true);
-                                continue;
-                            }
-                            try {
-                                MCProfession job = MCProfession.valueOf(type);
-                                zv.setVillagerProfession(BukkitMCProfession.getConvertor().getConcreteEnum(job));
-                            } catch (IllegalArgumentException ex) {
-                                throw new CREFormatException(type + " is not a valid profession", t);
-                            }
-                        }
                     } else {
                         Zombie z = (Zombie) e;
                         for (String type : subTypes) {
@@ -801,37 +655,16 @@ public class BukkitMCWorld extends BukkitMCMetadatable implements MCWorld {
                                         z.setVillager(true);
                                         break;
                                     case VILLAGER_BLACKSMITH:
-                                        if (version.gte(MCVersion.MC1_9)) {
-                                            z.setVillagerProfession(Villager.Profession.BLACKSMITH);
-                                        } else {
-                                            z.setVillager(true);
-                                        }
+                                        z.setVillager(true);
                                         break;
                                     case VILLAGER_BUTCHER:
-                                        if (version.gte(MCVersion.MC1_9)) {
-                                            z.setVillagerProfession(Villager.Profession.BUTCHER);
-                                        } else {
-                                            z.setVillager(true);
-                                        }
+                                        z.setVillager(true);
                                         break;
                                     case VILLAGER_LIBRARIAN:
-                                        if (version.gte(MCVersion.MC1_9)) {
-                                            z.setVillagerProfession(Villager.Profession.LIBRARIAN);
-                                        } else {
-                                            z.setVillager(true);
-                                        }
+                                        z.setVillager(true);
                                         break;
                                     case VILLAGER_PRIEST:
-                                        if (version.gte(MCVersion.MC1_9)) {
-                                            z.setVillagerProfession(Villager.Profession.PRIEST);
-                                        } else {
-                                            z.setVillager(true);
-                                        }
-                                        break;
-                                    case HUSK:
-                                        if (version.gt(MCVersion.MC1_9_X) && version.lt(MCVersion.MC1_11)) {
-                                            z.setVillagerProfession(Villager.Profession.HUSK);
-                                        }
+                                        z.setVillager(true);
                                         break;
                                 }
                             } catch (IllegalArgumentException ex) {
@@ -853,33 +686,6 @@ public class BukkitMCWorld extends BukkitMCMetadatable implements MCWorld {
                             }
                         } catch (IllegalArgumentException ex) {
                             throw new CREFormatException(type + " is not a pig state", t);
-                        }
-                    }
-                } else if (e instanceof Horse) {
-                    Horse h = (Horse) e;
-                    for (String type : subTypes) {
-                        if (version.lt(MCVersion.MC1_11)) {
-                            try {
-                                MCHorse.MCHorseVariant htype = MCHorse.MCHorseVariant.valueOf(type);
-                                h.setVariant(BukkitMCHorse.BukkitMCHorseVariant.getConvertor().getConcreteEnum(htype));
-                                break; // no other variants can have colors or patterns
-                            } catch (IllegalArgumentException ex) {
-                                // not variant
-                            }
-                        }
-                        try {
-                            MCHorse.MCHorseColor hcolor = MCHorse.MCHorseColor.valueOf(type);
-                            h.setColor(BukkitMCHorse.BukkitMCHorseColor.getConvertor().getConcreteEnum(hcolor));
-                            continue;
-                        } catch (IllegalArgumentException ex) {
-                            // not color
-                        }
-                        try {
-                            MCHorse.MCHorsePattern hpattern = MCHorse.MCHorsePattern.valueOf(type);
-                            h.setStyle(BukkitMCHorse.BukkitMCHorsePattern.getConvertor().getConcreteEnum(hpattern));
-                        } catch (IllegalArgumentException notAnything) {
-                            throw new CREFormatException("Type " + type + " did not match any horse variants,"
-                                    + " colors, or patterns.", t);
                         }
                     }
                 }

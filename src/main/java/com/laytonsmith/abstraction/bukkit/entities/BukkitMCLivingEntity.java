@@ -7,12 +7,9 @@ import com.laytonsmith.abstraction.MCLivingEntity;
 import com.laytonsmith.abstraction.MCLocation;
 import com.laytonsmith.abstraction.MCPlayer;
 import com.laytonsmith.abstraction.blocks.MCBlock;
-import com.laytonsmith.abstraction.bukkit.BukkitConvertor;
 import com.laytonsmith.abstraction.bukkit.BukkitMCEntityEquipment;
 import com.laytonsmith.abstraction.bukkit.BukkitMCLocation;
 import com.laytonsmith.abstraction.bukkit.blocks.BukkitMCBlock;
-import com.laytonsmith.abstraction.enums.MCVersion;
-import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.exceptions.CRE.CREBadEntityException;
 import org.bukkit.block.Block;
@@ -45,22 +42,22 @@ public class BukkitMCLivingEntity extends BukkitMCEntityProjectileSource impleme
     }
 
     @Override
-    public double getHealth() {
+    public int getHealth() {
         return le.getHealth();
     }
 
     @Override
-    public void setHealth(double i) {
+    public void setHealth(int i) {
         le.setHealth(i);
     }
 
     @Override
-    public double getMaxHealth() {
+    public int getMaxHealth() {
         return le.getMaxHealth();
     }
 
     @Override
-    public void setMaxHealth(double health) {
+    public void setMaxHealth(int health) {
         le.setMaxHealth(health);
     }
 
@@ -70,12 +67,12 @@ public class BukkitMCLivingEntity extends BukkitMCEntityProjectileSource impleme
     }
 
     @Override
-    public void damage(double i) {
+    public void damage(int i) {
         le.damage(i);
     }
 
     @Override
-    public void damage(double amount, MCEntity source) {
+    public void damage(int amount, MCEntity source) {
         le.damage(amount, ((BukkitMCEntity) source).getHandle());
     }
 
@@ -184,16 +181,6 @@ public class BukkitMCLivingEntity extends BukkitMCEntityProjectileSource impleme
         return blocks;
     }
 
-    @Override
-    public boolean hasAI() {
-        try {
-            return le.hasAI();
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.9.2
-            return true;
-        }
-    }
-
     /**
      * @param potionID  - ID of the potion
      * @param strength  - potion strength
@@ -204,12 +191,7 @@ public class BukkitMCLivingEntity extends BukkitMCEntityProjectileSource impleme
      */
     @Override
     public void addEffect(int potionID, int strength, int seconds, boolean ambient, boolean particles, Target t) {
-        PotionEffect pe;
-        if (Static.getServer().getMinecraftVersion().lt(MCVersion.MC1_8)) {
-            pe = new PotionEffect(PotionEffectType.getById(potionID), seconds * 20, strength, ambient);
-        } else {
-            pe = new PotionEffect(PotionEffectType.getById(potionID), seconds * 20, strength, ambient, particles);
-        }
+        PotionEffect pe = new PotionEffect(PotionEffectType.getById(potionID), seconds * 20, strength, ambient);
         try {
             if (le != null) {
                 le.addPotionEffect(pe, true);
@@ -248,21 +230,15 @@ public class BukkitMCLivingEntity extends BukkitMCEntityProjectileSource impleme
     public List<MCEffect> getEffects() {
         List<MCEffect> effects = new ArrayList<MCEffect>();
         for (PotionEffect pe : le.getActivePotionEffects()) {
-            MCEffect e;
-            if (Static.getServer().getMinecraftVersion().lt(MCVersion.MC1_8)) {
-                e = new MCEffect(pe.getType().getId(), pe.getAmplifier(),
+            MCEffect e = new MCEffect(pe.getType().getId(), pe.getAmplifier(),
                         pe.getDuration() / 20, pe.isAmbient(), true);
-            } else {
-                e = new MCEffect(pe.getType().getId(), pe.getAmplifier(),
-                        pe.getDuration() / 20, pe.isAmbient(), pe.hasParticles());
-            }
             effects.add(e);
         }
         return effects;
     }
 
     @Override
-    public void setLastDamage(double damage) {
+    public void setLastDamage(int damage) {
         le.setLastDamage(damage);
     }
 
@@ -338,49 +314,6 @@ public class BukkitMCLivingEntity extends BukkitMCEntityProjectileSource impleme
     @Override
     public void kill() {
         le.setLastDamageCause(new EntityDamageEvent(le, EntityDamageEvent.DamageCause.CUSTOM, le.getHealth()));
-        le.setHealth(0D);
-    }
-
-    @Override
-    public MCEntity getLeashHolder() {
-        return le.isLeashed() ? BukkitConvertor.BukkitGetCorrectEntity(le.getLeashHolder()) : null;
-    }
-
-    @Override
-    public boolean isLeashed() {
-        return le.isLeashed();
-    }
-
-    @Override
-    public void setLeashHolder(MCEntity holder) {
-        le.setLeashHolder(holder == null ? null : ((BukkitMCEntity) holder).getHandle());
-    }
-
-    @Override
-    public boolean isGliding() {
-        try {
-            return le.isGliding();
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.9
-            return false;
-        }
-    }
-
-    @Override
-    public void setGliding(Boolean glide) {
-        try {
-            le.setGliding(glide);
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.9
-        }
-    }
-
-    @Override
-    public void setAI(Boolean ai) {
-        try {
-            le.setAI(ai);
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.9.2
-        }
+        le.setHealth(0);
     }
 }

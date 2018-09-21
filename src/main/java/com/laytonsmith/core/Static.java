@@ -695,22 +695,12 @@ public final class Static {
      * @return
      */
     public static MCOfflinePlayer GetUser(String search, Target t) {
-        MCOfflinePlayer ofp;
         if (search.length() > 0 && search.length() <= 16) {
-            ofp = getServer().getOfflinePlayer(search);
+            return getServer().getOfflinePlayer(search);
         } else {
-            try {
-                ofp = getServer().getOfflinePlayer(GetUUID(search, t));
-            } catch (ConfigRuntimeException cre) {
-                if (cre instanceof CRELengthException) {
-                    throw new CRELengthException("The given string was the wrong size to identify a player."
-                            + " A player name is expected to be between 1 and 16 characters. " + cre.getMessage(), t);
-                } else {
-                    throw cre;
-                }
-            }
+            throw new CRELengthException("The given string was the wrong size to identify a player."
+                    + " A player name is expected to be between 1 and 16 characters.", t);
         }
-        return ofp;
     }
 
     /**
@@ -733,16 +723,8 @@ public final class Static {
         if (player.length() > 0 && player.length() <= 16) {
             m = GetCommandSender(player, t);
         } else {
-            try {
-                m = getServer().getPlayer(GetUUID(player, t));
-            } catch (ConfigRuntimeException cre) {
-                if (cre instanceof CRELengthException) {
-                    throw new CRELengthException("The given string was the wrong size to identify a player."
-                            + " A player name is expected to be between 1 and 16 characters. " + cre.getMessage(), t);
-                } else {
-                    throw cre;
-                }
-            }
+            throw new CRELengthException("The given string was the wrong size to identify a player."
+                    + " A player name is expected to be between 1 and 16 characters.", t);
         }
         if (m == null) {
             throw new CREPlayerOfflineException("The specified player (" + player + ") is not online", t);

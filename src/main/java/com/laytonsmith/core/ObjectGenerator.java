@@ -20,12 +20,10 @@ import com.laytonsmith.abstraction.MCItemStack;
 import com.laytonsmith.abstraction.MCLeatherArmorMeta;
 import com.laytonsmith.abstraction.MCLivingEntity;
 import com.laytonsmith.abstraction.MCLocation;
-import com.laytonsmith.abstraction.MCMapMeta;
 import com.laytonsmith.abstraction.MCMaterialData;
 import com.laytonsmith.abstraction.MCMetadataValue;
 import com.laytonsmith.abstraction.MCPattern;
 import com.laytonsmith.abstraction.MCPlugin;
-import com.laytonsmith.abstraction.MCPotionData;
 import com.laytonsmith.abstraction.MCPotionMeta;
 import com.laytonsmith.abstraction.MCRecipe;
 import com.laytonsmith.abstraction.MCShapedRecipe;
@@ -41,11 +39,7 @@ import com.laytonsmith.abstraction.blocks.MCShulkerBox;
 import com.laytonsmith.abstraction.enums.MCDyeColor;
 import com.laytonsmith.abstraction.enums.MCEntityType;
 import com.laytonsmith.abstraction.enums.MCFireworkType;
-import com.laytonsmith.abstraction.enums.MCItemFlag;
-import com.laytonsmith.abstraction.enums.MCPatternShape;
-import com.laytonsmith.abstraction.enums.MCPotionType;
 import com.laytonsmith.abstraction.enums.MCRecipeType;
-import com.laytonsmith.abstraction.enums.MCVersion;
 import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CBoolean;
 import com.laytonsmith.core.constructs.CDouble;
@@ -68,7 +62,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This file is responsible for converting CH objects into server objects, and
@@ -364,16 +357,6 @@ public class ObjectGenerator {
             ma.set("lore", lore, t);
             ma.set("enchants", enchants, t);
             ma.set("repair", new CInt(meta.getRepairCost(), t), t);
-            if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_8)) {
-                Set<MCItemFlag> itemFlags = meta.getItemFlags();
-                CArray flagArray = new CArray(t);
-                if (itemFlags.size() > 0) {
-                    for (MCItemFlag flag : itemFlags) {
-                        flagArray.push(new CString(flag.name(), t), t);
-                    }
-                }
-                ma.set("flags", flagArray, t);
-            }
 
             // Specific ItemMeta
 
@@ -469,12 +452,7 @@ public class ObjectGenerator {
                 MCPotionMeta potionmeta = (MCPotionMeta) meta;
                 effects = potions(potionmeta.getCustomEffects(), t);
                 ma.set("potions", effects, t);
-                if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)) {
-                    MCPotionData potiondata = potionmeta.getBasePotionData();
-                    if (potiondata != null) {
-                        ma.set("base", potionData(potiondata, t), t);
-                    }
-                } else if (effects.size() > 0) {
+                if (effects.size() > 0) {
                     ma.set("main", ((CArray) effects.get(0, t)).get("id", t), t);
                 }
             } else if (meta instanceof MCBannerMeta) {
@@ -498,14 +476,6 @@ public class ObjectGenerator {
                 } else {
                     ma.set("spawntype", new CString(spawntype.name(), t), t);
                 }
-            } else if (meta instanceof MCMapMeta && Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_11)) {
-                MCColor mapcolor = ((MCMapMeta) meta).getColor();
-                if (mapcolor == null) {
-                    color = CNull.NULL;
-                } else {
-                    color = color(mapcolor, t);
-                }
-                ma.set("color", color, t);
             }
             ret = ma;
         }
@@ -563,18 +533,6 @@ public class ObjectGenerator {
                 if (ma.containsKey("repair") && !(ma.get("repair", t) instanceof CNull)) {
                     meta.setRepairCost(Static.getInt32(ma.get("repair", t), t));
                 }
-                if (ma.containsKey("flags") && Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_8)) {
-                    Construct flags = ma.get("flags", t);
-                    if (flags instanceof CArray) {
-                        CArray flagArray = (CArray) flags;
-                        for (int i = 0; i < flagArray.size(); i++) {
-                            Construct flag = flagArray.get(i, t);
-                            meta.addItemFlags(MCItemFlag.valueOf(flag.getValue().toUpperCase()));
-                        }
-                    } else {
-                        throw new CREFormatException("Itemflags was expected to be an array of flags.", t);
-                    }
-                }
 
                 // Specific Item Meta
 
@@ -607,22 +565,6 @@ public class ObjectGenerator {
                                 throw new CREFormatException("ShulkerBox inventory expected to be an array or null.", t);
                             }
                         }
-                    } else if (bs instanceof MCBanner) {
-                        MCBanner banner = (MCBanner) bs;
-                        if (ma.containsKey("basecolor")) {
-                            banner.setBaseColor(MCDyeColor.valueOf(ma.get("basecolor", t).val().toUpperCase()));
-                        }
-                        if (ma.containsKey("patterns")) {
-                            CArray array = ArgumentValidation.getArray(ma.get("patterns", t), t);
-                            for (String key : array.stringKeySet()) {
-                                CArray pattern = ArgumentValidation.getArray(array.get(key, t), t);
-                                MCPatternShape shape = MCPatternShape.valueOf(pattern.get("shape", t).val().toUpperCase());
-                                MCDyeColor color = MCDyeColor.valueOf(pattern.get("color", t).val().toUpperCase());
-                                banner.addPattern(StaticLayer.GetConvertor().GetPattern(color, shape));
-                            }
-                        }
-                        banner.update();
-                        bsm.setBlockState(banner);
                     } else if (bs instanceof MCCreatureSpawner) {
                         if (ma.containsKey("spawntype")) {
                             MCCreatureSpawner mccs = (MCCreatureSpawner) bs;
@@ -743,44 +685,14 @@ public class ObjectGenerator {
                             throw new CREFormatException("Effects was expected to be an array of potion arrays.", t);
                         }
                     }
-                    if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)) {
-                        if (ma.containsKey("base")) {
-                            Construct potiondata = ma.get("base", t);
-                            if (potiondata instanceof CArray) {
-                                CArray pd = (CArray) potiondata;
-                                ((MCPotionMeta) meta).setBasePotionData(potionData((CArray) potiondata, t));
-                            }
-                        }
-                    } else if (ma.containsKey("main")) {
+                    if (ma.containsKey("main")) {
                         ((MCPotionMeta) meta).setMainEffect(Static.getInt32(ma.get("main", t), t));
-                    }
-                } else if (meta instanceof MCBannerMeta) {
-                    if (ma.containsKey("basecolor")) {
-                        ((MCBannerMeta) meta).setBaseColor(MCDyeColor.valueOf(ma.get("basecolor", t).val().toUpperCase()));
-                    }
-                    if (ma.containsKey("patterns")) {
-                        CArray array = ArgumentValidation.getArray(ma.get("patterns", t), t);
-                        for (String key : array.stringKeySet()) {
-                            CArray pattern = ArgumentValidation.getArray(array.get(key, t), t);
-                            MCPatternShape shape = MCPatternShape.valueOf(pattern.get("shape", t).val().toUpperCase());
-                            MCDyeColor color = MCDyeColor.valueOf(pattern.get("color", t).val().toUpperCase());
-                            ((MCBannerMeta) meta).addPattern(StaticLayer.GetConvertor().GetPattern(color, shape));
-                        }
                     }
                 } else if (meta instanceof MCSpawnEggMeta) {
                     if (ma.containsKey("spawntype")) {
                         Construct spawntype = ma.get("spawntype", t);
                         if (spawntype instanceof CString) {
                             ((MCSpawnEggMeta) meta).setSpawnedType(MCEntityType.valueOf(spawntype.val().toUpperCase()));
-                        }
-                    }
-                } else if (meta instanceof MCMapMeta && Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_11)) {
-                    if (ma.containsKey("color")) {
-                        Construct ci = ma.get("color", t);
-                        if (ci instanceof CArray) {
-                            ((MCMapMeta) meta).setColor(color((CArray) ci, t));
-                        } else if (!(ci instanceof CNull)) {
-                            throw new CREFormatException("Color was expected to be an array.", t);
                         }
                     }
                 }
@@ -1048,43 +960,6 @@ public class ObjectGenerator {
             }
         }
         return ret;
-    }
-
-    public CArray potionData(MCPotionData mcpd, Target t) {
-        CArray base = CArray.GetAssociativeArray(t);
-        base.set("type", mcpd.getType().name(), t);
-        base.set("extended", CBoolean.get(mcpd.isExtended()), t);
-        base.set("upgraded", CBoolean.get(mcpd.isUpgraded()), t);
-        return base;
-    }
-
-    public MCPotionData potionData(CArray pd, Target t) {
-        MCPotionType type = MCPotionType.valueOf(pd.get("type", t).val().toUpperCase());
-        boolean extended = false;
-        boolean upgraded = false;
-        if (pd.containsKey("extended")) {
-            Construct cext = pd.get("extended", t);
-            if (cext instanceof CBoolean) {
-                extended = ((CBoolean) cext).getBoolean();
-            } else {
-                throw new CREFormatException(
-                        "Expected potion value for key \"extended\" to be a boolean", t);
-            }
-        }
-        if (pd.containsKey("upgraded")) {
-            Construct cupg = pd.get("upgraded", t);
-            if (cupg instanceof CBoolean) {
-                upgraded = ((CBoolean) cupg).getBoolean();
-            } else {
-                throw new CREFormatException(
-                        "Expected potion value for key \"upgraded\" to be a boolean", t);
-            }
-        }
-        try {
-            return StaticLayer.GetPotionData(type, extended, upgraded);
-        } catch (IllegalArgumentException ex) {
-            throw new CREFormatException(ex.getMessage(), t, ex);
-        }
     }
 
     public CArray fireworkEffect(MCFireworkEffect mcfe, Target t) {

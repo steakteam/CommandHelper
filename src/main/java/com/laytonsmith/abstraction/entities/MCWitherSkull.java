@@ -7,7 +7,4 @@ import com.laytonsmith.abstraction.MCFireball;
  */
 public interface MCWitherSkull extends MCFireball {
 
-    public boolean isCharged();
-
-    public void setCharged(boolean charged);
 }

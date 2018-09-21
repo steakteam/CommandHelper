@@ -5,38 +5,36 @@ import com.laytonsmith.abstraction.MCCommandSender;
 import com.laytonsmith.abstraction.MCEntity;
 import com.laytonsmith.abstraction.MCItemStack;
 import com.laytonsmith.abstraction.MCLocation;
-import com.laytonsmith.abstraction.MCMaterialData;
 import com.laytonsmith.abstraction.MCNote;
 import com.laytonsmith.abstraction.MCOfflinePlayer;
 import com.laytonsmith.abstraction.MCPlayer;
 import com.laytonsmith.abstraction.MCPlayerInventory;
 import com.laytonsmith.abstraction.MCScoreboard;
 import com.laytonsmith.abstraction.StaticLayer;
-import com.laytonsmith.abstraction.bukkit.BukkitConvertor;
 import com.laytonsmith.abstraction.bukkit.BukkitMCItemStack;
 import com.laytonsmith.abstraction.bukkit.BukkitMCLocation;
 import com.laytonsmith.abstraction.bukkit.BukkitMCPlayerInventory;
 import com.laytonsmith.abstraction.bukkit.BukkitMCScoreboard;
 import com.laytonsmith.abstraction.enums.MCInstrument;
-import com.laytonsmith.abstraction.enums.MCParticle;
 import com.laytonsmith.abstraction.enums.MCSound;
 import com.laytonsmith.abstraction.enums.MCSoundCategory;
 import com.laytonsmith.abstraction.enums.MCVersion;
 import com.laytonsmith.abstraction.enums.MCWeather;
 import com.laytonsmith.abstraction.enums.bukkit.BukkitMCInstrument;
 import com.laytonsmith.abstraction.enums.bukkit.BukkitMCSound;
-import com.laytonsmith.abstraction.enums.bukkit.BukkitMCSoundCategory;
 import com.laytonsmith.abstraction.enums.bukkit.BukkitMCWeather;
 import com.laytonsmith.commandhelper.CommandHelperPlugin;
 import com.laytonsmith.core.Static;
+import net.minecraft.server.v1_5_R3.EntityPlayer;
+import net.minecraft.server.v1_5_R3.Packet130UpdateSign;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Note;
 import org.bukkit.Server;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -46,7 +44,6 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  *
@@ -129,7 +126,7 @@ public class BukkitMCPlayer extends BukkitMCHumanEntity implements MCPlayer, MCC
         } else if (slot == 103) {
             is = p.getInventory().getHelmet();
         } else if (slot == -106) {
-            is = p.getInventory().getItemInOffHand();
+            is = p.getInventory().getItemInHand();
         }
         if (slot >= 0 && slot <= 35) {
             is = p.getInventory().getItem(slot);
@@ -164,6 +161,11 @@ public class BukkitMCPlayer extends BukkitMCHumanEntity implements MCPlayer, MCC
     @Override
     public MCWeather getPlayerWeather() {
         return BukkitMCWeather.getConvertor().getAbstractedEnum(p.getPlayerWeather());
+    }
+
+    @Override
+    public void sendResourcePack(String url) {
+        p.setTexturePack(url);
     }
 
     @Override
@@ -262,7 +264,7 @@ public class BukkitMCPlayer extends BukkitMCHumanEntity implements MCPlayer, MCC
     public List<String> getGroups() {
         // As in https://github.com/sk89q/WorldEdit/blob/master/
         // worldedit-bukkit/src/main/java/com/sk89q/wepif/DinnerPermsResolver.java#L112-L126
-        List<String> groupNames = new ArrayList<String>();
+        List<String> groupNames = new ArrayList<>();
         for (PermissionAttachmentInfo permAttach : p.getEffectivePermissions()) {
             String perm = permAttach.getPermission();
             if (!(perm.startsWith(Static.groupPrefix) && permAttach.getValue())) {
@@ -335,29 +337,6 @@ public class BukkitMCPlayer extends BukkitMCHumanEntity implements MCPlayer, MCC
     }
 
     @Override
-    public void sendResourcePack(String url) {
-        p.setResourcePack(url);
-    }
-
-    @Override
-    public void sendTitle(String title, String subtitle, int fadein, int stay, int fadeout) {
-        if (title == null) {
-            // If the title is null the subtitle won't be displayed. This is unintuitive.
-            title = "";
-        }
-        try {
-            p.sendTitle(title, subtitle, fadein, stay, fadeout);
-        } catch (NoSuchMethodError ex1) {
-            // Probably prior to 1.11, try the deprecated method
-            try {
-                p.sendTitle(title, subtitle);
-            } catch (NoSuchMethodError ex2) {
-                // Probably prior to 1.8.7, no title API
-            }
-        }
-    }
-
-    @Override
     public void setAllowFlight(boolean flight) {
         p.setAllowFlight(flight);
     }
@@ -400,29 +379,6 @@ public class BukkitMCPlayer extends BukkitMCHumanEntity implements MCPlayer, MCC
     @Override
     public void setRemainingFireTicks(int i) {
         p.setFireTicks(i);
-    }
-
-    @Override
-    public void setSpectatorTarget(MCEntity entity) {
-        try {
-            if (entity == null) {
-                p.setSpectatorTarget(null);
-                return;
-            }
-            p.setSpectatorTarget((Entity) entity.getHandle());
-        } catch (NoSuchMethodError ex) {
-            // Probably 1.8.6 or prior
-        }
-    }
-
-    @Override
-    public MCEntity getSpectatorTarget() {
-        try {
-            return BukkitConvertor.BukkitGetCorrectEntity(p.getSpectatorTarget());
-        } catch (NoSuchMethodError ex) {
-            // Probably 1.8.6 or prior
-            return null;
-        }
     }
 
     @Override
@@ -521,7 +477,8 @@ public class BukkitMCPlayer extends BukkitMCHumanEntity implements MCPlayer, MCC
 
     @Override
     public void sendSignTextChange(MCLocation loc, String[] lines) {
-        p.sendSignChange(((Location) loc.getHandle()), lines);
+        EntityPlayer nmsPlayer = ((CraftPlayer) p).getHandle();
+        nmsPlayer.playerConnection.sendPacket(new Packet130UpdateSign(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), lines));
     }
 
     @Override
@@ -537,88 +494,17 @@ public class BukkitMCPlayer extends BukkitMCHumanEntity implements MCPlayer, MCC
 
     @Override
     public void playSound(MCLocation l, String sound, float volume, float pitch) {
-        p.playSound(((BukkitMCLocation) l).asLocation(), sound, volume, pitch);
+        playSound(l, MCSound.valueOf(sound), volume, pitch);
     }
 
     @Override
     public void playSound(MCLocation l, MCSound sound, MCSoundCategory category, float volume, float pitch) {
-        try {
-            p.playSound((Location) l.getHandle(), ((BukkitMCSound) sound).getConcrete(),
-                    BukkitMCSoundCategory.getConvertor().getConcreteEnum(category), volume, pitch);
-        } catch (NoClassDefFoundError ex) {
-            // probably prior to 1.11, ignore category
-            playSound(l, sound, volume, pitch);
-        }
+        playSound(l, sound, volume, pitch);
     }
 
     @Override
     public void playSound(MCLocation l, String sound, MCSoundCategory category, float volume, float pitch) {
-        try {
-            p.playSound((Location) l.getHandle(), sound,
-                    BukkitMCSoundCategory.getConvertor().getConcreteEnum(category), volume, pitch);
-        } catch (NoClassDefFoundError ex) {
-            // probably prior to 1.11, ignore category
-            playSound(l, sound, volume, pitch);
-        }
-    }
-
-    @Override
-    public void stopSound(MCSound sound) {
-        try {
-            p.stopSound(((BukkitMCSound) sound).getConcrete());
-        } catch (NoSuchMethodError ex) {
-            // probably prior to 1.10
-        }
-    }
-
-    @Override
-    public void stopSound(String sound) {
-        try {
-            p.stopSound(sound);
-        } catch (NoSuchMethodError ex) {
-            // probably prior to 1.10
-        }
-    }
-
-    @Override
-    public void stopSound(MCSound sound, MCSoundCategory category) {
-        try {
-            p.stopSound(((BukkitMCSound) sound).getConcrete(),
-                    BukkitMCSoundCategory.getConvertor().getConcreteEnum(category));
-        } catch (NoClassDefFoundError ex) {
-            // probably prior to 1.11, ignore category
-            stopSound(sound);
-        }
-    }
-
-    @Override
-    public void stopSound(String sound, MCSoundCategory category) {
-        try {
-            p.stopSound(sound, BukkitMCSoundCategory.getConvertor().getConcreteEnum(category));
-        } catch (NoClassDefFoundError ex) {
-            // probably prior to 1.11, ignore category
-            stopSound(sound);
-        }
-    }
-
-    @Override
-    public void spawnParticle(MCLocation l, MCParticle pa, int count, double offsetX, double offsetY, double offsetZ, double velocity, Object data) {
-        try {
-            Particle type = Particle.valueOf(pa.name());
-            if (data != null) {
-                Object particleData = null;
-                if (type.getDataType().equals(MaterialData.class) && data instanceof MCMaterialData) {
-                    particleData = ((MCMaterialData) data).getHandle();
-                } else if (type.getDataType().equals(ItemStack.class) && data instanceof MCItemStack) {
-                    particleData = ((MCItemStack) data).getHandle();
-                }
-                p.spawnParticle(type, ((BukkitMCLocation) l).asLocation(), count, offsetX, offsetY, offsetZ, velocity, particleData);
-            } else {
-                p.spawnParticle(type, ((BukkitMCLocation) l).asLocation(), count, offsetX, offsetY, offsetZ, velocity);
-            }
-        } catch (NoClassDefFoundError ex) {
-            // probably prior to 1.9
-        }
+        playSound(l, sound, volume, pitch);
     }
 
     @Override
@@ -655,11 +541,6 @@ public class BukkitMCPlayer extends BukkitMCHumanEntity implements MCPlayer, MCC
     public MCLocation getBedSpawnLocation() {
         Location loc = p.getBedSpawnLocation();
         return loc == null ? null : new BukkitMCLocation(loc);
-    }
-
-    @Override
-    public UUID getUniqueID() {
-        return p.getUniqueId();
     }
 
     @Override

@@ -22,7 +22,6 @@ import com.laytonsmith.abstraction.MCLocation;
 import com.laytonsmith.abstraction.MCMaterialData;
 import com.laytonsmith.abstraction.MCPainting;
 import com.laytonsmith.abstraction.MCPlayer;
-import com.laytonsmith.abstraction.MCPotionData;
 import com.laytonsmith.abstraction.MCProjectile;
 import com.laytonsmith.abstraction.MCProjectileSource;
 import com.laytonsmith.abstraction.MCTNT;
@@ -60,7 +59,6 @@ import com.laytonsmith.abstraction.entities.MCSheep;
 import com.laytonsmith.abstraction.entities.MCShulkerBullet;
 import com.laytonsmith.abstraction.entities.MCSkeleton;
 import com.laytonsmith.abstraction.entities.MCSlime;
-import com.laytonsmith.abstraction.entities.MCSnowman;
 import com.laytonsmith.abstraction.entities.MCThrownPotion;
 import com.laytonsmith.abstraction.entities.MCTippedArrow;
 import com.laytonsmith.abstraction.entities.MCVillager;
@@ -83,7 +81,6 @@ import com.laytonsmith.abstraction.enums.MCProjectileType;
 import com.laytonsmith.abstraction.enums.MCRabbitType;
 import com.laytonsmith.abstraction.enums.MCRotation;
 import com.laytonsmith.abstraction.enums.MCSkeletonType;
-import com.laytonsmith.abstraction.enums.MCVersion;
 import com.laytonsmith.annotations.api;
 import com.laytonsmith.annotations.seealso;
 import com.laytonsmith.core.ArgumentValidation;
@@ -105,6 +102,7 @@ import com.laytonsmith.core.exceptions.CRE.CREBadEntityException;
 import com.laytonsmith.core.exceptions.CRE.CREBadEntityTypeException;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
+import com.laytonsmith.core.exceptions.CRE.CREIllegalArgumentException;
 import com.laytonsmith.core.exceptions.CRE.CREIndexOverflowException;
 import com.laytonsmith.core.exceptions.CRE.CREInvalidWorldException;
 import com.laytonsmith.core.exceptions.CRE.CRELengthException;
@@ -1385,7 +1383,7 @@ public class EntityManagement {
         @Override
         public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
             MCLivingEntity le = Static.getLivingEntity(args[0], t);
-            le.setMaxHealth(Static.getDouble(args[1], t));
+            le.setMaxHealth(Static.getInt32(args[1], t));
             return CVoid.VOID;
         }
 
@@ -1513,66 +1511,6 @@ public class EntityManagement {
             return CHVersion.V3_3_1;
         }
 
-    }
-
-    @api
-    public static class get_mob_name extends EntityGetterFunction {
-
-        @Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCEntity le = Static.getEntity(args[0], t);
-            try {
-                return new CString(le.getCustomName(), t);
-            } catch (IllegalArgumentException e) {
-                throw new CRECastException(e.getMessage(), t);
-            }
-        }
-
-        @Override
-        public String getName() {
-            return "get_mob_name";
-        }
-
-        @Override
-        public String docs() {
-            return "string {entityID} Returns the name of the given mob.";
-        }
-
-        @Override
-        public CHVersion since() {
-            return CHVersion.V3_3_1;
-        }
-    }
-
-    @api
-    public static class set_mob_name extends EntitySetterFunction {
-
-        @Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCEntity le = Static.getEntity(args[0], t);
-            try {
-                le.setCustomName(args[1].val());
-            } catch (IllegalArgumentException e) {
-                throw new CRECastException(e.getMessage(), t);
-            }
-            return CVoid.VOID;
-        }
-
-        @Override
-        public String getName() {
-            return "set_mob_name";
-        }
-
-        @Override
-        public String docs() {
-            return "void {entityID, name} Sets the name of the given mob. This"
-                    + " automatically truncates if it is more than 64 characters.";
-        }
-
-        @Override
-        public CHVersion since() {
-            return CHVersion.V3_3_1;
-        }
     }
 
     @api(environments = {CommandHelperEnvironment.class})
@@ -1850,7 +1788,7 @@ public class EntityManagement {
                               Construct... args) throws ConfigRuntimeException {
 
             MCEntity e = Static.getEntity(args[0], t);
-            double speed = Static.getDouble(args[1], t);
+            int speed = Static.getInt32(args[1], t);
 
             if (e instanceof MCBoat) {
                 ((MCBoat) e).setMaxSpeed(speed);
@@ -1953,67 +1891,6 @@ public class EntityManagement {
             return "void {entityID, array} Sets the drop chances for each equipment slot on a mob,"
                     + " but does not work on players. Passing null instead of an array will automatically"
                     + " set all rates to 0, which will cause nothing to drop. A rate of 1 will guarantee a drop.";
-        }
-
-        @Override
-        public CHVersion since() {
-            return CHVersion.V3_3_1;
-        }
-    }
-
-    @api
-    public static class get_name_visible extends EntityGetterFunction {
-
-        @Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            try {
-                return CBoolean.get(Static.getEntity(args[0], t).isCustomNameVisible());
-            } catch (IllegalArgumentException e) {
-                throw new CRECastException(e.getMessage(), t);
-            }
-        }
-
-        @Override
-        public String getName() {
-            return "get_name_visible";
-        }
-
-        @Override
-        public String docs() {
-            return "boolean {entityID} Returns whether or not a mob's custom name is always visible."
-                    + " If this is true it will be as visible as player names, otherwise it will only be"
-                    + " visible when near the mob.";
-        }
-
-        @Override
-        public CHVersion since() {
-            return CHVersion.V3_3_1;
-        }
-    }
-
-    @api
-    public static class set_name_visible extends EntitySetterFunction {
-
-        @Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            try {
-                Static.getEntity(args[0], t).setCustomNameVisible(Static.getBoolean(args[1]));
-            } catch (IllegalArgumentException e) {
-                throw new CRECastException(e.getMessage(), t);
-            }
-            return CVoid.VOID;
-        }
-
-        @Override
-        public String getName() {
-            return "set_name_visible";
-        }
-
-        @Override
-        public String docs() {
-            return "void {entityID, boolean} Sets the visibility of a mob's custom name."
-                    + " True means it will be visible from a distance, like a playername."
-                    + " False means it will only be visible when near the mob.";
         }
 
         @Override
@@ -2246,70 +2123,6 @@ public class EntityManagement {
 
         @Override
         public Version since() {
-            return CHVersion.V3_3_1;
-        }
-    }
-
-    @api
-    public static class get_leashholder extends EntityGetterFunction {
-
-        @Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCLivingEntity le = Static.getLivingEntity(args[0], t);
-            if (!le.isLeashed()) {
-                return CNull.NULL;
-            }
-            return new CString(le.getLeashHolder().getUniqueId().toString(), t);
-        }
-
-        @Override
-        public String getName() {
-            return "get_leashholder";
-        }
-
-        @Override
-        public String docs() {
-            return "int {entityID} Returns the entityID of the entity that is holding the given living entity's leash,"
-                    + " or null if it isn't being held.";
-        }
-
-        @Override
-        public CHVersion since() {
-            return CHVersion.V3_3_1;
-        }
-    }
-
-    @api
-    public static class set_leashholder extends EntitySetterFunction {
-
-        @Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCLivingEntity le = Static.getLivingEntity(args[0], t);
-            MCEntity holder;
-            if (args[1] instanceof CNull) {
-                holder = null;
-            } else {
-                holder = Static.getEntity(args[1], t);
-            }
-            le.setLeashHolder(holder);
-            return CVoid.VOID;
-        }
-
-        @Override
-        public String getName() {
-            return "set_leashholder";
-        }
-
-        @Override
-        public String docs() {
-            return "void {entityID, entityID} The first entity is the entity to be held on a leash, and must be living."
-                    + " The second entity is the holder of the leash. This does not have to be living,"
-                    + " but the only non-living entity that will persist as a holder across restarts is the leash hitch."
-                    + " Bats, enderdragons, players, and withers can not be held by leashes due to minecraft limitations.";
-        }
-
-        @Override
-        public CHVersion since() {
             return CHVersion.V3_3_1;
         }
     }
@@ -2627,38 +2440,8 @@ public class EntityManagement {
             CArray specArray = CArray.GetAssociativeArray(t);
 
             switch (entity.getType().getAbstracted()) {
-                case AREA_EFFECT_CLOUD:
-                    MCAreaEffectCloud cloud = (MCAreaEffectCloud) entity;
-                    specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_COLOR, ObjectGenerator.GetGenerator().color(cloud.getColor(), t), t);
-                    specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_DURATION, new CInt(cloud.getDuration(), t), t);
-                    specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_DURATIONONUSE, new CInt(cloud.getDurationOnUse(), t), t);
-                    specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_PARTICLE, new CString(cloud.getParticle().name(), t), t);
-                    CArray meta = CArray.GetAssociativeArray(t);
-                    CArray effects = ObjectGenerator.GetGenerator().potions(cloud.getCustomEffects(), t);
-                    meta.set("potions", effects, t);
-                    meta.set("base", ObjectGenerator.GetGenerator().potionData(cloud.getBasePotionData(), t), t);
-                    specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_POTIONMETA, meta, t);
-                    specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_RADIUS, new CDouble(cloud.getRadius(), t), t);
-                    specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_RADIUSONUSE, new CDouble(cloud.getRadiusOnUse(), t), t);
-                    specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_RADIUSPERTICK, new CDouble(cloud.getRadiusPerTick(), t), t);
-                    specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_REAPPLICATIONDELAY, new CInt(cloud.getReapplicationDelay(), t), t);
-                    MCProjectileSource cloudSource = cloud.getSource();
-                    if (cloudSource instanceof MCBlockProjectileSource) {
-                        MCLocation blockLocation = ((MCBlockProjectileSource) cloudSource).getBlock().getLocation();
-                        CArray locationArray = ObjectGenerator.GetGenerator().location(blockLocation, false);
-                        specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_SOURCE, locationArray, t);
-                    } else if (cloudSource instanceof MCEntity) {
-                        String entityUUID = ((MCEntity) cloudSource).getUniqueId().toString();
-                        specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_SOURCE, new CString(entityUUID, t), t);
-                    } else {
-                        specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_SOURCE, CNull.NULL, t);
-                    }
-                    specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_WAITTIME, new CInt(cloud.getWaitTime(), t), t);
-                    break;
                 case ARROW:
                     MCArrow arrow = (MCArrow) entity;
-                    specArray.set(entity_spec.KEY_ARROW_CRITICAL, CBoolean.get(arrow.isCritical()), t);
-                    specArray.set(entity_spec.KEY_ARROW_KNOCKBACK, new CInt(arrow.getKnockbackStrength(), t), t);
                     break;
                 case ARMOR_STAND:
                     MCArmorStand stand = (MCArmorStand) entity;
@@ -2698,22 +2481,9 @@ public class EntityManagement {
                     break;
                 case ENDER_CRYSTAL:
                     MCEnderCrystal endercrystal = (MCEnderCrystal) entity;
-                    if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)) {
-                        specArray.set(entity_spec.KEY_ENDERCRYSTAL_BASE, CBoolean.get(endercrystal.isShowingBottom()), t);
-                        MCLocation location = endercrystal.getBeamTarget();
-                        if (location == null) {
-                            specArray.set(entity_spec.KEY_ENDERCRYSTAL_BEAMTARGET, CNull.NULL, t);
-                        } else {
-                            specArray.set(entity_spec.KEY_ENDERCRYSTAL_BEAMTARGET,
-                                    ObjectGenerator.GetGenerator().location(location, false), t);
-                        }
-                    }
                     break;
                 case ENDER_DRAGON:
                     MCEnderDragon enderdragon = (MCEnderDragon) entity;
-                    if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9_X)) {
-                        specArray.set(entity_spec.KEY_ENDERDRAGON_PHASE, new CString(enderdragon.getPhase().name(), t), t);
-                    }
                     break;
                 case ENDERMAN:
                     MCEnderman enderman = (MCEnderman) entity;
@@ -2791,8 +2561,8 @@ public class EntityManagement {
                     break;
                 case MINECART:
                     MCMinecart minecart = (MCMinecart) entity;
-                    specArray.set(entity_spec.KEY_MINECART_BLOCK, new CString(minecart.getDisplayBlock().getMaterial().getName(), t), t);
-                    specArray.set(entity_spec.KEY_MINECART_OFFSET, new CInt(minecart.getDisplayBlockOffset(), t), t);
+                    specArray.set(entity_spec.KEY_FLYING_VELOCITY, ObjectGenerator.GetGenerator().vector(minecart.getFlyingVelocityMod()), Target.UNKNOWN);
+                    specArray.set(entity_spec.KEY_DERAILED_VELOCITY, ObjectGenerator.GetGenerator().vector(minecart.getDerailedVelocityMod()), Target.UNKNOWN);
                     break;
                 case MINECART_COMMAND:
                     MCCommandMinecart commandminecart = (MCCommandMinecart) entity;
@@ -2866,25 +2636,11 @@ public class EntityManagement {
                     specArray.set(entity_spec.KEY_HORSE_SADDLE, ObjectGenerator.GetGenerator().item(undeadhorse.getSaddle(), t), t);
                     break;
                 case SNOWMAN:
-                    if (Static.getVersion().gte(MCVersion.MC1_9_4)) {
-                        MCSnowman snowman = (MCSnowman) entity;
-                        specArray.set(entity_spec.KEY_SNOWMAN_DERP, CBoolean.GenerateCBoolean(snowman.isDerp(), t), t);
-                    }
                     break;
                 case LINGERING_POTION:
                 case SPLASH_POTION:
                     MCThrownPotion potion = (MCThrownPotion) entity;
                     specArray.set(entity_spec.KEY_SPLASH_POTION_ITEM, ObjectGenerator.GetGenerator().item(potion.getItem(), t), t);
-                    break;
-                case TIPPED_ARROW:
-                    MCTippedArrow tippedarrow = (MCTippedArrow) entity;
-                    specArray.set(entity_spec.KEY_ARROW_CRITICAL, CBoolean.get(tippedarrow.isCritical()), t);
-                    specArray.set(entity_spec.KEY_ARROW_KNOCKBACK, new CInt(tippedarrow.getKnockbackStrength(), t), t);
-                    CArray tippedmeta = CArray.GetAssociativeArray(t);
-                    CArray tippedeffects = ObjectGenerator.GetGenerator().potions(tippedarrow.getCustomEffects(), t);
-                    tippedmeta.set("potions", tippedeffects, t);
-                    tippedmeta.set("base", ObjectGenerator.GetGenerator().potionData(tippedarrow.getBasePotionData(), t), t);
-                    specArray.set(entity_spec.KEY_TIPPEDARROW_POTIONMETA, tippedmeta, t);
                     break;
                 case VILLAGER:
                     MCVillager villager = (MCVillager) entity;
@@ -2892,7 +2648,6 @@ public class EntityManagement {
                     break;
                 case WITHER_SKULL:
                     MCWitherSkull skull = (MCWitherSkull) entity;
-                    specArray.set(entity_spec.KEY_WITHER_SKULL_CHARGED, CBoolean.get(skull.isCharged()), t);
                     specArray.set(entity_spec.KEY_FIREBALL_DIRECTION, ObjectGenerator.GetGenerator().vector(skull.getDirection(), t), t);
                     break;
                 case WOLF:
@@ -2996,6 +2751,8 @@ public class EntityManagement {
         private static final String KEY_WOLF_SITTING = "sitting";
         private static final String KEY_ZOMBIE_BABY = "baby";
         private static final String KEY_ZOMBIE_VILLAGER = "villager";
+        private static final String KEY_FLYING_VELOCITY = "flyingvelocity";
+        private static final String KEY_DERAILED_VELOCITY = "derailedvelocity";
     }
 
     @api
@@ -3060,31 +2817,6 @@ public class EntityManagement {
                                     throw new CREFormatException("Invalid particle type: " + particleName, t);
                                 }
                                 break;
-                            case entity_spec.KEY_AREAEFFECTCLOUD_POTIONMETA:
-                                Construct c = specArray.get(index, t);
-                                if (c instanceof CArray) {
-                                    CArray meta = (CArray) c;
-                                    if (meta.containsKey("base")) {
-                                        Construct base = meta.get("base", t);
-                                        if (base instanceof CArray) {
-                                            MCPotionData pd = ObjectGenerator.GetGenerator().potionData((CArray) base, t);
-                                            cloud.setBasePotionData(pd);
-                                        }
-                                    }
-                                    if (meta.containsKey("potions")) {
-                                        cloud.clearCustomEffects();
-                                        Construct potions = meta.get("potions", t);
-                                        if (potions instanceof CArray) {
-                                            List<MCLivingEntity.MCEffect> list = ObjectGenerator.GetGenerator().potions((CArray) potions, t);
-                                            for (MCLivingEntity.MCEffect effect : list) {
-                                                cloud.addCustomEffect(effect);
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    throw new CRECastException("AreaEffectCloud potion meta must be an array", t);
-                                }
-                                break;
                             case entity_spec.KEY_AREAEFFECTCLOUD_RADIUS:
                                 cloud.setRadius(ArgumentValidation.getDouble32(specArray.get(index, t), t));
                                 break;
@@ -3096,21 +2828,6 @@ public class EntityManagement {
                                 break;
                             case entity_spec.KEY_AREAEFFECTCLOUD_REAPPLICATIONDELAY:
                                 cloud.setReapplicationDelay(ArgumentValidation.getInt32(specArray.get(index, t), t));
-                                break;
-                            case entity_spec.KEY_AREAEFFECTCLOUD_SOURCE:
-                                Construct cloudSource = specArray.get(index, t);
-                                if (cloudSource instanceof CNull) {
-                                    cloud.setSource(null);
-                                } else if (cloudSource instanceof CArray) {
-                                    MCBlock b = ObjectGenerator.GetGenerator().location(cloudSource, cloud.getWorld(), t).getBlock();
-                                    if (b.isDispenser()) {
-                                        cloud.setSource(b.getDispenser().getBlockProjectileSource());
-                                    } else {
-                                        throw new CRECastException("AreaEffectCloud block source must be a dispenser", t);
-                                    }
-                                } else {
-                                    cloud.setSource(Static.getLivingEntity(cloudSource, t));
-                                }
                                 break;
                             case entity_spec.KEY_AREAEFFECTCLOUD_WAITTIME:
                                 cloud.setWaitTime(ArgumentValidation.getInt32(specArray.get(index, t), t));
@@ -3124,17 +2841,6 @@ public class EntityManagement {
                     MCArrow arrow = (MCArrow) entity;
                     for (String index : specArray.stringKeySet()) {
                         switch (index.toLowerCase()) {
-                            case entity_spec.KEY_ARROW_CRITICAL:
-                                arrow.setCritical(Static.getBoolean(specArray.get(index, t)));
-                                break;
-                            case entity_spec.KEY_ARROW_KNOCKBACK:
-                                int k = Static.getInt32(specArray.get(index, t), t);
-                                if (k < 0) {
-                                    throw new CRERangeException("Knockback can not be negative.", t);
-                                } else {
-                                    arrow.setKnockbackStrength(k);
-                                }
-                                break;
                             default:
                                 throwException(index, t);
                         }
@@ -3249,20 +2955,6 @@ public class EntityManagement {
                     MCEnderCrystal endercrystal = (MCEnderCrystal) entity;
                     for (String index : specArray.stringKeySet()) {
                         switch (index.toLowerCase()) {
-                            case entity_spec.KEY_ENDERCRYSTAL_BASE:
-                                endercrystal.setShowingBottom(Static.getBoolean(specArray.get(index, t)));
-                                break;
-                            case entity_spec.KEY_ENDERCRYSTAL_BEAMTARGET:
-                                Construct c = specArray.get(index, t);
-                                if (c instanceof CNull) {
-                                    endercrystal.setBeamTarget(null);
-                                } else if (c instanceof CArray) {
-                                    MCLocation l = ObjectGenerator.GetGenerator().location((CArray) c, endercrystal.getWorld(), t);
-                                    endercrystal.setBeamTarget(l);
-                                } else {
-                                    throw new CRECastException("EnderCrystal beam target must be an array or null", t);
-                                }
-                                break;
                             default:
                                 throwException(index, t);
                         }
@@ -3272,9 +2964,6 @@ public class EntityManagement {
                     MCEnderDragon enderdragon = (MCEnderDragon) entity;
                     for (String index : specArray.stringKeySet()) {
                         switch (index.toLowerCase()) {
-                            case entity_spec.KEY_ENDERDRAGON_PHASE:
-                                enderdragon.setPhase(MCEnderDragonPhase.valueOf(specArray.get(index, t).val().toUpperCase()));
-                                break;
                             default:
                                 throwException(index, t);
                         }
@@ -3493,12 +3182,13 @@ public class EntityManagement {
                 case MINECART:
                     MCMinecart minecart = (MCMinecart) entity;
                     for (String index : specArray.stringKeySet()) {
+                        Construct construct = specArray.get(index, t);
                         switch (index.toLowerCase()) {
-                            case entity_spec.KEY_MINECART_BLOCK:
-                                minecart.setDisplayBlock(ObjectGenerator.GetGenerator().material(specArray.get(index, t), t).getData());
+                            case entity_spec.KEY_FLYING_VELOCITY:
+                                minecart.setFlyingVelocityMod(ObjectGenerator.GetGenerator().vector(construct, t));
                                 break;
-                            case entity_spec.KEY_MINECART_OFFSET:
-                                minecart.setDisplayBlockOffset(Static.getInt32(specArray.get(index, t), t));
+                            case entity_spec.KEY_DERAILED_VELOCITY:
+                                minecart.setDerailedVelocityMod(ObjectGenerator.GetGenerator().vector(construct, t));
                                 break;
                             default:
                                 throwException(index, t);
@@ -3723,18 +3413,6 @@ public class EntityManagement {
                     }
                     break;
                 case SNOWMAN:
-                    if (Static.getVersion().gte(MCVersion.MC1_9_4)) {
-                        MCSnowman snowman = (MCSnowman) entity;
-                        for (String index : specArray.stringKeySet()) {
-                            switch (index.toLowerCase()) {
-                                case entity_spec.KEY_SNOWMAN_DERP:
-                                    snowman.setDerp(Static.getBoolean(specArray.get(index, t)));
-                                    break;
-                                default:
-                                    throwException(index, t);
-                            }
-                        }
-                    }
                     break;
                 case LINGERING_POTION:
                 case SPLASH_POTION:
@@ -3758,42 +3436,6 @@ public class EntityManagement {
                     MCTippedArrow tippedarrow = (MCTippedArrow) entity;
                     for (String index : specArray.stringKeySet()) {
                         switch (index.toLowerCase()) {
-                            case entity_spec.KEY_ARROW_CRITICAL:
-                                tippedarrow.setCritical(Static.getBoolean(specArray.get(index, t)));
-                                break;
-                            case entity_spec.KEY_ARROW_KNOCKBACK:
-                                int k = Static.getInt32(specArray.get(index, t), t);
-                                if (k < 0) {
-                                    throw new CRERangeException("Knockback can not be negative.", t);
-                                } else {
-                                    tippedarrow.setKnockbackStrength(k);
-                                }
-                                break;
-                            case entity_spec.KEY_TIPPEDARROW_POTIONMETA:
-                                Construct c = specArray.get(index, t);
-                                if (c instanceof CArray) {
-                                    CArray meta = (CArray) c;
-                                    if (meta.containsKey("base")) {
-                                        Construct base = meta.get("base", t);
-                                        if (base instanceof CArray) {
-                                            MCPotionData pd = ObjectGenerator.GetGenerator().potionData((CArray) base, t);
-                                            tippedarrow.setBasePotionData(pd);
-                                        }
-                                    }
-                                    if (meta.containsKey("potions")) {
-                                        tippedarrow.clearCustomEffects();
-                                        Construct potions = meta.get("potions", t);
-                                        if (potions instanceof CArray) {
-                                            List<MCLivingEntity.MCEffect> list = ObjectGenerator.GetGenerator().potions((CArray) potions, t);
-                                            for (MCLivingEntity.MCEffect effect : list) {
-                                                tippedarrow.addCustomEffect(effect);
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    throw new CRECastException("TippedArrow potion meta must be an array", t);
-                                }
-                                break;
                             default:
                                 throwException(index, t);
                         }
@@ -3819,12 +3461,6 @@ public class EntityManagement {
                     MCWitherSkull skull = (MCWitherSkull) entity;
                     for (String index : specArray.stringKeySet()) {
                         switch (index.toLowerCase()) {
-                            case entity_spec.KEY_WITHER_SKULL_CHARGED:
-                                skull.setCharged(Static.getBoolean(specArray.get(index, t)));
-                                break;
-                            case entity_spec.KEY_FIREBALL_DIRECTION:
-                                skull.setDirection(ObjectGenerator.GetGenerator().vector(specArray.get(index, t), t));
-                                break;
                             default:
                                 throwException(index, t);
                         }
@@ -3963,12 +3599,7 @@ public class EntityManagement {
                 if (args[1] instanceof CNull) {
                     ((MCProjectile) entity).setShooter(null);
                 } else if (args[1] instanceof CArray) {
-                    MCBlock b = ObjectGenerator.GetGenerator().location(args[1], entity.getWorld(), t).getBlock();
-                    if (b.isDispenser()) {
-                        ((MCProjectile) entity).setShooter(b.getDispenser().getBlockProjectileSource());
-                    } else {
-                        throw new CRECastException("Given block location is not a dispenser.", t);
-                    }
+                    throw new CREIllegalArgumentException("Unsupported operation.", t);
                 } else {
                     ((MCProjectile) entity).setShooter(Static.getLivingEntity(args[1], t));
                 }
@@ -4067,7 +3698,7 @@ public class EntityManagement {
 
             MCLivingEntity living = (MCLivingEntity) entity;
 
-            double damage = Static.getDouble(args[1], t);
+            int damage = Static.getInt32(args[1], t);
             if (args.length == 3) {
                 MCEntity source = Static.getEntity(args[2], t);
                 living.damage(damage, source);
@@ -4146,317 +3777,6 @@ public class EntityManagement {
         @Override
         public CHVersion since() {
             return CHVersion.V3_3_1;
-        }
-    }
-
-    @api
-    public static class set_entity_glowing extends EntitySetterFunction {
-        public String getName() {
-            return "set_entity_glowing";
-        }
-
-        public String docs() {
-            return "void {entityID, boolean} If true, applies glowing effect to the entity (MC 1.9)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            Static.getEntity(args[0], t).setGlowing(Static.getBoolean(args[1]));
-            return CVoid.VOID;
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class get_entity_glowing extends EntityGetterFunction {
-        public String getName() {
-            return "get_entity_glowing";
-        }
-
-        public String docs() {
-            return "boolean {entityID} Returns true if the entity is glowing (MC 1.9)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCEntity e = Static.getEntity(args[0], t);
-            return CBoolean.GenerateCBoolean(e.isGlowing(), t);
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class set_entity_gliding extends EntitySetterFunction {
-        public String getName() {
-            return "set_entity_gliding";
-        }
-
-        public String docs() {
-            return "void {entityID, boolean} If possible, makes the entity glide (MC 1.9)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCLivingEntity e = Static.getLivingEntity(args[0], t);
-            boolean glide = Static.getBoolean(args[1]);
-
-            e.setGliding(glide);
-
-            return CVoid.VOID;
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class get_entity_gliding extends EntityGetterFunction {
-        public String getName() {
-            return "get_entity_gliding";
-        }
-
-        public String docs() {
-            return "boolean {entityID} Returns true if the given entity is gliding (MC 1.9)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            return CBoolean.GenerateCBoolean(Static.getLivingEntity(args[0], t).isGliding(), t);
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class get_entity_ai extends EntityGetterFunction {
-        public String getName() {
-            return "get_entity_ai";
-        }
-
-        public String docs() {
-            return "boolean {entityID} Returns true if the given entity has AI (MC 1.9.2)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            return CBoolean.GenerateCBoolean(Static.getLivingEntity(args[0], t).hasAI(), t);
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class set_entity_ai extends EntitySetterFunction {
-        public String getName() {
-            return "set_entity_ai";
-        }
-
-        public String docs() {
-            return "void {entityID, boolean} enables or disables the entity AI (MC 1.9.2)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCLivingEntity e = Static.getLivingEntity(args[0], t);
-            boolean ai = Static.getBoolean(args[1]);
-
-            e.setAI(ai);
-
-            return CVoid.VOID;
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class get_entity_silent extends EntityGetterFunction {
-        public String getName() {
-            return "get_entity_silent";
-        }
-
-        public String docs() {
-            return "boolean {entityID} Returns true if the entity produces sounds (MC 1.9.4)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            return CBoolean.GenerateCBoolean(Static.getEntity(args[0], t).isSilent(), t);
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class set_entity_silent extends EntitySetterFunction {
-        public String getName() {
-            return "set_entity_silent";
-        }
-
-        public String docs() {
-            return "void {entityID, boolean} Sets whether or not entity produces sounds (MC 1.9.4)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCEntity e = Static.getEntity(args[0], t);
-            e.setSilent(Static.getBoolean(args[1]));
-            return CVoid.VOID;
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class get_entity_gravity extends EntityGetterFunction {
-        public String getName() {
-            return "get_entity_gravity";
-        }
-
-        public String docs() {
-            return "boolean {entityID} Returns true if gravity applies to the entity (MC 1.10)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            return CBoolean.GenerateCBoolean(Static.getEntity(args[0], t).hasGravity(), t);
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class set_entity_gravity extends EntitySetterFunction {
-        public String getName() {
-            return "set_entity_gravity";
-        }
-
-        public String docs() {
-            return "void {entityID, boolean} Sets whether or not gravity applies to the entity (MC 1.10)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCEntity e = Static.getEntity(args[0], t);
-            e.setHasGravity(Static.getBoolean(args[1]));
-            return CVoid.VOID;
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class get_entity_invulnerable extends EntityGetterFunction {
-        public String getName() {
-            return "get_entity_invulnerable";
-        }
-
-        public String docs() {
-            return "boolean {entityID} Returns true if the entity cannot be damaged (MC 1.9.2)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            return CBoolean.GenerateCBoolean(Static.getEntity(args[0], t).isInvulnerable(), t);
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class set_entity_invulnerable extends EntitySetterFunction {
-        public String getName() {
-            return "set_entity_invulnerable";
-        }
-
-        public String docs() {
-            return "void {entityID, boolean} If set to true the entity cannot be damaged, except by players in"
-                    + " creative mode (MC 1.9.2)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCEntity e = Static.getEntity(args[0], t);
-            e.setInvulnerable(Static.getBoolean(args[1]));
-            return CVoid.VOID;
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class get_scoreboard_tags extends EntityGetterFunction {
-        public String getName() {
-            return "get_scoreboard_tags";
-        }
-
-        public String docs() {
-            return "array {entityID} Returns an array of scoreboard tags for this entity. (MC 1.10.2)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCEntity e = Static.getEntity(args[0], t);
-            CArray tags = new CArray(t);
-            for (String tag : e.getScoreboardTags()) {
-                tags.push(new CString(tag, t), t);
-            }
-            return tags;
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class add_scoreboard_tag extends EntitySetterFunction {
-        public String getName() {
-            return "add_scoreboard_tag";
-        }
-
-        public String docs() {
-            return "boolean {entityID, tag} Adds a tag to the entity. Returns whether or not it was successful. (MC 1.10.2)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCEntity e = Static.getEntity(args[0], t);
-            return CBoolean.get(e.addScoreboardTag(args[1].val()));
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
-        }
-    }
-
-    @api
-    public static class remove_scoreboard_tag extends EntitySetterFunction {
-        public String getName() {
-            return "remove_scoreboard_tag";
-        }
-
-        public String docs() {
-            return "boolean {entityID, tag} Removes a tag from the entity. Returns whether or not it was successful. (MC 1.10.2)";
-        }
-
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCEntity e = Static.getEntity(args[0], t);
-            return CBoolean.get(e.removeScoreboardTag(args[1].val()));
-        }
-
-        public Version since() {
-            return CHVersion.V3_3_2;
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.laytonsmith.abstraction.bukkit.events;
 
-import com.laytonsmith.PureUtilities.Vector3D;
 import com.laytonsmith.abstraction.Implementation;
 import com.laytonsmith.abstraction.MCEntity;
 import com.laytonsmith.abstraction.MCHanging;
@@ -20,13 +19,11 @@ import com.laytonsmith.abstraction.bukkit.BukkitMCTravelAgent;
 import com.laytonsmith.abstraction.bukkit.blocks.BukkitMCBlock;
 import com.laytonsmith.abstraction.bukkit.blocks.BukkitMCMaterial;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCEntity;
-import com.laytonsmith.abstraction.bukkit.entities.BukkitMCFirework;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCHanging;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCItem;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCLivingEntity;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCPlayer;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCProjectile;
-import com.laytonsmith.abstraction.entities.MCFirework;
 import com.laytonsmith.abstraction.enums.MCDamageCause;
 import com.laytonsmith.abstraction.enums.MCEntityType;
 import com.laytonsmith.abstraction.enums.MCEquipmentSlot;
@@ -53,13 +50,10 @@ import com.laytonsmith.abstraction.events.MCEntityInteractEvent;
 import com.laytonsmith.abstraction.events.MCEntityPortalEvent;
 import com.laytonsmith.abstraction.events.MCEntityRegainHealthEvent;
 import com.laytonsmith.abstraction.events.MCEntityTargetEvent;
-import com.laytonsmith.abstraction.events.MCEntityToggleGlideEvent;
-import com.laytonsmith.abstraction.events.MCFireworkExplodeEvent;
 import com.laytonsmith.abstraction.events.MCHangingBreakEvent;
 import com.laytonsmith.abstraction.events.MCItemDespawnEvent;
 import com.laytonsmith.abstraction.events.MCItemSpawnEvent;
 import com.laytonsmith.abstraction.events.MCPlayerDropItemEvent;
-import com.laytonsmith.abstraction.events.MCPlayerInteractAtEntityEvent;
 import com.laytonsmith.abstraction.events.MCPlayerInteractEntityEvent;
 import com.laytonsmith.abstraction.events.MCPlayerPickupItemEvent;
 import com.laytonsmith.abstraction.events.MCPotionSplashEvent;
@@ -92,12 +86,9 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -431,32 +422,7 @@ public class BukkitEntityEvents {
 
         @Override
         public MCEquipmentSlot getHand() {
-            try {
-                if (e.getHand() == EquipmentSlot.HAND) {
-                    return MCEquipmentSlot.WEAPON;
-                }
-                return MCEquipmentSlot.OFF_HAND;
-            } catch (NoSuchMethodError e) {
-                // before Bukkit 1.9
-                return MCEquipmentSlot.WEAPON;
-            }
-        }
-    }
-
-    @abstraction(type = Implementation.Type.BUKKIT)
-    public static class BukkitMCPlayerInteractAtEntityEvent extends BukkitMCPlayerInteractEntityEvent implements MCPlayerInteractAtEntityEvent {
-
-        PlayerInteractAtEntityEvent e;
-
-        public BukkitMCPlayerInteractAtEntityEvent(Event event) {
-            super(event);
-            this.e = (PlayerInteractAtEntityEvent) event;
-        }
-
-        @Override
-        public Vector3D getClickedPosition() {
-            Vector v = e.getClickedPosition();
-            return new Vector3D(v.getX(), v.getY(), v.getZ());
+            return MCEquipmentSlot.WEAPON;
         }
     }
 
@@ -583,17 +549,12 @@ public class BukkitEntityEvents {
         }
 
         @Override
-        public double getFinalDamage() {
-            return event.getFinalDamage();
-        }
-
-        @Override
-        public double getDamage() {
+        public int getDamage() {
             return event.getDamage();
         }
 
         @Override
-        public void setDamage(double damage) {
+        public void setDamage(int damage) {
             event.setDamage(damage);
         }
     }
@@ -801,56 +762,6 @@ public class BukkitEntityEvents {
     }
 
     @abstraction(type = Implementation.Type.BUKKIT)
-    public static class BukkitMCEntityToggleGlideEvent implements MCEntityToggleGlideEvent {
-        EntityToggleGlideEvent e;
-
-        public BukkitMCEntityToggleGlideEvent(Event e) {
-            this.e = (EntityToggleGlideEvent) e;
-        }
-
-        @Override
-        public Object _GetObject() {
-            return e;
-        }
-
-        @Override
-        public boolean isGliding() {
-            return e.isGliding();
-        }
-
-        @Override
-        public MCEntity getEntity() {
-            return BukkitConvertor.BukkitGetCorrectEntity(e.getEntity());
-        }
-
-        @Override
-        public MCEntityType getEntityType() {
-            return BukkitConvertor.BukkitGetCorrectEntity(e.getEntity()).getType();
-        }
-
-    }
-
-    @abstraction(type = Implementation.Type.BUKKIT)
-    public static class BukkitMCFireworkExplodeEvent implements MCFireworkExplodeEvent {
-        FireworkExplodeEvent e;
-
-        public BukkitMCFireworkExplodeEvent(Event e) {
-            this.e = (FireworkExplodeEvent) e;
-        }
-
-        @Override
-        public Object _GetObject() {
-            return e;
-        }
-
-        @Override
-        public MCFirework getEntity() {
-            return new BukkitMCFirework(e.getEntity());
-        }
-
-    }
-
-    @abstraction(type = Implementation.Type.BUKKIT)
     public static class BukkitMCEntityRegainHealthEvent implements MCEntityRegainHealthEvent {
         EntityRegainHealthEvent e;
 
@@ -864,12 +775,12 @@ public class BukkitEntityEvents {
         }
 
         @Override
-        public double getAmount() {
+        public int getAmount() {
             return e.getAmount();
         }
 
         @Override
-        public void setAmount(double amount) {
+        public void setAmount(int amount) {
             e.setAmount(amount);
         }
 

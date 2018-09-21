@@ -7,13 +7,10 @@ import com.laytonsmith.abstraction.bukkit.events.BukkitInventoryEvents.BukkitMCI
 import com.laytonsmith.abstraction.bukkit.events.BukkitInventoryEvents.BukkitMCInventoryDragEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitInventoryEvents.BukkitMCInventoryOpenEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitInventoryEvents.BukkitMCItemHeldEvent;
-import com.laytonsmith.abstraction.bukkit.events.BukkitInventoryEvents.BukkitMCItemSwapEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitInventoryEvents.BukkitMCPrepareItemCraftEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitInventoryEvents.BukkitMCPrepareItemEnchantEvent;
-import com.laytonsmith.annotations.EventIdentifier;
 import com.laytonsmith.core.events.Driver;
 import com.laytonsmith.core.events.EventUtils;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -72,12 +69,6 @@ public class BukkitInventoryListener implements Listener {
     public void onItemHeld(PlayerItemHeldEvent event) {
         BukkitMCItemHeldEvent ih = new BukkitInventoryEvents.BukkitMCItemHeldEvent(event);
         EventUtils.TriggerListener(Driver.ITEM_HELD, "item_held", ih);
-    }
-
-    @EventIdentifier(event = Driver.ITEM_SWAP, className = "org.bukkit.event.player.PlayerSwapHandItemsEvent")
-    public void onItemSwap(Event event) {
-        BukkitMCItemSwapEvent is = new BukkitInventoryEvents.BukkitMCItemSwapEvent(event);
-        EventUtils.TriggerListener(Driver.ITEM_SWAP, "item_swap", is);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

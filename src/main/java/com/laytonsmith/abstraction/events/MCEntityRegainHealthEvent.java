@@ -8,9 +8,9 @@ import com.laytonsmith.core.events.BindableEvent;
  * Created by EntryPoint on 2016-12-13.
  */
 public interface MCEntityRegainHealthEvent extends BindableEvent {
-    double getAmount();
+    int getAmount();
 
-    void setAmount(double amount);
+    void setAmount(int amount);
 
     MCEntity getEntity();
 

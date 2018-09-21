@@ -16,24 +16,4 @@ public class BukkitMCArrow extends BukkitMCProjectile implements MCArrow {
         super((Projectile) arrow);
         _arrow = (Arrow) arrow;
     }
-
-    @Override
-    public int getKnockbackStrength() {
-        return _arrow.getKnockbackStrength();
-    }
-
-    @Override
-    public void setKnockbackStrength(int strength) {
-        _arrow.setKnockbackStrength(strength);
-    }
-
-    @Override
-    public boolean isCritical() {
-        return _arrow.isCritical();
-    }
-
-    @Override
-    public void setCritical(boolean critical) {
-        _arrow.setCritical(critical);
-    }
 }

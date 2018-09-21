@@ -8,9 +8,6 @@ import com.laytonsmith.abstraction.MCScoreboard;
 import com.laytonsmith.abstraction.MCTeam;
 import com.laytonsmith.abstraction.enums.MCCriteria;
 import com.laytonsmith.abstraction.enums.MCDisplaySlot;
-import com.laytonsmith.abstraction.enums.MCNameTagVisibility;
-import com.laytonsmith.abstraction.enums.MCOption;
-import com.laytonsmith.abstraction.enums.MCOptionStatus;
 import com.laytonsmith.abstraction.enums.MCVersion;
 import com.laytonsmith.annotations.api;
 import com.laytonsmith.core.CHVersion;
@@ -187,13 +184,6 @@ public class Scoreboards {
         CArray ops = CArray.GetAssociativeArray(t);
         ops.set("friendlyfire", CBoolean.get(team.allowFriendlyFire()), t);
         ops.set("friendlyinvisibles", CBoolean.get(team.canSeeFriendlyInvisibles()), t);
-        if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_8)) {
-            ops.set("nametagvisibility", new CString(team.getNameTagVisibility().name(), t), t);
-        }
-        if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)) {
-            ops.set("collisionrule", new CString(team.getOption(MCOption.COLLISION_RULE).name(), t), t);
-            ops.set("deathmessagevisibility", new CString(team.getOption(MCOption.DEATH_MESSAGE_VISIBILITY).name(), t), t);
-        }
         to.set("options", ops, t);
         CArray pl = new CArray(t);
         for (String entry : team.getEntries()) {
@@ -225,9 +215,6 @@ public class Scoreboards {
             return false;
         }
 
-        /**
-         * @return Array containing only {@link ExceptionType#CREScoreboardException}
-         */
         @Override
         public Class<? extends CREThrowable>[] thrown() {
             return new Class[]{CREScoreboardException.class};
@@ -1168,38 +1155,6 @@ public class Scoreboards {
                 }
                 if (options.containsKey("friendlyinvisibles")) {
                     team.setCanSeeFriendlyInvisibles(Static.getBoolean(options.get("friendlyinvisibles", t)));
-                }
-                if (options.containsKey("nametagvisibility") && Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_8)) {
-                    MCNameTagVisibility visibility;
-                    try {
-                        visibility = MCNameTagVisibility.valueOf(options.get("nametagvisibility", t).val().toUpperCase());
-                    } catch (IllegalArgumentException iae) {
-                        throw new CREFormatException("Unknown nametagvisibility: "
-                                + options.get("nametagvisibility", t).val(), t);
-                    }
-                    team.setNameTagVisibility(visibility);
-                }
-                if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)) {
-                    if (options.containsKey("collisionrule")) {
-                        MCOptionStatus collision;
-                        try {
-                            collision = MCOptionStatus.valueOf(options.get("collisionrule", t).val().toUpperCase());
-                        } catch (IllegalArgumentException iae) {
-                            throw new CREFormatException("Unknown collisionrule: "
-                                    + options.get("collisionrule", t).val(), t);
-                        }
-                        team.setOption(MCOption.COLLISION_RULE, collision);
-                    }
-                    if (options.containsKey("deathmessagevisibility")) {
-                        MCOptionStatus visibility;
-                        try {
-                            visibility = MCOptionStatus.valueOf(options.get("deathmessagevisibility", t).val().toUpperCase());
-                        } catch (IllegalArgumentException iae) {
-                            throw new CREFormatException("Unknown deathmessagevisibility: "
-                                    + options.get("deathmessagevisibility", t).val(), t);
-                        }
-                        team.setOption(MCOption.DEATH_MESSAGE_VISIBILITY, visibility);
-                    }
                 }
             } else {
                 throw new CREFormatException("Expected arg 2 to be an array.", t);

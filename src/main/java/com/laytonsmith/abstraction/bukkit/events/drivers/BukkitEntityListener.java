@@ -12,13 +12,10 @@ import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCEnti
 import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCEntityInteractEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCEntityPortalEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCEntityRegainHealthEvent;
-import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCEntityToggleGlideEvent;
-import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCFireworkExplodeEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCHangingBreakEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCItemDespawnEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCItemSpawnEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCPlayerDropItemEvent;
-import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCPlayerInteractAtEntityEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCPlayerInteractEntityEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCPlayerPickupItemEvent;
 import com.laytonsmith.abstraction.bukkit.events.BukkitEntityEvents.BukkitMCProjectileHitEvent;
@@ -50,13 +47,6 @@ public class BukkitEntityListener implements Listener {
     public void onClickEnt(Event event) {
         BukkitMCPlayerInteractEntityEvent piee = new BukkitMCPlayerInteractEntityEvent(event);
         EventUtils.TriggerListener(Driver.PLAYER_INTERACT_ENTITY, "player_interact_entity", piee);
-    }
-
-    @EventIdentifier(event = Driver.PLAYER_INTERACT_AT_ENTITY,
-            className = "org.bukkit.event.player.PlayerInteractAtEntityEvent")
-    public void onClickAtEnt(Event event) {
-        BukkitMCPlayerInteractAtEntityEvent piaee = new BukkitMCPlayerInteractAtEntityEvent(event);
-        EventUtils.TriggerListener(Driver.PLAYER_INTERACT_AT_ENTITY, "player_interact_at_entity", piaee);
     }
 
     @EventIdentifier(event = Driver.ITEM_DROP, className = "org.bukkit.event.player.PlayerDropItemEvent")
@@ -162,18 +152,6 @@ public class BukkitEntityListener implements Listener {
     public void onHangingBreak(Event event) {
         BukkitMCHangingBreakEvent hbe = new BukkitMCHangingBreakEvent(event);
         EventUtils.TriggerListener(Driver.HANGING_BREAK, "hanging_break", hbe);
-    }
-
-    @EventIdentifier(event = Driver.ENTITY_TOGGLE_GLIDE, className = "org.bukkit.event.entity.EntityToggleGlideEvent")
-    public void onEntityToggleGlide(Event event) {
-        BukkitMCEntityToggleGlideEvent etge = new BukkitMCEntityToggleGlideEvent(event);
-        EventUtils.TriggerListener(Driver.ENTITY_TOGGLE_GLIDE, "entity_toggle_glide", etge);
-    }
-
-    @EventIdentifier(event = Driver.FIREWORK_EXPLODE, className = "org.bukkit.event.entity.FireworkExplodeEvent")
-    public void onFireworkExplode(Event event) {
-        BukkitMCFireworkExplodeEvent fee = new BukkitMCFireworkExplodeEvent(event);
-        EventUtils.TriggerListener(Driver.FIREWORK_EXPLODE, "firework_explode", fee);
     }
 
     @EventIdentifier(event = Driver.ENTITY_REGAIN_HEALTH, className = "org.bukkit.event.entity.EntityRegainHealthEvent")

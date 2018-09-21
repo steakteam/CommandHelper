@@ -8,8 +8,8 @@ import com.laytonsmith.abstraction.bukkit.BukkitConvertor;
 import com.laytonsmith.abstraction.enums.MCProjectileType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
-import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 /**
@@ -18,15 +18,14 @@ import org.bukkit.util.Vector;
  * @author jb_aero
  */
 public class BukkitMCEntityProjectileSource extends BukkitMCEntity implements MCProjectileSource {
-
-    ProjectileSource eps;
+    LivingEntity eps;
 
     public BukkitMCEntityProjectileSource(Entity source) {
         super(source);
-        if (!(source instanceof ProjectileSource)) {
+        if (!(source instanceof LivingEntity)) {
             throw new IllegalArgumentException("Tried to construct BukkitMCEntityProjectileSource from invalid source.");
         }
-        eps = (ProjectileSource) source;
+        eps = (LivingEntity) source;
     }
 
     @Override
@@ -49,7 +48,8 @@ public class BukkitMCEntityProjectileSource extends BukkitMCEntity implements MC
         EntityType et = EntityType.valueOf(projectile.name());
         Class<? extends Entity> c = et.getEntityClass();
         Vector vector = new Vector(init.X(), init.Y(), init.Z());
-        Projectile proj = eps.launchProjectile(c.asSubclass(Projectile.class), vector);
+        Projectile proj = eps.launchProjectile(c.asSubclass(Projectile.class));
+        proj.setVelocity(vector);
 
         MCEntity mcproj = BukkitConvertor.BukkitGetCorrectEntity(proj);
 
@@ -74,6 +74,4 @@ public class BukkitMCEntityProjectileSource extends BukkitMCEntity implements MC
     public boolean equals(Object obj) {
         return eps.equals(obj);
     }
-
-
 }

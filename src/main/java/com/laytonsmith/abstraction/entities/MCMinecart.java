@@ -1,26 +1,26 @@
 package com.laytonsmith.abstraction.entities;
 
-import com.laytonsmith.abstraction.MCMaterialData;
+import com.laytonsmith.PureUtilities.Vector3D;
 import com.laytonsmith.abstraction.MCVehicle;
 
 public interface MCMinecart extends MCVehicle {
-    public void setDamage(double damage);
+    void setDamage(int damage);
 
-    public double getDamage();
+    int getDamage();
 
-    public double getMaxSpeed();
+    double getMaxSpeed();
 
-    public void setMaxSpeed(double speed);
+    void setMaxSpeed(int speed);
 
-    public boolean isSlowWhenEmpty();
+    boolean isSlowWhenEmpty();
 
-    public void setSlowWhenEmpty(boolean slow);
+    void setSlowWhenEmpty(boolean slow);
 
-    public void setDisplayBlock(MCMaterialData material);
+    Vector3D getFlyingVelocityMod();
 
-    public MCMaterialData getDisplayBlock();
+    void setFlyingVelocityMod(Vector3D var1);
 
-    public void setDisplayBlockOffset(int offset);
+    Vector3D getDerailedVelocityMod();
 
-    public int getDisplayBlockOffset();
+    void setDerailedVelocityMod(Vector3D var1);
 }

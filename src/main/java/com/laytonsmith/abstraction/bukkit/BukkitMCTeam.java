@@ -1,40 +1,28 @@
 package com.laytonsmith.abstraction.bukkit;
 
+import com.github.teamsteak.commandhelper.MockOfflinePlayer;
 import com.laytonsmith.PureUtilities.Common.ReflectionUtils;
 import com.laytonsmith.abstraction.MCScoreboard;
 import com.laytonsmith.abstraction.MCTeam;
-import com.laytonsmith.abstraction.enums.MCNameTagVisibility;
-import com.laytonsmith.abstraction.enums.MCOption;
-import com.laytonsmith.abstraction.enums.MCOptionStatus;
-import com.laytonsmith.abstraction.enums.bukkit.BukkitMCNameTagVisibility;
-import com.laytonsmith.abstraction.enums.bukkit.BukkitMCOption;
-import com.laytonsmith.abstraction.enums.bukkit.BukkitMCOptionStatus;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.scoreboard.NameTagVisibility;
+import net.minecraft.server.v1_5_R3.ScoreboardTeam;
 import org.bukkit.scoreboard.Team;
-import org.bukkit.scoreboard.Team.OptionStatus;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class BukkitMCTeam implements MCTeam {
 
-    Team t;
+    private final Team t;
+    private final ScoreboardTeam nmsTeam;
 
     public BukkitMCTeam(Team team) {
         t = team;
+        nmsTeam = (ScoreboardTeam) ReflectionUtils.get(t.getClass(), t, "team");
     }
 
     @Override
     public void addEntry(String entry) {
-        try {
-            t.addEntry(entry);
-        } catch (NoSuchMethodError ex) {
-            // Probably 1.8.5 or prior
-            OfflinePlayer player = Bukkit.getOfflinePlayer(entry);
-            ReflectionUtils.invokeMethod(t, "addPlayer", player);
-        }
+        t.addPlayer(new MockOfflinePlayer(entry));
     }
 
     @Override
@@ -58,31 +46,9 @@ public class BukkitMCTeam implements MCTeam {
     }
 
     @Override
-    public MCNameTagVisibility getNameTagVisibility() {
-        NameTagVisibility ntv = t.getNameTagVisibility();
-        return MCNameTagVisibility.valueOf(ntv.name());
-    }
-
-    @Override
-    public MCOptionStatus getOption(MCOption option) {
-        OptionStatus os = t.getOption(BukkitMCOption.getConvertor().getConcreteEnum(option));
-        return MCOptionStatus.valueOf(os.name());
-    }
-
-    @Override
+    @SuppressWarnings("unchecked")
     public Set<String> getEntries() {
-        Set<String> ret = new HashSet<String>();
-        try {
-            for (String e : t.getEntries()) {
-                ret.add(e);
-            }
-        } catch (NoSuchMethodError ex) {
-            // Probably 1.8.5 or prior
-            for (OfflinePlayer o : (Set<OfflinePlayer>) ReflectionUtils.invokeMethod(t, "getPlayers")) {
-                ret.add(o.getName());
-            }
-        }
-        return ret;
+        return new HashSet<String>(nmsTeam.getPlayerNameSet());
     }
 
     @Override
@@ -107,24 +73,12 @@ public class BukkitMCTeam implements MCTeam {
 
     @Override
     public boolean hasEntry(String entry) {
-        try {
-            return t.hasEntry(entry);
-        } catch (NoSuchMethodError ex) {
-            // Probably 1.8.5 or prior
-            OfflinePlayer player = Bukkit.getOfflinePlayer(entry);
-            return (boolean) ReflectionUtils.invokeMethod(t, "hasPlayer", player);
-        }
+        return t.hasPlayer(new MockOfflinePlayer(entry));
     }
 
     @Override
     public boolean removeEntry(String entry) {
-        try {
-            return t.removeEntry(entry);
-        } catch (NoSuchMethodError ex) {
-            // Probably 1.8.5 or prior
-            OfflinePlayer player = Bukkit.getOfflinePlayer(entry);
-            return (boolean) ReflectionUtils.invokeMethod(t, "removePlayer", player);
-        }
+        return t.removePlayer(new MockOfflinePlayer(entry));
     }
 
     @Override
@@ -140,16 +94,6 @@ public class BukkitMCTeam implements MCTeam {
     @Override
     public void setDisplayName(String displayName) {
         t.setDisplayName(displayName);
-    }
-
-    @Override
-    public void setNameTagVisibility(MCNameTagVisibility visibility) {
-        t.setNameTagVisibility(BukkitMCNameTagVisibility.getConvertor().getConcreteEnum(visibility));
-    }
-
-    @Override
-    public void setOption(MCOption option, MCOptionStatus status) {
-        t.setOption(BukkitMCOption.getConvertor().getConcreteEnum(option), BukkitMCOptionStatus.getConvertor().getConcreteEnum(status));
     }
 
     @Override

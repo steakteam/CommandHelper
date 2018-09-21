@@ -1,5 +1,6 @@
 package com.laytonsmith.abstraction.bukkit;
 
+import com.github.teamsteak.commandhelper.MockOfflinePlayer;
 import com.laytonsmith.PureUtilities.Common.ReflectionUtils;
 import com.laytonsmith.abstraction.MCObjective;
 import com.laytonsmith.abstraction.MCScore;
@@ -9,6 +10,7 @@ import com.laytonsmith.abstraction.enums.MCDisplaySlot;
 import com.laytonsmith.abstraction.enums.bukkit.BukkitMCDisplaySlot;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.craftbukkit.v1_5_R3.scoreboard.CraftScoreboard;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
@@ -19,7 +21,7 @@ import java.util.Set;
 
 public class BukkitMCScoreboard implements MCScoreboard {
 
-    Scoreboard s;
+    private final Scoreboard s;
 
     public BukkitMCScoreboard(Scoreboard sb) {
         s = sb;
@@ -71,14 +73,16 @@ public class BukkitMCScoreboard implements MCScoreboard {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Set<String> getEntries() {
-        return s.getEntries();
+        CraftScoreboard scoreboard = ((CraftScoreboard) s);
+        return new HashSet<String>(scoreboard.getHandle().getPlayers());
     }
 
     @Override
     public MCTeam getPlayerTeam(String entry) {
         try {
-            Team t = s.getEntryTeam(entry);
+            Team t = s.getPlayerTeam(new MockOfflinePlayer(entry));
             if (t == null) {
                 return null;
             }
@@ -97,7 +101,7 @@ public class BukkitMCScoreboard implements MCScoreboard {
     @Override
     public Set<MCScore> getScores(String entry) {
         Set<MCScore> ret = new HashSet<>();
-        for (Score o : s.getScores(entry)) {
+        for (Score o : s.getScores(new MockOfflinePlayer(entry))) {
             ret.add(new BukkitMCScore(o));
         }
         return ret;
@@ -133,7 +137,7 @@ public class BukkitMCScoreboard implements MCScoreboard {
 
     @Override
     public void resetScores(String entry) {
-        s.resetScores(entry);
+        s.resetScores(new MockOfflinePlayer(entry));
     }
 
     @Override

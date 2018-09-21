@@ -18,6 +18,7 @@
  */
 package com.laytonsmith.commandhelper;
 
+import com.github.teamsteak.commandhelper.Metrics;
 import com.laytonsmith.PureUtilities.ClassLoading.ClassDiscovery;
 import com.laytonsmith.PureUtilities.ClassLoading.ClassDiscoveryCache;
 import com.laytonsmith.PureUtilities.Common.FileUtil;
@@ -61,7 +62,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
@@ -74,7 +74,6 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.mcstats.Metrics;
 
 import java.io.File;
 import java.io.IOException;
@@ -323,22 +322,7 @@ public class CommandHelperPlugin extends JavaPlugin {
         BukkitMCBiomeType.build();
         BukkitMCSound.build();
 
-        //Metrics
-        try {
-            Metrics m = new Metrics(this);
-            Metrics.Graph graph = m.createGraph("Player count");
-            graph.addPlotter(new Metrics.Plotter("Player count") {
-
-                @Override
-                public int getValue() {
-                    return Static.getServer().getOnlinePlayers().size();
-                }
-            });
-            m.addGraph(graph);
-            m.start();
-        } catch (IOException e) {
-            // Failed to submit the stats :-(
-        }
+        new Metrics(this);
 
         try {
             //This may seem redundant, but on a /reload, we want to refresh these
@@ -562,7 +546,7 @@ public class CommandHelperPlugin extends JavaPlugin {
                 PlayerCommandPreprocessEvent pcpe = new PlayerCommandPreprocessEvent((Player) sender, command);
                 playerListener.onPlayerCommandPreprocess(pcpe);
             } else if (sender instanceof ConsoleCommandSender
-                    || sender instanceof BlockCommandSender || sender instanceof CommandMinecart) {
+                    || sender instanceof BlockCommandSender) {
                 // Console commands and command blocks/minecarts all fire the same event, so pass them to the
                 // event handler that would get them if they would not have started with "/runalias".
                 if (command.startsWith("/")) {

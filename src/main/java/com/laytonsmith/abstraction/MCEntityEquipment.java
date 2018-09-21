@@ -49,8 +49,6 @@ public interface MCEntityEquipment {
 
     public float getWeaponDropChance();
 
-    public float getOffHandDropChance();
-
     public float getHelmetDropChance();
 
     public float getChestplateDropChance();
@@ -60,8 +58,6 @@ public interface MCEntityEquipment {
     public float getBootsDropChance();
 
     public void setWeaponDropChance(float chance);
-
-    public void setOffHandDropChance(float chance);
 
     public void setHelmetDropChance(float chance);
 

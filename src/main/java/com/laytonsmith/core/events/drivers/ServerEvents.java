@@ -26,6 +26,7 @@ import com.laytonsmith.core.events.BoundEvent.ActiveEvent;
 import com.laytonsmith.core.events.Driver;
 import com.laytonsmith.core.events.Prefilters;
 import com.laytonsmith.core.events.Prefilters.PrefilterType;
+import com.laytonsmith.core.exceptions.CRE.CRELengthException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.EventException;
 import com.laytonsmith.core.exceptions.PrefilterNonMatchException;
@@ -206,10 +207,8 @@ public class ServerEvents {
                                         break;
                                     }
                                 } else { // "player" is the UUID of the player.
-                                    if (playerStr.equalsIgnoreCase(player.getUniqueID().toString())) {
-                                        modifiedPlayers.add(player);
-                                        break;
-                                    }
+                                    throw new CRELengthException("The given string was the wrong size to identify a player."
+                                            + " A player name is expected to be between 1 and 16 characters.", Target.UNKNOWN);
                                 }
                             }
                         }

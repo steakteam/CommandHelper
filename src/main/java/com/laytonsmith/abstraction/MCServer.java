@@ -7,7 +7,6 @@ import com.laytonsmith.abstraction.pluginmessages.MCMessenger;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 
 /**
@@ -24,8 +23,6 @@ public interface MCServer extends AbstractionObject {
     public MCPluginManager getPluginManager();
 
     public MCPlayer getPlayer(String name);
-
-    public MCPlayer getPlayer(UUID uuid);
 
     public MCWorld getWorld(String name);
 
@@ -55,15 +52,6 @@ public interface MCServer extends AbstractionObject {
      * @return An object containing any info that can be accessed regardless of a connected player.
      */
     public MCOfflinePlayer getOfflinePlayer(String player);
-
-    /**
-     * Provides access to local user data associated with a UUID.
-     * Depending on the implementation, a web lookup with the official API may or may not be performed.
-     *
-     * @param uuid The UUID to lookup
-     * @return An object containing any info that can be accessed regardless of a connected player.
-     */
-    public MCOfflinePlayer getOfflinePlayer(UUID uuid);
 
     public MCOfflinePlayer[] getOfflinePlayers();
 

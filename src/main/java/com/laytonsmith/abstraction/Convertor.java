@@ -2,9 +2,6 @@ package com.laytonsmith.abstraction;
 
 import com.laytonsmith.PureUtilities.DaemonManager;
 import com.laytonsmith.abstraction.blocks.MCMaterial;
-import com.laytonsmith.abstraction.enums.MCDyeColor;
-import com.laytonsmith.abstraction.enums.MCPatternShape;
-import com.laytonsmith.abstraction.enums.MCPotionType;
 import com.laytonsmith.abstraction.enums.MCRecipeType;
 import com.laytonsmith.abstraction.enums.MCTone;
 import com.laytonsmith.commandhelper.CommandHelperPlugin;
@@ -54,8 +51,6 @@ public interface Convertor {
     public MCItemStack GetItemStack(String type, int qty);
 
     public MCItemStack GetItemStack(String type, int data, int qty);
-
-    public MCPotionData GetPotionData(MCPotionType type, boolean extended, boolean upgraded);
 
     public void Startup(CommandHelperPlugin chp);
 
@@ -210,14 +205,6 @@ public interface Convertor {
      * @return
      */
     public MCColor GetColor(String colorName, Target t) throws CREFormatException;
-
-    /**
-     * Returns a pattern object
-     *
-     * @param color
-     * @param shape
-     */
-    public MCPattern GetPattern(MCDyeColor color, MCPatternShape shape);
 
     /**
      * Returns an MCFirework which can be built.

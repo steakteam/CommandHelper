@@ -9,7 +9,6 @@ import com.laytonsmith.abstraction.enums.MCEffect;
 import com.laytonsmith.abstraction.enums.MCEntityType;
 import com.laytonsmith.abstraction.enums.MCGameRule;
 import com.laytonsmith.abstraction.enums.MCMobs;
-import com.laytonsmith.abstraction.enums.MCParticle;
 import com.laytonsmith.abstraction.enums.MCSound;
 import com.laytonsmith.abstraction.enums.MCSoundCategory;
 import com.laytonsmith.abstraction.enums.MCTreeType;
@@ -59,8 +58,6 @@ public interface MCWorld extends MCMetadatable {
 
     public boolean setGameRuleValue(MCGameRule gameRule, String value);
 
-    public MCWorldBorder getWorldBorder();
-
     public MCBlock getBlockAt(int x, int y, int z);
 
     public MCChunk getChunkAt(int x, int z);
@@ -82,8 +79,6 @@ public interface MCWorld extends MCMetadatable {
     public boolean generateTree(MCLocation l, MCTreeType treeType);
 
     public void playEffect(MCLocation l, MCEffect mCEffect, int data, int radius);
-
-    public void spawnParticle(MCLocation l, MCParticle pa, int count, double offsetX, double offsetY, double offsetZ, double velocity, Object data);
 
     public void playSound(MCLocation l, MCSound sound, float volume, float pitch);
 

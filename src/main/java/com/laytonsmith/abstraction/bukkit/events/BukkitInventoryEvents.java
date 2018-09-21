@@ -34,12 +34,10 @@ import com.laytonsmith.abstraction.events.MCInventoryEvent;
 import com.laytonsmith.abstraction.events.MCInventoryInteractEvent;
 import com.laytonsmith.abstraction.events.MCInventoryOpenEvent;
 import com.laytonsmith.abstraction.events.MCItemHeldEvent;
-import com.laytonsmith.abstraction.events.MCItemSwapEvent;
 import com.laytonsmith.abstraction.events.MCPrepareItemCraftEvent;
 import com.laytonsmith.abstraction.events.MCPrepareItemEnchantEvent;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.event.Event;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
@@ -51,7 +49,6 @@ import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -480,49 +477,6 @@ public class BukkitInventoryEvents {
         @Override
         public int getPreviousSlot() {
             return ih.getPreviousSlot();
-        }
-    }
-
-    public static class BukkitMCItemSwapEvent implements MCItemSwapEvent {
-
-        PlayerSwapHandItemsEvent is;
-
-        public BukkitMCItemSwapEvent(PlayerSwapHandItemsEvent event) {
-            is = event;
-        }
-
-        public BukkitMCItemSwapEvent(Event event) {
-            is = (PlayerSwapHandItemsEvent) event;
-        }
-
-        @Override
-        public MCPlayer getPlayer() {
-            return new BukkitMCPlayer(is.getPlayer());
-        }
-
-        @Override
-        public Object _GetObject() {
-            return is;
-        }
-
-        @Override
-        public MCItemStack getMainHandItem() {
-            return new BukkitMCItemStack(is.getMainHandItem());
-        }
-
-        @Override
-        public MCItemStack getOffHandItem() {
-            return new BukkitMCItemStack(is.getOffHandItem());
-        }
-
-        @Override
-        public void setMainHandItem(MCItemStack item) {
-            is.setMainHandItem((ItemStack) item.getHandle());
-        }
-
-        @Override
-        public void setOffHandItem(MCItemStack item) {
-            is.setOffHandItem((ItemStack) item.getHandle());
         }
     }
 

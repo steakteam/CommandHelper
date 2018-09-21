@@ -7,21 +7,17 @@ import java.util.List;
 
 public interface MCPotionMeta extends MCItemMeta {
 
-    public MCPotionData getBasePotionData();
+    public boolean hasCustomEffects();
 
-    public void setBasePotionData(MCPotionData pd);
+    public List<MCEffect> getCustomEffects();
 
     public boolean addCustomEffect(int potionID, int strength, int seconds, boolean ambient, boolean overwrite, Target t);
 
     public boolean clearCustomEffects();
 
-    public List<MCEffect> getCustomEffects();
-
     public boolean hasCustomEffect(int id);
 
-    public boolean hasCustomEffects();
+    public boolean setMainEffect(int id);
 
     public boolean removeCustomEffect(int id);
-
-    public boolean setMainEffect(int id);
 }

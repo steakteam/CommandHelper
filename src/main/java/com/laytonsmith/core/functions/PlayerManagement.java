@@ -17,8 +17,6 @@ import com.laytonsmith.abstraction.StaticLayer;
 import com.laytonsmith.abstraction.blocks.MCBlock;
 import com.laytonsmith.abstraction.entities.MCCommandMinecart;
 import com.laytonsmith.abstraction.enums.MCGameMode;
-import com.laytonsmith.abstraction.enums.MCSound;
-import com.laytonsmith.abstraction.enums.MCSoundCategory;
 import com.laytonsmith.abstraction.enums.MCWeather;
 import com.laytonsmith.annotations.api;
 import com.laytonsmith.annotations.hide;
@@ -41,7 +39,6 @@ import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.environments.GlobalEnv;
-import com.laytonsmith.core.exceptions.CRE.CREBadEntityException;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
 import com.laytonsmith.core.exceptions.CRE.CREIllegalArgumentException;
@@ -66,7 +63,6 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -148,73 +144,6 @@ public class PlayerManagement {
         @Override
         public Boolean runAsync() {
             return false;
-        }
-    }
-
-    @api(environments = {CommandHelperEnvironment.class})
-    public static class puuid extends AbstractFunction {
-
-        @Override
-        public Class<? extends CREThrowable>[] thrown() {
-            return new Class[]{CREPlayerOfflineException.class, CRENotFoundException.class};
-        }
-
-        @Override
-        public boolean isRestricted() {
-            return false;
-        }
-
-        @Override
-        public Boolean runAsync() {
-            return false;
-        }
-
-        @Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCOfflinePlayer pl = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
-            boolean dashless = false;
-            if (args.length >= 1) {
-                try {
-                    pl = Static.GetPlayer(args[0], t);
-                } catch (ConfigRuntimeException cre) {
-                    pl = Static.GetUser(args[0], t);
-                }
-            }
-            if (args.length == 2) {
-                dashless = Static.getBoolean(args[1]);
-            }
-            if (pl == null) {
-                throw new CREPlayerOfflineException("No matching player could be found.", t);
-            }
-            UUID uuid = pl.getUniqueID();
-            if (uuid == null) {
-                throw new CRENotFoundException(
-                        "Could not find the UUID of the player (are you running in cmdline mode?)", t);
-            }
-            String uuidStr = uuid.toString();
-            return new CString(dashless ? uuidStr.replace("-", "") : uuidStr, t);
-        }
-
-        @Override
-        public String getName() {
-            return "puuid";
-        }
-
-        @Override
-        public Integer[] numArgs() {
-            return new Integer[]{0, 1, 2};
-        }
-
-        @Override
-        public String docs() {
-            return "string {[player], [dashless]} Returns the uuid of the current player or the specified player."
-                    + " This will attempt to find an offline player, but if that also fails,"
-                    + " a PlayerOfflineException will be thrown.";
-        }
-
-        @Override
-        public Version since() {
-            return CHVersion.V3_3_1;
         }
     }
 
@@ -2383,12 +2312,12 @@ public class PlayerManagement {
             if (p instanceof MCPlayer) {
                 m = (MCPlayer) p;
             }
-            double health;
+            int health;
             if (args.length == 2) {
                 m = Static.GetPlayer(args[0].val(), t);
-                health = Static.getDouble(args[1], t);
+                health = Static.getInt32(args[1], t);
             } else {
-                health = Static.getDouble(args[0], t);
+                health = Static.getInt32(args[0], t);
             }
             Static.AssertPlayerNonNull(m, t);
             if (health < 0 || health > m.getMaxHealth()) {
@@ -4965,262 +4894,5 @@ public class PlayerManagement {
         public CHVersion since() {
             return CHVersion.V3_3_1;
         }
-    }
-
-    @api
-    public static class pspectator_target extends AbstractFunction {
-
-        @Override
-        public String getName() {
-            return "pspectator_target";
-        }
-
-        @Override
-        public Integer[] numArgs() {
-            return new Integer[]{0, 1};
-        }
-
-        @Override
-        public String docs() {
-            return "string {[player]} Gets the entity that a spectator is viewing. If the player isn't spectating"
-                    + " from an entity, null is returned. If the player isn't in spectator mode, an"
-                    + " IllegalArgumentException is thrown.";
-        }
-
-        @Override
-        public Class<? extends CREThrowable>[] thrown() {
-            return new Class[]{CREPlayerOfflineException.class, CREIllegalArgumentException.class};
-        }
-
-        @Override
-        public boolean isRestricted() {
-            return true;
-        }
-
-        @Override
-        public Boolean runAsync() {
-            return false;
-        }
-
-        @Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCPlayer p;
-            if (args.length == 0) {
-                p = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
-            } else {
-                p = Static.GetPlayer(args[0], t);
-            }
-            Static.AssertPlayerNonNull(p, t);
-            if (p.getGameMode() != MCGameMode.SPECTATOR) {
-                throw new CREIllegalArgumentException("Player must be in spectator mode.", t);
-            }
-            MCEntity e = p.getSpectatorTarget();
-            if (e == null) {
-                return CNull.NULL;
-            }
-            return new CString(e.getUniqueId().toString(), t);
-        }
-
-        @Override
-        public CHVersion since() {
-            return CHVersion.V3_3_1;
-        }
-    }
-
-    @api
-    public static class set_pspectator_target extends AbstractFunction {
-
-        @Override
-        public String getName() {
-            return "set_pspectator_target";
-        }
-
-        @Override
-        public Integer[] numArgs() {
-            return new Integer[]{1, 2};
-        }
-
-        @Override
-        public String docs() {
-            return "void {[player], entity} Sets the entity for the player to spectate. If set to null, the"
-                    + " spectator will stop following an entity. If the player is not in spectator mode an"
-                    + " IllegalArgumentException is thrown.";
-        }
-
-        @Override
-        public Class<? extends CREThrowable>[] thrown() {
-            return new Class[]{CREPlayerOfflineException.class, CREIllegalArgumentException.class,
-                    CREBadEntityException.class};
-        }
-
-        @Override
-        public boolean isRestricted() {
-            return true;
-        }
-
-        @Override
-        public Boolean runAsync() {
-            return false;
-        }
-
-        @Override
-        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCPlayer p;
-            int offset = 0;
-            if (args.length == 1) {
-                p = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
-            } else {
-                p = Static.GetPlayer(args[0], t);
-                offset = 1;
-            }
-            Static.AssertPlayerNonNull(p, t);
-            if (p.getGameMode() != MCGameMode.SPECTATOR) {
-                throw new CREIllegalArgumentException("Player must be in spectator mode.", t);
-            }
-            if (args[offset] instanceof CNull) {
-                p.setSpectatorTarget(null);
-            } else {
-                p.setSpectatorTarget(Static.getLivingEntity(args[offset], t));
-            }
-            return CVoid.VOID;
-        }
-
-        @Override
-        public CHVersion since() {
-            return CHVersion.V3_3_1;
-        }
-    }
-
-    @api
-    @seealso({com.laytonsmith.core.functions.Environment.play_sound.class})
-    public static class stop_sound extends AbstractFunction {
-
-        @Override
-        public Class<? extends CREThrowable>[] thrown() {
-            return new Class[]{CREInvalidWorldException.class, CRELengthException.class, CREFormatException.class,
-                    CREPlayerOfflineException.class};
-        }
-
-        @Override
-        public boolean isRestricted() {
-            return true;
-        }
-
-        @Override
-        public Boolean runAsync() {
-            return false;
-        }
-
-        @Override
-        public Construct exec(Target t, com.laytonsmith.core.environments.Environment environment, Construct... args)
-                throws ConfigRuntimeException {
-
-            MCPlayer p = Static.GetPlayer(args[0], t);
-
-            MCSound sound;
-            try {
-                sound = MCSound.valueOf(args[1].val().toUpperCase());
-            } catch (IllegalArgumentException iae) {
-                throw new CREFormatException("Sound name '" + args[1].val() + "' is invalid.", t);
-            }
-
-            if (args.length == 3) {
-                MCSoundCategory category;
-                try {
-                    category = MCSoundCategory.valueOf(args[2].val().toUpperCase());
-                } catch (IllegalArgumentException iae) {
-                    throw new CREFormatException("Sound category '" + args[2].val() + "' is invalid.", t);
-                }
-                p.stopSound(sound, category);
-            } else {
-                p.stopSound(sound);
-            }
-
-            return CVoid.VOID;
-        }
-
-        @Override
-        public String getName() {
-            return "stop_sound";
-        }
-
-        @Override
-        public Integer[] numArgs() {
-            return new Integer[]{2, 3};
-        }
-
-        @Override
-        public String docs() {
-            return "void {player, sound, [category]} Stops the specified sound for the given player.";
-        }
-
-        @Override
-        public CHVersion since() {
-            return CHVersion.V3_3_2;
-        }
-
-    }
-
-    @api
-    @seealso({com.laytonsmith.core.functions.Environment.play_named_sound.class})
-    public static class stop_named_sound extends AbstractFunction {
-
-        @Override
-        public Class<? extends CREThrowable>[] thrown() {
-            return new Class[]{CREInvalidWorldException.class, CRELengthException.class, CREFormatException.class,
-                    CREPlayerOfflineException.class};
-        }
-
-        @Override
-        public boolean isRestricted() {
-            return true;
-        }
-
-        @Override
-        public Boolean runAsync() {
-            return false;
-        }
-
-        @Override
-        public Construct exec(Target t, com.laytonsmith.core.environments.Environment environment, Construct... args)
-                throws ConfigRuntimeException {
-
-            MCPlayer p = Static.GetPlayer(args[0], t);
-            String sound = args[1].val();
-            if (args.length == 3) {
-                MCSoundCategory category;
-                try {
-                    category = MCSoundCategory.valueOf(args[2].val().toUpperCase());
-                } catch (IllegalArgumentException iae) {
-                    throw new CREFormatException("Sound category '" + args[2].val() + "' is invalid.", t);
-                }
-                p.stopSound(sound, category);
-            } else {
-                p.stopSound(sound);
-            }
-
-            return CVoid.VOID;
-        }
-
-        @Override
-        public String getName() {
-            return "stop_named_sound";
-        }
-
-        @Override
-        public Integer[] numArgs() {
-            return new Integer[]{2, 3};
-        }
-
-        @Override
-        public String docs() {
-            return "void {player, sound, [category]} Stops the specified sound for the given player.";
-        }
-
-        @Override
-        public CHVersion since() {
-            return CHVersion.V3_3_2;
-        }
-
     }
 }

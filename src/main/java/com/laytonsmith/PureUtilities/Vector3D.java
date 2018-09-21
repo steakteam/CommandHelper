@@ -1,5 +1,7 @@
 package com.laytonsmith.PureUtilities;
 
+import org.bukkit.util.Vector;
+
 /**
  * Represents both a point in 3D space and a vector representing a direction and magnitude.
  */
@@ -35,6 +37,10 @@ public class Vector3D extends Point3D {
      */
     public Vector3D(double x, double y, double z) {
         super(x, y, z);
+    }
+
+    public Vector3D(Vector vector) {
+        this(vector.getX(), vector.getY(), vector.getZ());
     }
 
     /**
@@ -150,5 +156,9 @@ public class Vector3D extends Point3D {
      */
     public double length() {
         return Math.sqrt(lengthSquared());
+    }
+
+    public Vector toBukkitVector() {
+        return new Vector(X(), Y(), Z());
     }
 }

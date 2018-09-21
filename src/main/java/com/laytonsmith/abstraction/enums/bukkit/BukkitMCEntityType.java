@@ -1,7 +1,6 @@
 package com.laytonsmith.abstraction.enums.bukkit;
 
 import com.laytonsmith.abstraction.MCEntity;
-import com.laytonsmith.abstraction.bukkit.entities.BukkitMCCommandMinecart;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCFishHook;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCItem;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCLightningStrike;
@@ -135,9 +134,6 @@ public class BukkitMCEntityType extends MCEntityType<EntityType> {
                 if ("minecart".equals(split[0])) {
                     if (split.length == 1 || !"command".equals(split[1])) {
                         wrapperClass = BukkitMCMinecart.class;
-                        break;
-                    } else {
-                        wrapperClass = BukkitMCCommandMinecart.class;
                         break;
                     }
                 }

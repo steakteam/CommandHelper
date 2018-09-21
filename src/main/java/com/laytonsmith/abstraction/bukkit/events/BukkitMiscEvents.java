@@ -16,8 +16,7 @@ import org.bukkit.event.server.ServerListPingEvent;
 
 import java.net.InetAddress;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -138,34 +137,12 @@ public class BukkitMiscEvents {
 
         @Override
         public Set<MCPlayer> getPlayers() {
-            Set<MCPlayer> players = new HashSet<>();
-            try {
-                Iterator<Player> iterator = slp.iterator();
-                while (iterator.hasNext()) {
-                    players.add(new BukkitMCPlayer(iterator.next()));
-                }
-            } catch (UnsupportedOperationException ex) {
-                // not implemented, ignore
-            }
-            return players;
+            return Collections.emptySet();
         }
 
         @Override
         public void setPlayers(Collection<MCPlayer> players) {
-            Set<Player> ps = new HashSet<>();
-            for (MCPlayer player : players) {
-                ps.add((Player) player.getHandle());
-            }
-            try {
-                Iterator<Player> iterator = slp.iterator();
-                while (iterator.hasNext()) {
-                    if (!ps.contains(iterator.next())) {
-                        iterator.remove();
-                    }
-                }
-            } catch (UnsupportedOperationException ex) {
-                // not implemented, ignore
-            }
+            // not implemented, ignore
         }
     }
 

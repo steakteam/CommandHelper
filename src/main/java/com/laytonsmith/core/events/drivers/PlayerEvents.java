@@ -1300,7 +1300,6 @@ public class PlayerEvents {
                 Map<String, Construct> map = super.evaluate(e);
                 map.putAll(evaluate_helper(e));
                 map.put("death_message", new CString(event.getDeathMessage(), Target.UNKNOWN));
-                map.put("keep_inventory", CBoolean.get(event.getKeepInventory()));
                 map.put("keep_level", CBoolean.get(event.getKeepLevel()));
                 map.put("new_exp", new CInt(event.getNewExp(), Target.UNKNOWN));
                 map.put("new_level", new CInt(event.getNewLevel(), Target.UNKNOWN));
@@ -1340,9 +1339,6 @@ public class PlayerEvents {
                 switch (key) {
                     case "death_message":
                         e.setDeathMessage(value.nval());
-                        return true;
-                    case "keep_inventory":
-                        e.setKeepInventory(Static.getBoolean(value));
                         return true;
                     case "keep_level":
                         e.setKeepLevel(Static.getBoolean(value));

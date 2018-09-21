@@ -844,7 +844,7 @@ public class EntityEvents {
                                    BindableEvent event) {
             MCEntityDamageEvent e = (MCEntityDamageEvent) event;
             if (key.equals("amount")) {
-                e.setDamage(Static.getDouble(value, value.getTarget()));
+                e.setDamage(Static.getInt32(value, value.getTarget()));
                 return true;
             }
             return false;
@@ -1262,7 +1262,6 @@ public class EntityEvents {
                 map.put("damager", new CString(dtype, t));
                 map.put("cause", new CString(event.getCause().name(), t));
                 map.put("amount", new CDouble(event.getDamage(), t));
-                map.put("finalamount", new CDouble(event.getFinalDamage(), t));
                 map.put("id", new CString(event.getDamager().getUniqueId().toString(), t));
                 map.put("location", ObjectGenerator.GetGenerator().location(event.getEntity().getLocation()));
 
@@ -1623,7 +1622,6 @@ public class EntityEvents {
             map.put("id", new CString(victim.getUniqueId().toString(), Target.UNKNOWN));
             map.put("cause", new CString(event.getCause().name(), Target.UNKNOWN));
             map.put("amount", new CDouble(event.getDamage(), Target.UNKNOWN));
-            map.put("finalamount", new CDouble(event.getFinalDamage(), Target.UNKNOWN));
             map.put("world", new CString(event.getEntity().getWorld().getName(), Target.UNKNOWN));
             map.put("location", ObjectGenerator.GetGenerator().location(event.getEntity().getLocation()));
 
@@ -1925,7 +1923,7 @@ public class EntityEvents {
             if (event instanceof MCEntityRegainHealthEvent) {
                 MCEntityRegainHealthEvent e = (MCEntityRegainHealthEvent) event;
                 if (key.equalsIgnoreCase("amount")) {
-                    e.setAmount(Static.getDouble32(value, value.getTarget()));
+                    e.setAmount(Static.getInt32(value, value.getTarget()));
                     return true;
                 }
             }

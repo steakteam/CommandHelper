@@ -15,14 +15,4 @@ public class BukkitMCSnowman extends BukkitMCLivingEntity implements MCSnowman {
         this((Snowman) ao.getHandle());
     }
 
-    @Override
-    public void setDerp(boolean derp) {
-        ((Snowman) getHandle()).setDerp(derp);
-    }
-
-    @Override
-    public boolean isDerp() {
-        return ((Snowman) getHandle()).isDerp();
-    }
-
 }

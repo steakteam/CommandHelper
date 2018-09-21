@@ -7,7 +7,6 @@ import com.laytonsmith.abstraction.enums.MCTeleportCause;
 import com.laytonsmith.abstraction.events.MCEntityDamageEvent;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -15,16 +14,69 @@ import java.util.UUID;
  *
  */
 public interface MCEntity extends MCMetadatable {
+    MCLocation getLocation();
 
-    public boolean eject();
+    void setVelocity(Vector3D v);
 
-    public float getFallDistance();
+    Vector3D getVelocity();
 
-    public int getFireTicks();
+    boolean isOnGround();
 
-    public MCEntityDamageEvent getLastDamageCause();
+    MCWorld getWorld();
 
-    public MCLocation getLocation();
+    boolean teleport(MCEntity destination);
+
+    boolean teleport(MCEntity destination, MCTeleportCause cause);
+
+    boolean teleport(MCLocation location);
+
+    boolean teleport(MCLocation location, MCTeleportCause cause);
+
+    List<MCEntity> getNearbyEntities(double x, double y, double z);
+
+    int getFireTicks();
+
+    int getMaxFireTicks();
+
+    void setFireTicks(int ticks);
+
+    void remove();
+
+    boolean isDead();
+
+    MCServer getServer();
+
+    MCEntity getPassenger();
+
+    boolean setPassenger(MCEntity passenger);
+
+    boolean isEmpty();
+
+    boolean eject();
+
+    float getFallDistance();
+
+    void setFallDistance(float distance);
+
+    void setLastDamageCause(MCEntityDamageEvent event);
+
+    MCEntityDamageEvent getLastDamageCause();
+
+    UUID getUniqueId();
+
+    int getTicksLived();
+
+    void setTicksLived(int value);
+
+    void playEffect(MCEntityEffect type);
+
+    MCEntityType getType();
+
+    boolean isInsideVehicle();
+
+    boolean leaveVehicle();
+
+    MCEntity getVehicle();
 
     /**
      * Unlike {@see MCEntity#getLocation}, this will work when not run on the server
@@ -32,89 +84,5 @@ public interface MCEntity extends MCMetadatable {
      *
      * @return
      */
-    public MCLocation asyncGetLocation();
-
-    public int getMaxFireTicks();
-
-    public List<MCEntity> getNearbyEntities(double x, double y, double z);
-
-    public MCEntity getPassenger();
-
-    public MCServer getServer();
-
-    public int getTicksLived();
-
-    public MCEntityType getType();
-
-    public UUID getUniqueId();
-
-    public MCEntity getVehicle();
-
-    public Vector3D getVelocity();
-
-    public void setVelocity(Vector3D v);
-
-    public MCWorld getWorld();
-
-    public boolean isDead();
-
-    public boolean isEmpty();
-
-    public boolean isInsideVehicle();
-
-    public boolean isOnGround();
-
-    public boolean leaveVehicle();
-
-    public void playEffect(MCEntityEffect type);
-
-    public void remove();
-
-    public void setFallDistance(float distance);
-
-    public void setFireTicks(int ticks);
-
-    public void setLastDamageCause(MCEntityDamageEvent event);
-
-    public boolean setPassenger(MCEntity passenger);
-
-    public void setTicksLived(int value);
-
-    public boolean teleport(MCEntity destination);
-
-    public boolean teleport(MCEntity destination, MCTeleportCause cause);
-
-    public boolean teleport(MCLocation location);
-
-    public boolean teleport(MCLocation location, MCTeleportCause cause);
-
-    public void setCustomName(String name);
-
-    public String getCustomName();
-
-    public void setCustomNameVisible(boolean visible);
-
-    public boolean isCustomNameVisible();
-
-    public boolean isGlowing();
-
-    public void setGlowing(Boolean glow);
-
-    public boolean hasGravity();
-
-    public void setHasGravity(boolean gravity);
-
-    public boolean isSilent();
-
-    public void setSilent(boolean silent);
-
-    public boolean isInvulnerable();
-
-    public void setInvulnerable(boolean invulnerable);
-
-    public Set<String> getScoreboardTags();
-
-    public boolean addScoreboardTag(String tag);
-
-    public boolean removeScoreboardTag(String tag);
+    MCLocation asyncGetLocation();
 }

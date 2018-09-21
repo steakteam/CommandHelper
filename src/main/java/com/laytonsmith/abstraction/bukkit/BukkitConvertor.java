@@ -17,22 +17,17 @@ import com.laytonsmith.abstraction.MCItemStack;
 import com.laytonsmith.abstraction.MCLocation;
 import com.laytonsmith.abstraction.MCMetadataValue;
 import com.laytonsmith.abstraction.MCNote;
-import com.laytonsmith.abstraction.MCPattern;
 import com.laytonsmith.abstraction.MCPlugin;
 import com.laytonsmith.abstraction.MCPluginMeta;
-import com.laytonsmith.abstraction.MCPotionData;
 import com.laytonsmith.abstraction.MCRecipe;
 import com.laytonsmith.abstraction.MCServer;
 import com.laytonsmith.abstraction.MCWorld;
 import com.laytonsmith.abstraction.MCWorldCreator;
 import com.laytonsmith.abstraction.blocks.MCBlockState;
 import com.laytonsmith.abstraction.blocks.MCMaterial;
-import com.laytonsmith.abstraction.bukkit.blocks.BukkitMCBanner;
 import com.laytonsmith.abstraction.bukkit.blocks.BukkitMCBlockState;
 import com.laytonsmith.abstraction.bukkit.blocks.BukkitMCMaterial;
-import com.laytonsmith.abstraction.bukkit.blocks.BukkitMCShulkerBox;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCAgeable;
-import com.laytonsmith.abstraction.bukkit.entities.BukkitMCCommandMinecart;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCComplexEntityPart;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCComplexLivingEntity;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCEntity;
@@ -53,16 +48,10 @@ import com.laytonsmith.abstraction.bukkit.events.drivers.BukkitServerListener;
 import com.laytonsmith.abstraction.bukkit.events.drivers.BukkitVehicleListener;
 import com.laytonsmith.abstraction.bukkit.events.drivers.BukkitWeatherListener;
 import com.laytonsmith.abstraction.bukkit.events.drivers.BukkitWorldListener;
-import com.laytonsmith.abstraction.enums.MCDyeColor;
-import com.laytonsmith.abstraction.enums.MCPatternShape;
-import com.laytonsmith.abstraction.enums.MCPotionType;
 import com.laytonsmith.abstraction.enums.MCRecipeType;
 import com.laytonsmith.abstraction.enums.MCTone;
 import com.laytonsmith.abstraction.enums.MCVersion;
-import com.laytonsmith.abstraction.enums.bukkit.BukkitMCDyeColor;
 import com.laytonsmith.abstraction.enums.bukkit.BukkitMCEntityType;
-import com.laytonsmith.abstraction.enums.bukkit.BukkitMCPatternShape;
-import com.laytonsmith.abstraction.enums.bukkit.BukkitMCPotionType;
 import com.laytonsmith.annotations.convert;
 import com.laytonsmith.commandhelper.CommandHelperPlugin;
 import com.laytonsmith.core.CHLog;
@@ -82,7 +71,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.DoubleChest;
-import org.bukkit.block.banner.Pattern;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -100,7 +88,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Vehicle;
-import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -117,7 +104,6 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.potion.PotionData;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;
@@ -220,11 +206,6 @@ public class BukkitConvertor extends AbstractConvertor {
             return null;
         }
         return new BukkitMCItemStack(new ItemStack(mat, qty, (short) data));
-    }
-
-    public MCPotionData GetPotionData(MCPotionType type, boolean extended, boolean upgraded) {
-        return new BukkitMCPotionData(new PotionData(
-                BukkitMCPotionType.getConvertor().getConcreteEnum(type), extended, upgraded));
     }
 
     @Override
@@ -430,15 +411,9 @@ public class BukkitConvertor extends AbstractConvertor {
             radius = 1;
         }
         Location l = (Location) location.getHandle();
-        Collection<Entity> near;
-        try {
-            near = l.getWorld().getNearbyEntities(l, radius, radius, radius);
-        } catch (NoSuchMethodError ex) {
-            // Probably before 1.8.3
-            Entity tempEntity = l.getWorld().spawnEntity(l, EntityType.ARROW);
-            near = tempEntity.getNearbyEntities(radius, radius, radius);
-            tempEntity.remove();
-        }
+        Entity tempEntity = l.getWorld().spawnEntity(l, EntityType.ARROW);
+        Collection<Entity> near = tempEntity.getNearbyEntities(radius, radius, radius);
+        tempEntity.remove();
         List<MCEntity> entities = new ArrayList<>();
         for (Entity e : near) {
             entities.add(BukkitGetCorrectEntity(e));
@@ -448,12 +423,6 @@ public class BukkitConvertor extends AbstractConvertor {
 
     public static MCBlockState BukkitGetCorrectBlockState(BlockState bs) {
         MCVersion version = Static.getServer().getMinecraftVersion();
-        if (version.gte(MCVersion.MC1_11) && bs instanceof ShulkerBox) {
-            return new BukkitMCShulkerBox((ShulkerBox) bs);
-        }
-        if (version.gte(MCVersion.MC1_9) && bs instanceof Banner) {
-            return new BukkitMCBanner((Banner) bs);
-        }
         if (bs instanceof CreatureSpawner) {
             return new BukkitMCCreatureSpawner((CreatureSpawner) bs);
         }
@@ -462,15 +431,6 @@ public class BukkitConvertor extends AbstractConvertor {
 
     public static MCItemMeta BukkitGetCorrectMeta(ItemMeta im) {
         MCVersion version = Static.getServer().getMinecraftVersion();
-        if (version.gte(MCVersion.MC1_11_X) && im instanceof SpawnEggMeta) {
-            return new BukkitMCSpawnEggMeta((SpawnEggMeta) im);
-        }
-        if (version.gte(MCVersion.MC1_8_6) && im instanceof BlockStateMeta) {
-            return new BukkitMCBlockStateMeta((BlockStateMeta) im);
-        }
-        if (version.gte(MCVersion.MC1_8) && im instanceof BannerMeta) {
-            return new BukkitMCBannerMeta((BannerMeta) im);
-        }
         if (im instanceof BookMeta) {
             return new BukkitMCBookMeta((BookMeta) im);
         }
@@ -568,12 +528,6 @@ public class BukkitConvertor extends AbstractConvertor {
     }
 
     @Override
-    public MCPattern GetPattern(MCDyeColor color, MCPatternShape shape) {
-        return new BukkitMCPattern(new Pattern(BukkitMCDyeColor.getConvertor().getConcreteEnum(color),
-                BukkitMCPatternShape.getConvertor().getConcreteEnum(shape)));
-    }
-
-    @Override
     public MCFireworkBuilder GetFireworkBuilder() {
         return new BukkitMCFireworkBuilder();
     }
@@ -644,8 +598,6 @@ public class BukkitConvertor extends AbstractConvertor {
             return new BukkitMCConsoleCommandSender((ConsoleCommandSender) sender);
         } else if (sender instanceof BlockCommandSender) {
             return new BukkitMCBlockCommandSender((BlockCommandSender) sender);
-        } else if (sender instanceof CommandMinecart) {
-            return new BukkitMCCommandMinecart((CommandMinecart) sender);
         } else {
             return new BukkitMCCommandSender(sender);
         }

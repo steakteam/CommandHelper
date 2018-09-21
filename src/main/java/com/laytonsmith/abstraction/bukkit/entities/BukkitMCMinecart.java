@@ -1,11 +1,9 @@
 package com.laytonsmith.abstraction.bukkit.entities;
 
-import com.laytonsmith.abstraction.MCMaterialData;
-import com.laytonsmith.abstraction.bukkit.BukkitMCMaterialData;
+import com.laytonsmith.PureUtilities.Vector3D;
 import com.laytonsmith.abstraction.entities.MCMinecart;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
-import org.bukkit.material.MaterialData;
 
 public class BukkitMCMinecart extends BukkitMCVehicle
         implements MCMinecart {
@@ -18,12 +16,12 @@ public class BukkitMCMinecart extends BukkitMCVehicle
     }
 
     @Override
-    public void setDamage(double damage) {
+    public void setDamage(int damage) {
         m.setDamage(damage);
     }
 
     @Override
-    public double getDamage() {
+    public int getDamage() {
         return m.getDamage();
     }
 
@@ -33,7 +31,7 @@ public class BukkitMCMinecart extends BukkitMCVehicle
     }
 
     @Override
-    public void setMaxSpeed(double speed) {
+    public void setMaxSpeed(int speed) {
         m.setMaxSpeed(speed);
     }
 
@@ -47,23 +45,24 @@ public class BukkitMCMinecart extends BukkitMCVehicle
         m.setSlowWhenEmpty(slow);
     }
 
+
     @Override
-    public void setDisplayBlock(MCMaterialData material) {
-        m.setDisplayBlock((MaterialData) material.getHandle());
+    public Vector3D getFlyingVelocityMod() {
+        return new Vector3D(m.getFlyingVelocityMod());
     }
 
     @Override
-    public MCMaterialData getDisplayBlock() {
-        return new BukkitMCMaterialData(m.getDisplayBlock());
+    public void setFlyingVelocityMod(Vector3D var1) {
+        m.setFlyingVelocityMod(var1.toBukkitVector());
     }
 
     @Override
-    public void setDisplayBlockOffset(int offset) {
-        m.setDisplayBlockOffset(offset);
+    public Vector3D getDerailedVelocityMod() {
+        return new Vector3D(m.getDerailedVelocityMod());
     }
 
     @Override
-    public int getDisplayBlockOffset() {
-        return m.getDisplayBlockOffset();
+    public void setDerailedVelocityMod(Vector3D var1) {
+        m.setDerailedVelocityMod(var1.toBukkitVector());
     }
 }

@@ -96,10 +96,10 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -469,8 +469,12 @@ public class BukkitPlayerEvents {
         }
 
         public static BukkitMCPlayerChatEvent _instantiate(MCPlayer player, String message, String format) {
-            AsyncPlayerChatEvent apce = new AsyncPlayerChatEvent(false, ((BukkitMCPlayer) player)._Player(), message,
-                    new HashSet<>(Bukkit.getServer().getOnlinePlayers()));
+            AsyncPlayerChatEvent apce = new AsyncPlayerChatEvent(
+                    false,
+                    ((BukkitMCPlayer) player)._Player(),
+                    message,
+                    new HashSet<>(Arrays.asList(Bukkit.getServer().getOnlinePlayers()))
+            );
             apce.setFormat(format);
             return new BukkitMCPlayerChatEvent(apce);
         }
@@ -603,15 +607,7 @@ public class BukkitPlayerEvents {
 
         @Override
         public MCEquipmentSlot getHand() {
-            try {
-                if (pie.getHand() == EquipmentSlot.HAND) {
-                    return MCEquipmentSlot.WEAPON;
-                }
-                return MCEquipmentSlot.OFF_HAND;
-            } catch (NoSuchMethodError e) {
-                // before Bukkit 1.9
-                return MCEquipmentSlot.WEAPON;
-            }
+            return MCEquipmentSlot.WEAPON;
         }
     }
 
@@ -681,16 +677,6 @@ public class BukkitPlayerEvents {
         @Override
         public void setDeathMessage(String nval) {
             pde.setDeathMessage(nval);
-        }
-
-        @Override
-        public boolean getKeepInventory() {
-            return pde.getKeepInventory();
-        }
-
-        @Override
-        public void setKeepInventory(boolean keepInventory) {
-            pde.setKeepInventory(keepInventory);
         }
 
         @Override
