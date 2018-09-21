@@ -50,591 +50,592 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 
+ *
  */
 @core
 public class Reflection {
 
-	public static String docs() {
-		return "This class of functions allows scripts to hook deep into the interpreter itself,"
-				+ " and get meta information about the operations of a script. This is useful for"
-				+ " debugging, testing, and ultra dynamic scripting. See the"
-				+ " [[CommandHelper/Reflection|guide to reflection]] on the wiki for more"
-				+ " details. In order to make the most of these functions, you should familiarize"
-				+ " yourself with the general workings of the language. These functions explore"
-				+ " extremely advanced concepts, and should normally not be used; especially"
-				+ " if you are not familiar with the language.";
-	}
-
-	@api(environments={CommandHelperEnvironment.class})
-	public static class reflect_pull extends AbstractFunction {
-
-		private static Set<Construct> protocols;
-		@Override
-		public String getName() {
-			return "reflect_pull";
-		}
-
-		@Override
-		public Integer[] numArgs() {
-			return new Integer[]{Integer.MAX_VALUE};
-		}
-
-		@Override
-		public String docs() {
-			return "mixed {param, [args, ...]} Returns information about the runtime in a usable"
-					+ " format. Depending on the information returned, it may be useable directly,"
-					+ " or it may be more of a referential format. ---- The following items can be retrieved:"
-					+ "<table><tr><th>param</th><th>args</th><th>returns/description</th></tr>"
-					+ "<tr><td>label</td><td></td><td>Return the label that the script is currently running under</td></tr>"
-					+ "<tr><td>command</td><td></td><td>Returns the command that was used to fire off this script (if applicable)</td></tr>"
-					+ "<tr><td>varlist</td><td>[name]</td><td>Returns a list of currently in scope variables. If name"
-					+ " is provided, the currently set value is instead returned.</td></tr>"
-					+ "<tr><td>line_num</td><td></td><td>The current line number</td></tr>"
-					+ "<tr><td>file</td><td></td><td>The absolute path to the current file</td></tr>"
-					+ "<tr><td>col</td><td></td><td>The current column number</td></tr>"
-					+ "<tr><td>datasources</td><td></td><td>An array of data source protocols available</td></tr>"
-					+ "<tr><td>enum</td><td>[enum name]</td><td>An array of enum names, or if one if provided, a list of all"
-					+ " the values in that enum</td></tr>"
-					+ "</table>";
-			//+ "<tr><td></td><td></td><td></td></tr>"
-		}
-
-		@Override
-		public Class<? extends CREThrowable>[] thrown() {
-			return new Class[]{CREFormatException.class, CREIOException.class};
-		}
-
-		@Override
-		public boolean isRestricted() {
-			return true;
-		}
-
-		@Override
-		public Boolean runAsync() {
-			return null;
-		}
-
-		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
-			if (args.length < 1) {
-				throw new CREInsufficientArgumentsException("Not enough parameters was sent to " + getName(), t);
-			}
-
-			String param = args[0].val();
-			if ("label".equalsIgnoreCase(param)) {
-				return new CString(env.getEnv(GlobalEnv.class).GetLabel(), t);
-			} else if ("command".equalsIgnoreCase(param)) {
-				return new CString(env.getEnv(CommandHelperEnvironment.class).GetCommand(), t);
-			} else if ("varlist".equalsIgnoreCase(param)) {
-				if (args.length == 1) {
-					//No name provided
-					CArray ca = new CArray(t);
-					for (String name : env.getEnv(GlobalEnv.class).GetVarList().keySet()) {
-						ca.push(new CString(name, t), t);
-					}
-					return ca;
-				} else if (args.length == 2) {
-					//The name was provided
-					String name = args[1].val();
-					return env.getEnv(GlobalEnv.class).GetVarList().get(name, t).ival();
-				}
-			} else if ("line_num".equalsIgnoreCase(param)) {
-				return new CInt(t.line(), t);
-			} else if ("file".equalsIgnoreCase(param)) {
-				if (t.file() == null) {
-					return new CString("Unknown (maybe the interpreter?)", t);
-				} else {
-					try {
-						return new CString(t.file().getCanonicalPath().replace('\\', '/'), t);
-					} catch (IOException ex) {
-						throw new CREIOException(ex.getMessage(), t);
-					}
-				}
-			} else if ("col".equalsIgnoreCase(param)) {
-				return new CInt(t.col(), t);
-			} else if("datasources".equalsIgnoreCase(param)){
-				if(protocols == null){
-					protocols = new HashSet<Construct>();
-					for(String s : DataSourceFactory.GetSupportedProtocols()){
-						protocols.add(new CString(s, Target.UNKNOWN));
-					}
-				}
-				return new CArray(t, protocols);
-			} else if("enum".equalsIgnoreCase(param)){
-				CArray a = new CArray(t);
-				Set<Class<Enum>> enums = ClassDiscovery.getDefaultInstance().loadClassesWithAnnotationThatExtend(MEnum.class, Enum.class);
-				Set<Class<DynamicEnum>> dEnums = ClassDiscovery.getDefaultInstance().loadClassesWithAnnotationThatExtend(MDynamicEnum.class, DynamicEnum.class);
-				if(args.length == 1){
-					//No name provided
-					for(Class<Enum> e : enums){
-						a.push(new CString(e.getAnnotation(MEnum.class).value(), t), t);
-					}
-					for (Class<DynamicEnum> d : dEnums) {
-						a.push(new CString(d.getAnnotation(MDynamicEnum.class).value(), t), t);
-					}
-				} else if(args.length == 2){
-					String enumName = args[1].val();
-					for(Class<Enum> e : enums){
-						if(e.getAnnotation(MEnum.class).value().equals(enumName)){
-							for(Enum ee : e.getEnumConstants()){
-								a.push(new CString(ee.name(), t), t);
-							}
-							break;
-						}
-					}
-					for (Class<DynamicEnum> d : dEnums) {
-						if (d.getAnnotation(MDynamicEnum.class).value().equals(enumName)) {
-							for (DynamicEnum ee : (Collection<DynamicEnum>) ReflectionUtils.invokeMethod(d, null, "values")) {
-								a.push(new CString(ee.name(), t), t);
-							}
-							break;
-						}
-					}
-				}
-				return a;
-			}
-
-			throw new CREFormatException("The arguments passed to " + getName() + " are incorrect. Please check them and try again.", t);
-		}
-
-		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
-		}
-	}
-
-	@api
-	public static class reflect_docs extends AbstractFunction implements Optimizable {
-
-		public static enum DocField {
-
-			TYPE,
-			RETURN,
-			ARGS,
-			DESCRIPTION;
-
-			public String getName() {
-				return name().toLowerCase();
-			}
-
-			public static DocField getValue(String value) {
-				return DocField.valueOf(value.toUpperCase());
-			}
-		}
-
-		@Override
-		public Class<? extends CREThrowable>[] thrown() {
-			return new Class[]{CREFormatException.class};
-		}
-
-		@Override
-		public boolean isRestricted() {
-			return true;
-		}
-
-		@Override
-		public Boolean runAsync() {
-			return null;
-		}
-
-		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-			String element = args[0].val();
-			DocField docField;
-			try {
-				docField = DocField.getValue(args[1].val());
-			} catch (IllegalArgumentException e) {
-				throw new CREFormatException("Invalid docField provided: " + args[1].val(), t);
-			}
-			//For now, we have special handling, since functions are actually the only thing that will work,
-			//but eventually this will be a generic interface.
-			if (element.startsWith("@")) {
-				IVariable var = environment.getEnv(GlobalEnv.class).GetVarList().get(element, t);
-				if (var == null) {
-					throw new CREFormatException("Invalid variable provided: " + element + " does not exist in the current scope", t);
-				}
-			} else if (element.startsWith("_")) {
-				if (!environment.getEnv(GlobalEnv.class).GetProcs().containsKey(element)) {
-					throw new CREFormatException("Invalid procedure name provided: " + element + " does not exist in the current scope", t);
-				}
-			} else {
-				try {
-					Function f = (Function) FunctionList.getFunction(new CFunction(element, t));
-					return new CString(formatFunctionDoc(f.docs(), docField), t);
-				} catch (ConfigCompileException ex) {
-					throw new CREFormatException("Unknown function: " + element, t);
-				}
-			}
-			return CNull.NULL;
-		}
-
-		public String formatFunctionDoc(String docs, DocField field) {
-			Pattern p = Pattern.compile("(?s)\\s*(.*?)\\s*\\{(.*?)\\}\\s*(.*)\\s*");
-			Matcher m = p.matcher(docs);
-			if (!m.find()) {
-				throw new Error("An error has occured in " + getName() + ". While trying to get the documentation"
-						+ ", it was unable to parse this: " + docs);
-			}
-			if (field == DocField.RETURN || field == DocField.TYPE) {
-				return m.group(1);
-			} else if (field == DocField.ARGS) {
-				return m.group(2);
-			} else if (field == DocField.DESCRIPTION) {
-				return m.group(3);
-			}
-			throw new Error("Unhandled case in formatFunctionDoc!");
-		}
-
-		@Override
-		public ParseTree optimizeDynamic(Target t, List<ParseTree> children, FileOptions fileOptions) throws ConfigCompileException, ConfigRuntimeException {
-			if(children.isEmpty()){
-				//They are requesting this function's documentation. We can just return a string,
-				//and then it will never actually get called, so we handle it entirely in here.
-				return new ParseTree(new CString(docs(), t), null);
-			}
-			if (children.get(0).isConst()) {
-				//If it's a function, we can check to see if it actually exists,
-				//and make it a compile error if it doesn't, even if parameter 2 is dynamic
-				String value = children.get(0).getData().val();
-				if (!value.startsWith("_") && !value.startsWith("@")) {
-					//It's a function
-					FunctionList.getFunction(new CFunction(value, t));
-				}
-			}
-			if (children.get(1).isConst()) {
-				try {
-					DocField.getValue(children.get(1).getData().val());
-				} catch (IllegalArgumentException e) {
-					throw new ConfigCompileException("Invalid docField provided: " + children.get(1).getData().val(), t);
-				}
-			}
-			return null;
-		}
-		
-		@Override
-		public Set<OptimizationOption> optimizationOptions() {
-			return EnumSet.of(
-						OptimizationOption.CONSTANT_OFFLINE,
-						OptimizationOption.OPTIMIZE_DYNAMIC
-			);
-		}
-
-		@Override
-		public String getName() {
-			return "reflect_docs";
-		}
-
-		@Override
-		public Integer[] numArgs() {
-			return new Integer[]{0, 2};
-		}
-
-		@Override
-		public String docs() {
-			return "string { | element, docField} Returns the documentation for an element. There are 4 things that an element might have,"
-					+ " and one of these should be passed as the docField argument: type, return, args, description. A valid element is either"
-					+ " the name of an ivariable, or a function/proc. For instance, reflect_docs('reflect_docs', 'description') would return"
-					+ " what you are reading right now. User defined variables and procs may not have any documentation, in which case null"
-					+ " is returned. If the specified argument cannot be found, a FormatException is thrown. If no arguments are passed in,"
-					+ " it returns the documentation for " + getName() + ", that is, what you're reading right now.";
-		}
-
-		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
-		}
-
-		@Override
-		public ExampleScript[] examples() throws ConfigCompileException {
-			return new ExampleScript[]{
-				new ExampleScript("Return type", "reflect_docs('array_contains', 'return'); // Using 'type' would also work"),
-				new ExampleScript("Args", "reflect_docs('array_contains', 'args');"),
-				new ExampleScript("Description", "reflect_docs('array_contains', 'description');")
-			};
-		}
-	}
-	
-	@api
-	public static class get_functions extends AbstractFunction {
-
-		@Override
-		public Class<? extends CREThrowable>[] thrown() {
-			return new Class[]{};
-		}
-
-		@Override
-		public boolean isRestricted() {
-			return true;
-		}
-
-		@Override
-		public Boolean runAsync() {
-			return false;
-		}
-
-		private static Map<String,List<String>> funcs = new HashMap<String,List<String>>();
-		
-		private void initf() {
-			for (FunctionBase f : FunctionList.getFunctionList(api.Platforms.INTERPRETER_JAVA)) {
-				String[] pack = f.getClass().getEnclosingClass().getName().split("\\.");
-				String clazz = pack[pack.length - 1];
-				if (!funcs.containsKey(clazz)) {
-					funcs.put(clazz, new ArrayList<String>());
-				}
-				funcs.get(clazz).add(f.getName());
-			}
-		}
-		
-		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-			CArray ret = CArray.GetAssociativeArray(t);
-			if (funcs.keySet().size() < 10) {
-				initf();
-			}
-			for (String cname : funcs.keySet()) {
-				CArray fnames = new CArray(t);
-				for (String fname : funcs.get(cname)) {
-					fnames.push(new CString(fname, t), t);
-				}
-				ret.set(new CString(cname, t), fnames, t);
-			}
-			return ret;
-		}
-
-		@Override
-		public String getName() {
-			return "get_functions";
-		}
-
-		@Override
-		public Integer[] numArgs() {
-			return new Integer[]{0};
-		}
-
-		@Override
-		public String docs() {
-			return "array {} Returns an associative array of all loaded functions. The keys of this array are the"
-					+ " names of the classes containing the functions (which you know as the sections of the API page),"
-					+ " and the values are arrays of the names of the functions within those classes.";
-		}
-
-		@Override
-		public Version since() {
-			return CHVersion.V3_3_1;
-		}
-	}
-	
-	@api
-	public static class get_events extends AbstractFunction {
-
-		@Override
-		public Class<? extends CREThrowable>[] thrown() {
-			return new Class[]{};
-		}
-
-		@Override
-		public boolean isRestricted() {
-			return true;
-		}
-
-		@Override
-		public Boolean runAsync() {
-			return false;
-		}
-
-		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
-			CArray ret = new CArray(t);
-			for (Event event : EventList.GetEvents()) {
-				ret.push(new CString(event.getName(), t), t);
-			}
-			ret.sort(CArray.SortType.STRING_IC);
-			return ret;
-		}
-
-		@Override
-		public String getName() {
-			return "get_events";
-		}
-
-		@Override
-		public Integer[] numArgs() {
-			return new Integer[]{0};
-		}
-
-		@Override
-		public String docs() {
-			return "array {} Returns an array of all registered event names.";
-		}
-
-		@Override
-		public Version since() {
-			return CHVersion.V3_3_1;
-		}
-	}
-	
-	@api
-	public static class get_aliases extends AbstractFunction {
-
-		@Override
-		public Class<? extends CREThrowable>[] thrown() {
-			return new Class[]{};
-		}
-
-		@Override
-		public boolean isRestricted() {
-			return true;
-		}
-
-		@Override
-		public Boolean runAsync() {
-			return false;
-		}
-
-		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-			CArray ret = new CArray(t);
-			for (Script s : Static.getAliasCore().getScripts()) {
-				ret.push(new CString(s.getSignature(), t), t);
-			}
-			ret.sort(CArray.SortType.STRING_IC);
-			return ret;
-		}
-
-		@Override
-		public String getName() {
-			return "get_aliases";
-		}
-
-		@Override
-		public Integer[] numArgs() {
-			return new Integer[]{0};
-		}
-
-		@Override
-		public String docs() {
-			return "array {} Returns an array of the defined alias signatures (The part left of the = sign).";
-		}
-
-		@Override
-		public Version since() {
-			return CHVersion.V3_3_1;
-		}
-	}
-	
-	@api
-	public static class reflect_value_source extends AbstractFunction {
-
-		@Override
-		public Class<? extends CREThrowable>[] thrown() {
-			return new Class[]{};
-		}
-
-		@Override
-		public boolean isRestricted() {
-			return true;
-		}
-
-		@Override
-		public Boolean runAsync() {
-			return null;
-		}
-
-		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-			PersistenceNetwork pn = environment.getEnv(GlobalEnv.class).GetPersistenceNetwork();
-			return new CString(pn.getKeySource(args[0].val().split("\\.")).toString(), t);
-		}
-
-		@Override
-		public String getName() {
-			return "reflect_value_source";
-		}
-
-		@Override
-		public Integer[] numArgs() {
-			return new Integer[]{1};
-		}
-
-		@Override
-		public String docs() {
-			return "string {persistenceKey} Returns the source file that this key will store a value to in the Persistence Network."
-					+ " For instance, in your persistence.ini file, if you have the entry \"storage.test.**=json:///path/to/file.json\","
-					+ " then reflect_value_source('storage.test.testing') would return 'json:///path/to/file.json'. This is useful for"
-					+ " debugging, as it will definitively trace back the source/destination of a value.";
-		}
-
-		@Override
-		public Version since() {
-			return CHVersion.V3_3_1;
-		}
-		
-	}
-
-	@api
-	public static class get_procedures extends AbstractFunction {
-
-		@Override
-		public Class<? extends CREThrowable>[] thrown() {
-			return new Class[]{};
-		}
-
-		@Override
-		public boolean isRestricted() {
-			return true;
-		}
-
-		@Override
-		public Boolean runAsync() {
-			return false;
-		}
-
-		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-			CArray ret = new CArray(t);
-			for (Map.Entry<String, Procedure> p : environment.getEnv(GlobalEnv.class).GetProcs().entrySet()) {
-				ret.push(new CString(p.getKey(), t), t);
-			}
-			ret.sort(CArray.SortType.STRING_IC);
-			return ret;
-		}
-
-		@Override
-		public String getName() {
-			return "get_procedures";
-		}
-
-		@Override
-		public Integer[] numArgs() {
-			return new Integer[]{0};
-		}
-
-		@Override
-		public String docs() {
-			return "array {} Returns an array of procedures callable in the current scope.";
-		}
-
-		@Override
-		public Version since() {
-			return CHVersion.V3_3_1;
-		}
-
-		@Override
-		public ExampleScript[] examples() throws ConfigCompileException {
-			return new ExampleScript[]{
-				new ExampleScript("Simple example", "msg(get_procedures());\n"
-						+ "proc _testProc() {}\n"
-						+ "msg(get_procedures());"),
-				new ExampleScript("Example with procedures within procedures", "msg(get_procedures());\n"
-						+ "proc _testProc() {\n"
-						+ "\tproc _innerProc() {}\n"
-						+ "\tmsg(get_procedures());\n"
-						+ "}\n"
-						+ "_testProc();\n"
-						+ "msg(get_procedures());")
-			};
-		}
-	}
+    public static String docs() {
+        return "This class of functions allows scripts to hook deep into the interpreter itself,"
+                + " and get meta information about the operations of a script. This is useful for"
+                + " debugging, testing, and ultra dynamic scripting. See the"
+                + " [[CommandHelper/Reflection|guide to reflection]] on the wiki for more"
+                + " details. In order to make the most of these functions, you should familiarize"
+                + " yourself with the general workings of the language. These functions explore"
+                + " extremely advanced concepts, and should normally not be used; especially"
+                + " if you are not familiar with the language.";
+    }
+
+    @api(environments = {CommandHelperEnvironment.class})
+    public static class reflect_pull extends AbstractFunction {
+
+        private static Set<Construct> protocols;
+
+        @Override
+        public String getName() {
+            return "reflect_pull";
+        }
+
+        @Override
+        public Integer[] numArgs() {
+            return new Integer[]{Integer.MAX_VALUE};
+        }
+
+        @Override
+        public String docs() {
+            return "mixed {param, [args, ...]} Returns information about the runtime in a usable"
+                    + " format. Depending on the information returned, it may be useable directly,"
+                    + " or it may be more of a referential format. ---- The following items can be retrieved:"
+                    + "<table><tr><th>param</th><th>args</th><th>returns/description</th></tr>"
+                    + "<tr><td>label</td><td></td><td>Return the label that the script is currently running under</td></tr>"
+                    + "<tr><td>command</td><td></td><td>Returns the command that was used to fire off this script (if applicable)</td></tr>"
+                    + "<tr><td>varlist</td><td>[name]</td><td>Returns a list of currently in scope variables. If name"
+                    + " is provided, the currently set value is instead returned.</td></tr>"
+                    + "<tr><td>line_num</td><td></td><td>The current line number</td></tr>"
+                    + "<tr><td>file</td><td></td><td>The absolute path to the current file</td></tr>"
+                    + "<tr><td>col</td><td></td><td>The current column number</td></tr>"
+                    + "<tr><td>datasources</td><td></td><td>An array of data source protocols available</td></tr>"
+                    + "<tr><td>enum</td><td>[enum name]</td><td>An array of enum names, or if one if provided, a list of all"
+                    + " the values in that enum</td></tr>"
+                    + "</table>";
+            //+ "<tr><td></td><td></td><td></td></tr>"
+        }
+
+        @Override
+        public Class<? extends CREThrowable>[] thrown() {
+            return new Class[]{CREFormatException.class, CREIOException.class};
+        }
+
+        @Override
+        public boolean isRestricted() {
+            return true;
+        }
+
+        @Override
+        public Boolean runAsync() {
+            return null;
+        }
+
+        @Override
+        public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+            if (args.length < 1) {
+                throw new CREInsufficientArgumentsException("Not enough parameters was sent to " + getName(), t);
+            }
+
+            String param = args[0].val();
+            if ("label".equalsIgnoreCase(param)) {
+                return new CString(env.getEnv(GlobalEnv.class).GetLabel(), t);
+            } else if ("command".equalsIgnoreCase(param)) {
+                return new CString(env.getEnv(CommandHelperEnvironment.class).GetCommand(), t);
+            } else if ("varlist".equalsIgnoreCase(param)) {
+                if (args.length == 1) {
+                    //No name provided
+                    CArray ca = new CArray(t);
+                    for (String name : env.getEnv(GlobalEnv.class).GetVarList().keySet()) {
+                        ca.push(new CString(name, t), t);
+                    }
+                    return ca;
+                } else if (args.length == 2) {
+                    //The name was provided
+                    String name = args[1].val();
+                    return env.getEnv(GlobalEnv.class).GetVarList().get(name, t).ival();
+                }
+            } else if ("line_num".equalsIgnoreCase(param)) {
+                return new CInt(t.line(), t);
+            } else if ("file".equalsIgnoreCase(param)) {
+                if (t.file() == null) {
+                    return new CString("Unknown (maybe the interpreter?)", t);
+                } else {
+                    try {
+                        return new CString(t.file().getCanonicalPath().replace('\\', '/'), t);
+                    } catch (IOException ex) {
+                        throw new CREIOException(ex.getMessage(), t);
+                    }
+                }
+            } else if ("col".equalsIgnoreCase(param)) {
+                return new CInt(t.col(), t);
+            } else if ("datasources".equalsIgnoreCase(param)) {
+                if (protocols == null) {
+                    protocols = new HashSet<Construct>();
+                    for (String s : DataSourceFactory.GetSupportedProtocols()) {
+                        protocols.add(new CString(s, Target.UNKNOWN));
+                    }
+                }
+                return new CArray(t, protocols);
+            } else if ("enum".equalsIgnoreCase(param)) {
+                CArray a = new CArray(t);
+                Set<Class<Enum>> enums = ClassDiscovery.getDefaultInstance().loadClassesWithAnnotationThatExtend(MEnum.class, Enum.class);
+                Set<Class<DynamicEnum>> dEnums = ClassDiscovery.getDefaultInstance().loadClassesWithAnnotationThatExtend(MDynamicEnum.class, DynamicEnum.class);
+                if (args.length == 1) {
+                    //No name provided
+                    for (Class<Enum> e : enums) {
+                        a.push(new CString(e.getAnnotation(MEnum.class).value(), t), t);
+                    }
+                    for (Class<DynamicEnum> d : dEnums) {
+                        a.push(new CString(d.getAnnotation(MDynamicEnum.class).value(), t), t);
+                    }
+                } else if (args.length == 2) {
+                    String enumName = args[1].val();
+                    for (Class<Enum> e : enums) {
+                        if (e.getAnnotation(MEnum.class).value().equals(enumName)) {
+                            for (Enum ee : e.getEnumConstants()) {
+                                a.push(new CString(ee.name(), t), t);
+                            }
+                            break;
+                        }
+                    }
+                    for (Class<DynamicEnum> d : dEnums) {
+                        if (d.getAnnotation(MDynamicEnum.class).value().equals(enumName)) {
+                            for (DynamicEnum ee : (Collection<DynamicEnum>) ReflectionUtils.invokeMethod(d, null, "values")) {
+                                a.push(new CString(ee.name(), t), t);
+                            }
+                            break;
+                        }
+                    }
+                }
+                return a;
+            }
+
+            throw new CREFormatException("The arguments passed to " + getName() + " are incorrect. Please check them and try again.", t);
+        }
+
+        @Override
+        public CHVersion since() {
+            return CHVersion.V3_3_1;
+        }
+    }
+
+    @api
+    public static class reflect_docs extends AbstractFunction implements Optimizable {
+
+        public static enum DocField {
+
+            TYPE,
+            RETURN,
+            ARGS,
+            DESCRIPTION;
+
+            public String getName() {
+                return name().toLowerCase();
+            }
+
+            public static DocField getValue(String value) {
+                return DocField.valueOf(value.toUpperCase());
+            }
+        }
+
+        @Override
+        public Class<? extends CREThrowable>[] thrown() {
+            return new Class[]{CREFormatException.class};
+        }
+
+        @Override
+        public boolean isRestricted() {
+            return true;
+        }
+
+        @Override
+        public Boolean runAsync() {
+            return null;
+        }
+
+        @Override
+        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+            String element = args[0].val();
+            DocField docField;
+            try {
+                docField = DocField.getValue(args[1].val());
+            } catch (IllegalArgumentException e) {
+                throw new CREFormatException("Invalid docField provided: " + args[1].val(), t);
+            }
+            //For now, we have special handling, since functions are actually the only thing that will work,
+            //but eventually this will be a generic interface.
+            if (element.startsWith("@")) {
+                IVariable var = environment.getEnv(GlobalEnv.class).GetVarList().get(element, t);
+                if (var == null) {
+                    throw new CREFormatException("Invalid variable provided: " + element + " does not exist in the current scope", t);
+                }
+            } else if (element.startsWith("_")) {
+                if (!environment.getEnv(GlobalEnv.class).GetProcs().containsKey(element)) {
+                    throw new CREFormatException("Invalid procedure name provided: " + element + " does not exist in the current scope", t);
+                }
+            } else {
+                try {
+                    Function f = (Function) FunctionList.getFunction(new CFunction(element, t));
+                    return new CString(formatFunctionDoc(f.docs(), docField), t);
+                } catch (ConfigCompileException ex) {
+                    throw new CREFormatException("Unknown function: " + element, t);
+                }
+            }
+            return CNull.NULL;
+        }
+
+        public String formatFunctionDoc(String docs, DocField field) {
+            Pattern p = Pattern.compile("(?s)\\s*(.*?)\\s*\\{(.*?)\\}\\s*(.*)\\s*");
+            Matcher m = p.matcher(docs);
+            if (!m.find()) {
+                throw new Error("An error has occured in " + getName() + ". While trying to get the documentation"
+                        + ", it was unable to parse this: " + docs);
+            }
+            if (field == DocField.RETURN || field == DocField.TYPE) {
+                return m.group(1);
+            } else if (field == DocField.ARGS) {
+                return m.group(2);
+            } else if (field == DocField.DESCRIPTION) {
+                return m.group(3);
+            }
+            throw new Error("Unhandled case in formatFunctionDoc!");
+        }
+
+        @Override
+        public ParseTree optimizeDynamic(Target t, List<ParseTree> children, FileOptions fileOptions) throws ConfigCompileException, ConfigRuntimeException {
+            if (children.isEmpty()) {
+                //They are requesting this function's documentation. We can just return a string,
+                //and then it will never actually get called, so we handle it entirely in here.
+                return new ParseTree(new CString(docs(), t), null);
+            }
+            if (children.get(0).isConst()) {
+                //If it's a function, we can check to see if it actually exists,
+                //and make it a compile error if it doesn't, even if parameter 2 is dynamic
+                String value = children.get(0).getData().val();
+                if (!value.startsWith("_") && !value.startsWith("@")) {
+                    //It's a function
+                    FunctionList.getFunction(new CFunction(value, t));
+                }
+            }
+            if (children.get(1).isConst()) {
+                try {
+                    DocField.getValue(children.get(1).getData().val());
+                } catch (IllegalArgumentException e) {
+                    throw new ConfigCompileException("Invalid docField provided: " + children.get(1).getData().val(), t);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public Set<OptimizationOption> optimizationOptions() {
+            return EnumSet.of(
+                    OptimizationOption.CONSTANT_OFFLINE,
+                    OptimizationOption.OPTIMIZE_DYNAMIC
+            );
+        }
+
+        @Override
+        public String getName() {
+            return "reflect_docs";
+        }
+
+        @Override
+        public Integer[] numArgs() {
+            return new Integer[]{0, 2};
+        }
+
+        @Override
+        public String docs() {
+            return "string { | element, docField} Returns the documentation for an element. There are 4 things that an element might have,"
+                    + " and one of these should be passed as the docField argument: type, return, args, description. A valid element is either"
+                    + " the name of an ivariable, or a function/proc. For instance, reflect_docs('reflect_docs', 'description') would return"
+                    + " what you are reading right now. User defined variables and procs may not have any documentation, in which case null"
+                    + " is returned. If the specified argument cannot be found, a FormatException is thrown. If no arguments are passed in,"
+                    + " it returns the documentation for " + getName() + ", that is, what you're reading right now.";
+        }
+
+        @Override
+        public CHVersion since() {
+            return CHVersion.V3_3_1;
+        }
+
+        @Override
+        public ExampleScript[] examples() throws ConfigCompileException {
+            return new ExampleScript[]{
+                    new ExampleScript("Return type", "reflect_docs('array_contains', 'return'); // Using 'type' would also work"),
+                    new ExampleScript("Args", "reflect_docs('array_contains', 'args');"),
+                    new ExampleScript("Description", "reflect_docs('array_contains', 'description');")
+            };
+        }
+    }
+
+    @api
+    public static class get_functions extends AbstractFunction {
+
+        @Override
+        public Class<? extends CREThrowable>[] thrown() {
+            return new Class[]{};
+        }
+
+        @Override
+        public boolean isRestricted() {
+            return true;
+        }
+
+        @Override
+        public Boolean runAsync() {
+            return false;
+        }
+
+        private static Map<String, List<String>> funcs = new HashMap<String, List<String>>();
+
+        private void initf() {
+            for (FunctionBase f : FunctionList.getFunctionList(api.Platforms.INTERPRETER_JAVA)) {
+                String[] pack = f.getClass().getEnclosingClass().getName().split("\\.");
+                String clazz = pack[pack.length - 1];
+                if (!funcs.containsKey(clazz)) {
+                    funcs.put(clazz, new ArrayList<String>());
+                }
+                funcs.get(clazz).add(f.getName());
+            }
+        }
+
+        @Override
+        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+            CArray ret = CArray.GetAssociativeArray(t);
+            if (funcs.keySet().size() < 10) {
+                initf();
+            }
+            for (String cname : funcs.keySet()) {
+                CArray fnames = new CArray(t);
+                for (String fname : funcs.get(cname)) {
+                    fnames.push(new CString(fname, t), t);
+                }
+                ret.set(new CString(cname, t), fnames, t);
+            }
+            return ret;
+        }
+
+        @Override
+        public String getName() {
+            return "get_functions";
+        }
+
+        @Override
+        public Integer[] numArgs() {
+            return new Integer[]{0};
+        }
+
+        @Override
+        public String docs() {
+            return "array {} Returns an associative array of all loaded functions. The keys of this array are the"
+                    + " names of the classes containing the functions (which you know as the sections of the API page),"
+                    + " and the values are arrays of the names of the functions within those classes.";
+        }
+
+        @Override
+        public Version since() {
+            return CHVersion.V3_3_1;
+        }
+    }
+
+    @api
+    public static class get_events extends AbstractFunction {
+
+        @Override
+        public Class<? extends CREThrowable>[] thrown() {
+            return new Class[]{};
+        }
+
+        @Override
+        public boolean isRestricted() {
+            return true;
+        }
+
+        @Override
+        public Boolean runAsync() {
+            return false;
+        }
+
+        @Override
+        public Construct exec(Target t, Environment environment,
+                              Construct... args) throws ConfigRuntimeException {
+            CArray ret = new CArray(t);
+            for (Event event : EventList.GetEvents()) {
+                ret.push(new CString(event.getName(), t), t);
+            }
+            ret.sort(CArray.SortType.STRING_IC);
+            return ret;
+        }
+
+        @Override
+        public String getName() {
+            return "get_events";
+        }
+
+        @Override
+        public Integer[] numArgs() {
+            return new Integer[]{0};
+        }
+
+        @Override
+        public String docs() {
+            return "array {} Returns an array of all registered event names.";
+        }
+
+        @Override
+        public Version since() {
+            return CHVersion.V3_3_1;
+        }
+    }
+
+    @api
+    public static class get_aliases extends AbstractFunction {
+
+        @Override
+        public Class<? extends CREThrowable>[] thrown() {
+            return new Class[]{};
+        }
+
+        @Override
+        public boolean isRestricted() {
+            return true;
+        }
+
+        @Override
+        public Boolean runAsync() {
+            return false;
+        }
+
+        @Override
+        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+            CArray ret = new CArray(t);
+            for (Script s : Static.getAliasCore().getScripts()) {
+                ret.push(new CString(s.getSignature(), t), t);
+            }
+            ret.sort(CArray.SortType.STRING_IC);
+            return ret;
+        }
+
+        @Override
+        public String getName() {
+            return "get_aliases";
+        }
+
+        @Override
+        public Integer[] numArgs() {
+            return new Integer[]{0};
+        }
+
+        @Override
+        public String docs() {
+            return "array {} Returns an array of the defined alias signatures (The part left of the = sign).";
+        }
+
+        @Override
+        public Version since() {
+            return CHVersion.V3_3_1;
+        }
+    }
+
+    @api
+    public static class reflect_value_source extends AbstractFunction {
+
+        @Override
+        public Class<? extends CREThrowable>[] thrown() {
+            return new Class[]{};
+        }
+
+        @Override
+        public boolean isRestricted() {
+            return true;
+        }
+
+        @Override
+        public Boolean runAsync() {
+            return null;
+        }
+
+        @Override
+        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+            PersistenceNetwork pn = environment.getEnv(GlobalEnv.class).GetPersistenceNetwork();
+            return new CString(pn.getKeySource(args[0].val().split("\\.")).toString(), t);
+        }
+
+        @Override
+        public String getName() {
+            return "reflect_value_source";
+        }
+
+        @Override
+        public Integer[] numArgs() {
+            return new Integer[]{1};
+        }
+
+        @Override
+        public String docs() {
+            return "string {persistenceKey} Returns the source file that this key will store a value to in the Persistence Network."
+                    + " For instance, in your persistence.ini file, if you have the entry \"storage.test.**=json:///path/to/file.json\","
+                    + " then reflect_value_source('storage.test.testing') would return 'json:///path/to/file.json'. This is useful for"
+                    + " debugging, as it will definitively trace back the source/destination of a value.";
+        }
+
+        @Override
+        public Version since() {
+            return CHVersion.V3_3_1;
+        }
+
+    }
+
+    @api
+    public static class get_procedures extends AbstractFunction {
+
+        @Override
+        public Class<? extends CREThrowable>[] thrown() {
+            return new Class[]{};
+        }
+
+        @Override
+        public boolean isRestricted() {
+            return true;
+        }
+
+        @Override
+        public Boolean runAsync() {
+            return false;
+        }
+
+        @Override
+        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+            CArray ret = new CArray(t);
+            for (Map.Entry<String, Procedure> p : environment.getEnv(GlobalEnv.class).GetProcs().entrySet()) {
+                ret.push(new CString(p.getKey(), t), t);
+            }
+            ret.sort(CArray.SortType.STRING_IC);
+            return ret;
+        }
+
+        @Override
+        public String getName() {
+            return "get_procedures";
+        }
+
+        @Override
+        public Integer[] numArgs() {
+            return new Integer[]{0};
+        }
+
+        @Override
+        public String docs() {
+            return "array {} Returns an array of procedures callable in the current scope.";
+        }
+
+        @Override
+        public Version since() {
+            return CHVersion.V3_3_1;
+        }
+
+        @Override
+        public ExampleScript[] examples() throws ConfigCompileException {
+            return new ExampleScript[]{
+                    new ExampleScript("Simple example", "msg(get_procedures());\n"
+                            + "proc _testProc() {}\n"
+                            + "msg(get_procedures());"),
+                    new ExampleScript("Example with procedures within procedures", "msg(get_procedures());\n"
+                            + "proc _testProc() {\n"
+                            + "\tproc _innerProc() {}\n"
+                            + "\tmsg(get_procedures());\n"
+                            + "}\n"
+                            + "_testProc();\n"
+                            + "msg(get_procedures());")
+            };
+        }
+    }
 }

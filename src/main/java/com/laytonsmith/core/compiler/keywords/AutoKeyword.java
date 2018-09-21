@@ -11,9 +11,9 @@ import com.laytonsmith.core.constructs.Target;
 @Keyword.keyword("auto")
 public class AutoKeyword extends LiteralKeyword {
 
-	@Override
-	protected Construct getValue(Target t) {
-		return CClassType.AUTO;
-	}
+    @Override
+    protected Construct getValue(Target t) {
+        return CClassType.AUTO;
+    }
 
 }

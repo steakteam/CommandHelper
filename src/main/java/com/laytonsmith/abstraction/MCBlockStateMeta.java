@@ -4,7 +4,8 @@ import com.laytonsmith.abstraction.blocks.MCBlockState;
 
 public interface MCBlockStateMeta extends MCItemMeta {
 
-	MCBlockState getBlockState();
-	void setBlockState(MCBlockState state);
+    MCBlockState getBlockState();
+
+    void setBlockState(MCBlockState state);
 
 }

@@ -6,8 +6,8 @@ import com.laytonsmith.abstraction.MCPlayer;
 import com.laytonsmith.abstraction.bukkit.BukkitMCCommand;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCPlayer;
 import com.laytonsmith.abstraction.events.MCCommandTabCompleteEvent;
-import com.laytonsmith.abstraction.events.MCServerCommandEvent;
 import com.laytonsmith.abstraction.events.MCPluginIncomingMessageEvent;
+import com.laytonsmith.abstraction.events.MCServerCommandEvent;
 import com.laytonsmith.abstraction.events.MCServerPingEvent;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
@@ -23,200 +23,201 @@ import java.util.Set;
 
 /**
  *
- * 
+ *
  */
 public class BukkitMiscEvents {
-	public static class BukkitMCServerCommandEvent implements MCServerCommandEvent {
-		ServerCommandEvent sce;
-		MCCommandSender sender;
-		
-		public BukkitMCServerCommandEvent(ServerCommandEvent sce, MCCommandSender sender){
-			this.sce = sce;
-			this.sender = sender;
-		}
+    public static class BukkitMCServerCommandEvent implements MCServerCommandEvent {
+        ServerCommandEvent sce;
+        MCCommandSender sender;
 
-		@Override
-		public Object _GetObject() {
-			return sce;
-		}
+        public BukkitMCServerCommandEvent(ServerCommandEvent sce, MCCommandSender sender) {
+            this.sce = sce;
+            this.sender = sender;
+        }
 
-		@Override
-		public String getCommand() {
-			return sce.getCommand();
-		}
+        @Override
+        public Object _GetObject() {
+            return sce;
+        }
 
-		@Override
-		public void setCommand(String command) {
-			sce.setCommand(command);
-		}
+        @Override
+        public String getCommand() {
+            return sce.getCommand();
+        }
 
-		@Override
-		public MCCommandSender getCommandSender() {
-			return sender;
-		}
-	}
-	
-	/*
-	 * Not an actual event, but making it one.
-	 */
-	public static class BukkitMCPluginIncomingMessageEvent implements MCPluginIncomingMessageEvent {
-		
-		Player player;
-		String channel;
-		byte[] bytes;
+        @Override
+        public void setCommand(String command) {
+            sce.setCommand(command);
+        }
 
-		public BukkitMCPluginIncomingMessageEvent(Player player, String channel, byte[] bytes) {
-			this.player = player;
-			this.channel = channel;
-			this.bytes = bytes;
-		}
-		
-		
-		@Override
-		public String getChannel() {
-			return channel;
-		}
+        @Override
+        public MCCommandSender getCommandSender() {
+            return sender;
+        }
+    }
 
-		@Override
-		public byte[] getBytes() {
-			return bytes;
-		}
+    /*
+     * Not an actual event, but making it one.
+     */
+    public static class BukkitMCPluginIncomingMessageEvent implements MCPluginIncomingMessageEvent {
 
-		@Override
-		public MCPlayer getPlayer() {
-			return new BukkitMCPlayer(player);
-		}
+        Player player;
+        String channel;
+        byte[] bytes;
 
-		@Override
-		public Object _GetObject() {
-			return null;
-		}
-	}
+        public BukkitMCPluginIncomingMessageEvent(Player player, String channel, byte[] bytes) {
+            this.player = player;
+            this.channel = channel;
+            this.bytes = bytes;
+        }
 
-	public static class BukkitMCServerPingEvent implements MCServerPingEvent {
 
-		private final ServerListPingEvent slp;
+        @Override
+        public String getChannel() {
+            return channel;
+        }
 
-		public BukkitMCServerPingEvent(ServerListPingEvent event) {
-			slp = event;
-		}
+        @Override
+        public byte[] getBytes() {
+            return bytes;
+        }
 
-		@Override
-		public Object _GetObject() {
-			return slp;
-		}
+        @Override
+        public MCPlayer getPlayer() {
+            return new BukkitMCPlayer(player);
+        }
 
-		@Override
-		public InetAddress getAddress() {
-			return slp.getAddress();
-		}
+        @Override
+        public Object _GetObject() {
+            return null;
+        }
+    }
 
-		@Override
-		public int getMaxPlayers() {
-			return slp.getMaxPlayers();
-		}
+    public static class BukkitMCServerPingEvent implements MCServerPingEvent {
 
-		@Override
-		public String getMOTD() {
-			return slp.getMotd();
-		}
+        private final ServerListPingEvent slp;
 
-		@Override
-		public int getNumPlayers() {
-			return slp.getNumPlayers();
-		}
+        public BukkitMCServerPingEvent(ServerListPingEvent event) {
+            slp = event;
+        }
 
-		@Override
-		public void setMaxPlayers(int max) {
-			slp.setMaxPlayers(max);
-		}
+        @Override
+        public Object _GetObject() {
+            return slp;
+        }
 
-		@Override
-		public void setMOTD(String motd) {
-			slp.setMotd(motd);
-		}
+        @Override
+        public InetAddress getAddress() {
+            return slp.getAddress();
+        }
 
-		@Override
-		public Set<MCPlayer> getPlayers() {
-			Set<MCPlayer> players = new HashSet<>();
-			try {
-				Iterator<Player> iterator = slp.iterator();
-				while (iterator.hasNext()) {
-					players.add(new BukkitMCPlayer(iterator.next()));
-				}
-			} catch(UnsupportedOperationException ex) {
-				// not implemented, ignore
-			}
-			return players;
-		}
+        @Override
+        public int getMaxPlayers() {
+            return slp.getMaxPlayers();
+        }
 
-		@Override
-		public void setPlayers(Collection<MCPlayer> players) {
-			Set<Player> ps = new HashSet<>();
-			for (MCPlayer player : players) {
-				ps.add((Player) player.getHandle());
-			}
-			try {
-				Iterator<Player> iterator = slp.iterator();
-				while (iterator.hasNext()) {
-					if (!ps.contains(iterator.next())) {
-						iterator.remove();
-					}
-				}
-			} catch(UnsupportedOperationException ex) {
-				// not implemented, ignore
-			}
-		}
-	}
+        @Override
+        public String getMOTD() {
+            return slp.getMotd();
+        }
 
-	public static class BukkitMCCommandTabCompleteEvent implements MCCommandTabCompleteEvent {
+        @Override
+        public int getNumPlayers() {
+            return slp.getNumPlayers();
+        }
 
-		List<String> comp;
-		MCCommandSender sender;
-		Command cmd;
-		String alias;
-		String[] args;
-		public BukkitMCCommandTabCompleteEvent(MCCommandSender sender, Command cmd, String alias, String[] args) {
-			this.comp = null;
-			this.sender = sender;
-			this.cmd = cmd;
-			this.alias = alias;
-			this.args = args;
-		}
-		
-		@Override
-		public Object _GetObject() {
-			return comp;
-		}
+        @Override
+        public void setMaxPlayers(int max) {
+            slp.setMaxPlayers(max);
+        }
 
-		@Override
-		public MCCommandSender getCommandSender() {
-			return sender;
-		}
+        @Override
+        public void setMOTD(String motd) {
+            slp.setMotd(motd);
+        }
 
-		@Override
-		public MCCommand getCommand() {
-			return new BukkitMCCommand(cmd);
-		}
+        @Override
+        public Set<MCPlayer> getPlayers() {
+            Set<MCPlayer> players = new HashSet<>();
+            try {
+                Iterator<Player> iterator = slp.iterator();
+                while (iterator.hasNext()) {
+                    players.add(new BukkitMCPlayer(iterator.next()));
+                }
+            } catch (UnsupportedOperationException ex) {
+                // not implemented, ignore
+            }
+            return players;
+        }
 
-		@Override
-		public String getAlias() {
-			return alias;
-		}
+        @Override
+        public void setPlayers(Collection<MCPlayer> players) {
+            Set<Player> ps = new HashSet<>();
+            for (MCPlayer player : players) {
+                ps.add((Player) player.getHandle());
+            }
+            try {
+                Iterator<Player> iterator = slp.iterator();
+                while (iterator.hasNext()) {
+                    if (!ps.contains(iterator.next())) {
+                        iterator.remove();
+                    }
+                }
+            } catch (UnsupportedOperationException ex) {
+                // not implemented, ignore
+            }
+        }
+    }
 
-		@Override
-		public String[] getArguments() {
-			return args;
-		}
+    public static class BukkitMCCommandTabCompleteEvent implements MCCommandTabCompleteEvent {
 
-		@Override
-		public List<String> getCompletions() {
-			return comp;
-		}
+        List<String> comp;
+        MCCommandSender sender;
+        Command cmd;
+        String alias;
+        String[] args;
 
-		@Override
-		public void setCompletions(List<String> completions) {
-			this.comp = completions;
-		}
-	}
+        public BukkitMCCommandTabCompleteEvent(MCCommandSender sender, Command cmd, String alias, String[] args) {
+            this.comp = null;
+            this.sender = sender;
+            this.cmd = cmd;
+            this.alias = alias;
+            this.args = args;
+        }
+
+        @Override
+        public Object _GetObject() {
+            return comp;
+        }
+
+        @Override
+        public MCCommandSender getCommandSender() {
+            return sender;
+        }
+
+        @Override
+        public MCCommand getCommand() {
+            return new BukkitMCCommand(cmd);
+        }
+
+        @Override
+        public String getAlias() {
+            return alias;
+        }
+
+        @Override
+        public String[] getArguments() {
+            return args;
+        }
+
+        @Override
+        public List<String> getCompletions() {
+            return comp;
+        }
+
+        @Override
+        public void setCompletions(List<String> completions) {
+            this.comp = completions;
+        }
+    }
 }

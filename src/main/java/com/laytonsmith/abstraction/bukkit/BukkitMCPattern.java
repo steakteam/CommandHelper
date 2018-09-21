@@ -9,39 +9,40 @@ import org.bukkit.block.banner.Pattern;
 
 public class BukkitMCPattern implements MCPattern {
 
-	Pattern pattern;
-	public BukkitMCPattern(Pattern p) {
-		pattern = p;
-	}
+    Pattern pattern;
 
-	@Override
-	public Object getHandle() {
-		return pattern;
-	}
+    public BukkitMCPattern(Pattern p) {
+        pattern = p;
+    }
 
-	@Override
-	public MCDyeColor getColor() {
-		return BukkitMCDyeColor.getConvertor().getAbstractedEnum(pattern.getColor());
-	}
+    @Override
+    public Object getHandle() {
+        return pattern;
+    }
 
-	@Override
-	public MCPatternShape getShape() {
-		return BukkitMCPatternShape.getConvertor().getAbstractedEnum(pattern.getPattern());
-	}
+    @Override
+    public MCDyeColor getColor() {
+        return BukkitMCDyeColor.getConvertor().getAbstractedEnum(pattern.getColor());
+    }
 
-	@Override
-	public String toString() {
-		return pattern.toString();
-	}
+    @Override
+    public MCPatternShape getShape() {
+        return BukkitMCPatternShape.getConvertor().getAbstractedEnum(pattern.getPattern());
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof BukkitMCPattern && pattern.equals(((BukkitMCPattern)obj).pattern);
-	}
+    @Override
+    public String toString() {
+        return pattern.toString();
+    }
 
-	@Override
-	public int hashCode() {
-		return pattern.hashCode();
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof BukkitMCPattern && pattern.equals(((BukkitMCPattern) obj).pattern);
+    }
+
+    @Override
+    public int hashCode() {
+        return pattern.hashCode();
+    }
 
 }

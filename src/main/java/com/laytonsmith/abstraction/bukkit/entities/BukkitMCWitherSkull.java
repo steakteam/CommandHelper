@@ -5,30 +5,29 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.WitherSkull;
 
 /**
- *
  * @author Veyyn
  */
 public class BukkitMCWitherSkull extends BukkitMCFireball implements MCWitherSkull {
 
-	private final WitherSkull _skull;
+    private final WitherSkull _skull;
 
-	public BukkitMCWitherSkull(Entity skull) {
-		super(skull);
-		_skull = (WitherSkull) skull;
-	}
+    public BukkitMCWitherSkull(Entity skull) {
+        super(skull);
+        _skull = (WitherSkull) skull;
+    }
 
-	@Override
-	public WitherSkull getHandle() {
-		return _skull;
-	}
+    @Override
+    public WitherSkull getHandle() {
+        return _skull;
+    }
 
-	@Override
-	public boolean isCharged() {
-		return _skull.isCharged();
-	}
+    @Override
+    public boolean isCharged() {
+        return _skull.isCharged();
+    }
 
-	@Override
-	public void setCharged(boolean charged) {
-		_skull.setCharged(charged);
-	}
+    @Override
+    public void setCharged(boolean charged) {
+        _skull.setCharged(charged);
+    }
 }

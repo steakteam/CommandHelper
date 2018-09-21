@@ -4,12 +4,13 @@ import java.util.Calendar;
 
 /**
  *
- * 
+ *
  */
 public final class DateUtils {
-    
-    private DateUtils(){}
-    
+
+    private DateUtils() {
+    }
+
     /**
      * Convenience notation for ParseCalendarNotation(name, null)
      */
@@ -27,11 +28,12 @@ public final class DateUtils {
      * <tr><td>%m</td><td>Minute</td></tr>
      * <tr><td>%s</td><td>Second</td></tr>
      * </table>
-     * 
+     * <p>
      * A generally standard format for human readable logs is: %Y-%M-%D %h:%m.%s
+     *
      * @param name
      * @param c
-     * @return 
+     * @return
      */
     public static String ParseCalendarNotation(String name, Calendar c) {
         if (c == null) {

@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCDonkey extends BukkitMCChestedHorse implements MCDonkey {
 
-	public BukkitMCDonkey(Entity t) {
-		super(t);
-	}
+    public BukkitMCDonkey(Entity t) {
+        super(t);
+    }
 
 }

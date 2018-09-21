@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCEvokerFangs extends BukkitMCEntity implements MCEvokerFangs {
 
-	public BukkitMCEvokerFangs(Entity ent) {
-		super(ent);
-	}
+    public BukkitMCEvokerFangs(Entity ent) {
+        super(ent);
+    }
 
 }

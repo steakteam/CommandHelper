@@ -8,28 +8,29 @@ import org.bukkit.command.BlockCommandSender;
 
 /**
  *
- * 
+ *
  */
 public class BukkitMCBlockCommandSender extends BukkitMCCommandSender implements MCBlockCommandSender {
 
-	BlockCommandSender bcs;
-	public BukkitMCBlockCommandSender(AbstractionObject a){
-        this((BlockCommandSender)null);
-        if(a instanceof MCBlockCommandSender){
-            this.c = ((BlockCommandSender)a.getHandle());
+    BlockCommandSender bcs;
+
+    public BukkitMCBlockCommandSender(AbstractionObject a) {
+        this((BlockCommandSender) null);
+        if (a instanceof MCBlockCommandSender) {
+            this.c = ((BlockCommandSender) a.getHandle());
         } else {
             throw new ClassCastException();
         }
-	}
-	
-	public BukkitMCBlockCommandSender(BlockCommandSender bcs){
-		super(bcs);
-		this.bcs = bcs;
-	}
-	
-	@Override
-	public MCBlock getBlock() {
-		return new BukkitMCBlock(bcs.getBlock());
-	}
+    }
+
+    public BukkitMCBlockCommandSender(BlockCommandSender bcs) {
+        super(bcs);
+        this.bcs = bcs;
+    }
+
+    @Override
+    public MCBlock getBlock() {
+        return new BukkitMCBlock(bcs.getBlock());
+    }
 
 }

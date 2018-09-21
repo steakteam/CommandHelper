@@ -5,6 +5,6 @@ import com.laytonsmith.core.events.BindableEvent;
 
 public interface MCFireworkExplodeEvent extends BindableEvent {
 
-	public MCFirework getEntity();
+    public MCFirework getEntity();
 
 }

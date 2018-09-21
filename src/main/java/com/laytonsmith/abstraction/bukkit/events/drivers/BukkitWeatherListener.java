@@ -13,7 +13,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 /**
  * @author jacobwgillespie
  */
-public class BukkitWeatherListener implements Listener{
+public class BukkitWeatherListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onLightningStrike(LightningStrikeEvent event) {
         EventUtils.TriggerListener(Driver.LIGHTNING_STRIKE, "lightning_strike", new BukkitWeatherEvents.BukkitMCLightningStrikeEvent(event));

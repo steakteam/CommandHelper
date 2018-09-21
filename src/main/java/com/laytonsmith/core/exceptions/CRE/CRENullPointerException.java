@@ -16,21 +16,21 @@ public class CRENullPointerException extends CREException {
     public static final CClassType TYPE = CClassType.get("NullPointerException");
 
     public CRENullPointerException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CRENullPointerException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "If a null is sent, but not expected, this exception is thrown. Additionally, this is thrown"
-		+ " if null is dereferenced.";
+        return "If a null is sent, but not expected, this exception is thrown. Additionally, this is thrown"
+                + " if null is dereferenced.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

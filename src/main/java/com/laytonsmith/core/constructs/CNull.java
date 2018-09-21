@@ -38,11 +38,11 @@ public final class CNull extends Construct implements Cloneable {
      * @return
      */
     public static CNull GenerateCNull(Target t) {
-	if (t == Target.UNKNOWN) {
-	    return NULL;
-	} else {
-	    return new CNull(t);
-	}
+        if (t == Target.UNKNOWN) {
+            return NULL;
+        } else {
+            return new CNull(t);
+        }
     }
 
     /**
@@ -52,49 +52,49 @@ public final class CNull extends Construct implements Cloneable {
      * @param t
      */
     private CNull(Target t) {
-	super("null", ConstructType.NULL, t);
+        super("null", ConstructType.NULL, t);
     }
 
     @Override
     @SuppressWarnings("CloneDoesntCallSuperClone")
     public CNull clone() throws CloneNotSupportedException {
-	return this;
+        return this;
     }
 
     @Override
     public String val() {
-	return "null";
+        return "null";
     }
 
     @Override
     public String nval() {
-	return null;
+        return null;
     }
 
     @Override
     public boolean equals(Object obj) {
-	return obj instanceof CNull;
+        return obj instanceof CNull;
     }
 
     @Override
     public boolean isDynamic() {
-	return false;
+        return false;
     }
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	return hash;
+        int hash = 7;
+        return hash;
     }
 
     @Override
     public String docs() {
-	return "null is a default value. All values can be null.";
+        return "null is a default value. All values can be null.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_0_1;
+        return CHVersion.V3_0_1;
     }
 
 }

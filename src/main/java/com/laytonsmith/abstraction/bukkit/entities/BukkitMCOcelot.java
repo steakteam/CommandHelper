@@ -9,32 +9,36 @@ import org.bukkit.entity.Ocelot;
 
 public class BukkitMCOcelot extends BukkitMCTameable implements MCOcelot {
 
-	Ocelot o;
-	public BukkitMCOcelot(Entity be) {
-		super(be);
-		this.o = (Ocelot) be;
-	}
-	
-	public BukkitMCOcelot(AbstractionObject ao){
-        super((LivingEntity)ao.getHandle());
+    Ocelot o;
+
+    public BukkitMCOcelot(Entity be) {
+        super(be);
+        this.o = (Ocelot) be;
+    }
+
+    public BukkitMCOcelot(AbstractionObject ao) {
+        super((LivingEntity) ao.getHandle());
         this.o = (Ocelot) ao.getHandle();
     }
-	
-	@Override
-	public MCOcelotType getCatType() {
-		return MCOcelotType.valueOf(o.getCatType().name());
-	}
-	@Override
-	public boolean isSitting() {
-		return o.isSitting();
-	}
-	@Override
-	public void setCatType(MCOcelotType type) {
-		o.setCatType(Ocelot.Type.valueOf(type.name()));
-	}
-	@Override
-	public void setSitting(boolean sitting) {
-		o.setSitting(sitting);
-	}
+
+    @Override
+    public MCOcelotType getCatType() {
+        return MCOcelotType.valueOf(o.getCatType().name());
+    }
+
+    @Override
+    public boolean isSitting() {
+        return o.isSitting();
+    }
+
+    @Override
+    public void setCatType(MCOcelotType type) {
+        o.setCatType(Ocelot.Type.valueOf(type.name()));
+    }
+
+    @Override
+    public void setSitting(boolean sitting) {
+        o.setSitting(sitting);
+    }
 
 }

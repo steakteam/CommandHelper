@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCHusk extends BukkitMCZombie implements MCHusk {
 
-	public BukkitMCHusk(Entity zombie) {
-		super(zombie);
-	}
+    public BukkitMCHusk(Entity zombie) {
+        super(zombie);
+    }
 
 }

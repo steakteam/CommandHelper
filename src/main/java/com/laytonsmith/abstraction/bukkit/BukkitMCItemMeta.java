@@ -8,139 +8,141 @@ import com.laytonsmith.abstraction.AbstractionObject;
 import com.laytonsmith.abstraction.MCEnchantment;
 import com.laytonsmith.abstraction.MCItemMeta;
 import com.laytonsmith.abstraction.enums.MCItemFlag;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.Repairable;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.Repairable;
 
 /**
  *
- * 
+ *
  */
 public class BukkitMCItemMeta implements MCItemMeta {
 
-	ItemMeta im;
-	public BukkitMCItemMeta(ItemMeta im) {
-		this.im = im;
-	}
+    ItemMeta im;
 
-	public BukkitMCItemMeta(AbstractionObject o) {
-		im = (ItemMeta)o;
-	}
-	
-	@Override
-	public boolean hasDisplayName() {
-		return im.hasDisplayName();
-	}
+    public BukkitMCItemMeta(ItemMeta im) {
+        this.im = im;
+    }
 
-	@Override
-	public String getDisplayName() {
-		return im.getDisplayName();
-	}
+    public BukkitMCItemMeta(AbstractionObject o) {
+        im = (ItemMeta) o;
+    }
 
-	@Override
-	public void setDisplayName(String name) {
-		im.setDisplayName(name);
-	}
+    @Override
+    public boolean hasDisplayName() {
+        return im.hasDisplayName();
+    }
 
-	@Override
-	public boolean hasLore() {
-		return im.hasLore();
-	}
+    @Override
+    public String getDisplayName() {
+        return im.getDisplayName();
+    }
 
-	@Override
-	public List<String> getLore() {
-		return im.getLore();
-	}
+    @Override
+    public void setDisplayName(String name) {
+        im.setDisplayName(name);
+    }
 
-	@Override
-	public void setLore(List<String> lore) {
-		im.setLore(lore);
-	}
-	
-	@Override
-	public boolean hasEnchants() {
-		return im.hasEnchants();
-	}
+    @Override
+    public boolean hasLore() {
+        return im.hasLore();
+    }
 
-	@Override
-	public Map<MCEnchantment, Integer> getEnchants() {
-		Map<MCEnchantment, Integer> map = new HashMap<MCEnchantment, Integer>();
-		for(Entry<Enchantment, Integer> entry : im.getEnchants().entrySet()) {
-			map.put(new BukkitMCEnchantment(entry.getKey()), entry.getValue());
-		}
-		return map;
-	}
-	
-	@Override
-	public boolean addEnchant(MCEnchantment ench, int level, boolean ignoreLevelRestriction) {
-		return im.addEnchant(((BukkitMCEnchantment) ench).__Enchantment(), level, ignoreLevelRestriction);
-	}
-	
-	@Override
-	public boolean removeEnchant(MCEnchantment ench) {
-		return im.removeEnchant(((BukkitMCEnchantment) ench).__Enchantment());
-	}
+    @Override
+    public List<String> getLore() {
+        return im.getLore();
+    }
 
-	@Override
-	public Object getHandle() {
-		return im;
-	}
-	
-	public ItemMeta asItemMeta() {
-		return im;
-	}
+    @Override
+    public void setLore(List<String> lore) {
+        im.setLore(lore);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return im.equals(obj);
-	}
+    @Override
+    public boolean hasEnchants() {
+        return im.hasEnchants();
+    }
 
-	@Override
-	public int hashCode() {
-		return im.hashCode();
-	}
+    @Override
+    public Map<MCEnchantment, Integer> getEnchants() {
+        Map<MCEnchantment, Integer> map = new HashMap<MCEnchantment, Integer>();
+        for (Entry<Enchantment, Integer> entry : im.getEnchants().entrySet()) {
+            map.put(new BukkitMCEnchantment(entry.getKey()), entry.getValue());
+        }
+        return map;
+    }
 
-	@Override
-	public String toString() {
-		return im.toString();
-	}
-	
-	@Override
-	public boolean hasRepairCost() {
-		return ((Repairable) im).hasRepairCost();
-	}
-	
-	@Override
-	public int getRepairCost() {
-		return ((Repairable) im).getRepairCost();
-	}
-	
-	@Override
-	public void setRepairCost(int cost) {
-		((Repairable) im).setRepairCost(cost);
-	}
-	
-	@Override
-	public void addItemFlags(MCItemFlag... flags) {
-		for(MCItemFlag flag : flags) {
-			im.addItemFlags(ItemFlag.valueOf(flag.name()));
-		}
-	}
-	
-	@Override
-	public Set<MCItemFlag> getItemFlags() {
-		Set<ItemFlag> flags = im.getItemFlags();
-		Set<MCItemFlag> ret = new HashSet<>(flags.size());
-		for(ItemFlag flag : flags) {
-			ret.add(MCItemFlag.valueOf(flag.name()));
-		}
-		return ret;
-	}
+    @Override
+    public boolean addEnchant(MCEnchantment ench, int level, boolean ignoreLevelRestriction) {
+        return im.addEnchant(((BukkitMCEnchantment) ench).__Enchantment(), level, ignoreLevelRestriction);
+    }
+
+    @Override
+    public boolean removeEnchant(MCEnchantment ench) {
+        return im.removeEnchant(((BukkitMCEnchantment) ench).__Enchantment());
+    }
+
+    @Override
+    public Object getHandle() {
+        return im;
+    }
+
+    public ItemMeta asItemMeta() {
+        return im;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return im.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return im.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return im.toString();
+    }
+
+    @Override
+    public boolean hasRepairCost() {
+        return ((Repairable) im).hasRepairCost();
+    }
+
+    @Override
+    public int getRepairCost() {
+        return ((Repairable) im).getRepairCost();
+    }
+
+    @Override
+    public void setRepairCost(int cost) {
+        ((Repairable) im).setRepairCost(cost);
+    }
+
+    @Override
+    public void addItemFlags(MCItemFlag... flags) {
+        for (MCItemFlag flag : flags) {
+            im.addItemFlags(ItemFlag.valueOf(flag.name()));
+        }
+    }
+
+    @Override
+    public Set<MCItemFlag> getItemFlags() {
+        Set<ItemFlag> flags = im.getItemFlags();
+        Set<MCItemFlag> ret = new HashSet<>(flags.size());
+        for (ItemFlag flag : flags) {
+            ret.add(MCItemFlag.valueOf(flag.name()));
+        }
+        return ret;
+    }
 }

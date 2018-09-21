@@ -1,4 +1,3 @@
-
 package com.laytonsmith.abstraction.bukkit;
 
 import com.laytonsmith.abstraction.AbstractionObject;
@@ -8,41 +7,42 @@ import org.bukkit.Note;
 
 /**
  *
- * 
+ *
  */
 public class BukkitMCNote implements AbstractionObject, MCNote {
-	Note n;
-	public BukkitMCNote(int octave, MCTone tone, boolean sharp) throws IllegalArgumentException {
-		n = new Note(octave, Note.Tone.valueOf(tone.name()), sharp);
-	}
+    Note n;
 
-	public BukkitMCNote(Note n) {
-		this.n = n;
-	}
+    public BukkitMCNote(int octave, MCTone tone, boolean sharp) throws IllegalArgumentException {
+        n = new Note(octave, Note.Tone.valueOf(tone.name()), sharp);
+    }
 
-	@Override
-	public MCTone getTone() {
-		return MCTone.valueOf(n.getTone().toString());
-	}
+    public BukkitMCNote(Note n) {
+        this.n = n;
+    }
 
-	@Override
-	public int getOctave() {
-		return n.getOctave();
-	}
+    @Override
+    public MCTone getTone() {
+        return MCTone.valueOf(n.getTone().toString());
+    }
 
-	@Override
-	public boolean isSharped() {
-		return n.isSharped();
-	}
+    @Override
+    public int getOctave() {
+        return n.getOctave();
+    }
 
-	@Override
-	public Object getHandle() {
-		return n;
-	}
+    @Override
+    public boolean isSharped() {
+        return n.isSharped();
+    }
 
-	@Override
-	public String toString() {
-		return n.toString();
-	}
+    @Override
+    public Object getHandle() {
+        return n;
+    }
+
+    @Override
+    public String toString() {
+        return n.toString();
+    }
 
 }

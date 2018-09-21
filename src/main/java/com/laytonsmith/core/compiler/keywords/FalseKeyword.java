@@ -11,9 +11,9 @@ import com.laytonsmith.core.constructs.Target;
 @Keyword.keyword("false")
 public class FalseKeyword extends LiteralKeyword {
 
-	@Override
-	protected Construct getValue(Target t) {
-		return CBoolean.GenerateCBoolean(false, t);
-	}
+    @Override
+    protected Construct getValue(Target t) {
+        return CBoolean.GenerateCBoolean(false, t);
+    }
 
 }

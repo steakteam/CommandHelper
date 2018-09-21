@@ -13,55 +13,55 @@ import org.bukkit.entity.Llama;
 
 public class BukkitMCLlama extends BukkitMCChestedHorse implements MCLlama {
 
-	Llama l;
+    Llama l;
 
-	public BukkitMCLlama(Entity t) {
-		super(t);
-		this.l = (Llama) t;
-	}
+    public BukkitMCLlama(Entity t) {
+        super(t);
+        this.l = (Llama) t;
+    }
 
-	@Override
-	public MCLlamaColor getLlamaColor() {
-		return BukkitMCLlamaColor.getConvertor().getAbstractedEnum(l.getColor());
-	}
+    @Override
+    public MCLlamaColor getLlamaColor() {
+        return BukkitMCLlamaColor.getConvertor().getAbstractedEnum(l.getColor());
+    }
 
-	@Override
-	public void setLlamaColor(MCLlamaColor color) {
-		l.setColor(BukkitMCLlamaColor.getConvertor().getConcreteEnum(color));
-	}
+    @Override
+    public void setLlamaColor(MCLlamaColor color) {
+        l.setColor(BukkitMCLlamaColor.getConvertor().getConcreteEnum(color));
+    }
 
-	@Override
-	public void setSaddle(MCItemStack stack) {
-		ah.getInventory().setItem(1, ((BukkitMCItemStack)stack).asItemStack());
-	}
+    @Override
+    public void setSaddle(MCItemStack stack) {
+        ah.getInventory().setItem(1, ((BukkitMCItemStack) stack).asItemStack());
+    }
 
-	@Override
-	public MCItemStack getSaddle() {
-		return new BukkitMCItemStack(ah.getInventory().getItem(1));
-	}
+    @Override
+    public MCItemStack getSaddle() {
+        return new BukkitMCItemStack(ah.getInventory().getItem(1));
+    }
 
-	@abstractionenum(
-			implementation= Implementation.Type.BUKKIT,
-			forAbstractEnum=MCLlamaColor.class,
-			forConcreteEnum=Llama.Color.class
-	)
-	public static class BukkitMCLlamaColor extends EnumConvertor<MCLlamaColor, Llama.Color>{
+    @abstractionenum(
+            implementation = Implementation.Type.BUKKIT,
+            forAbstractEnum = MCLlamaColor.class,
+            forConcreteEnum = Llama.Color.class
+    )
+    public static class BukkitMCLlamaColor extends EnumConvertor<MCLlamaColor, Llama.Color> {
 
-		private static BukkitMCLlamaColor instance;
-		
-		public static BukkitMCLlamaColor getConvertor() {
-			if (instance == null) {
-				instance = new BukkitMCLlamaColor();
-			}
-			return instance;
-		}
+        private static BukkitMCLlamaColor instance;
 
-		@Override
-		protected Llama.Color getConcreteEnumCustom(MCLlamaColor abstracted) {
-			if(Static.getServer().getMinecraftVersion().lt(MCVersion.MC1_11)) {
-				return null;
-			}
-			return super.getConcreteEnumCustom(abstracted);
-		}
-	}
+        public static BukkitMCLlamaColor getConvertor() {
+            if (instance == null) {
+                instance = new BukkitMCLlamaColor();
+            }
+            return instance;
+        }
+
+        @Override
+        protected Llama.Color getConcreteEnumCustom(MCLlamaColor abstracted) {
+            if (Static.getServer().getMinecraftVersion().lt(MCVersion.MC1_11)) {
+                return null;
+            }
+            return super.getConcreteEnumCustom(abstracted);
+        }
+    }
 }

@@ -12,273 +12,272 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- *
  * @author jb_aero
  */
 public class BukkitMCEntityEquipment implements MCEntityEquipment {
 
-	private EntityEquipment ee;
+    private EntityEquipment ee;
 
-	public BukkitMCEntityEquipment(EntityEquipment equipment) {
-		this.ee = equipment;
-	}
-	
-	@Override
-	public void clearEquipment() {
-		ee.clear();
-	}
+    public BukkitMCEntityEquipment(EntityEquipment equipment) {
+        this.ee = equipment;
+    }
 
-	@Override
-	public int getSize() {
-		return MCEquipmentSlot.values().length;
-	}
-	
-	@Override
-	public MCEntity getHolder() {
-		return BukkitConvertor.BukkitGetCorrectEntity(ee.getHolder());
-	}
+    @Override
+    public void clearEquipment() {
+        ee.clear();
+    }
 
-	@Override
-	public Map<MCEquipmentSlot, MCItemStack> getAllEquipment() {
-		Map<MCEquipmentSlot, MCItemStack> slots = new EnumMap<MCEquipmentSlot, MCItemStack>(MCEquipmentSlot.class);
-		for (MCEquipmentSlot key : MCEquipmentSlot.values()) {
-			switch (key) {
-			case WEAPON:
-				slots.put(key, getWeapon());
-				break;
-			case OFF_HAND:
-				if(Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)){
-					slots.put(key, getItemInOffHand());
-				}
-				break;
-			case HELMET:
-				slots.put(key, getHelmet());
-				break;
-			case CHESTPLATE:
-				slots.put(key, getChestplate());
-				break;
-			case LEGGINGS:
-				slots.put(key, getLeggings());
-				break;
-			case BOOTS:
-				slots.put(key, getBoots());
-				break;
-			}
-		}
-		return slots;
-	}
+    @Override
+    public int getSize() {
+        return MCEquipmentSlot.values().length;
+    }
 
-	@Override
-	public void setAllEquipment(Map<MCEquipmentSlot, MCItemStack> slots) {
-		MCItemStack stack = null;
-		for (MCEquipmentSlot key : slots.keySet()) {
-			stack = slots.get(key);
-			switch (key) {
-			case WEAPON:
-				setWeapon(stack);
-				break;
-			case OFF_HAND:
-				if(Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)){
-					setItemInOffHand(stack);
-				}
-				break;
-			case HELMET:
-				setHelmet(stack);
-				break;
-			case CHESTPLATE:
-				setChestplate(stack);
-				break;
-			case LEGGINGS:
-				setLeggings(stack);
-				break;
-			case BOOTS:
-				setBoots(stack);
-				break;
-			}
-		}
-	}
-	
-	@Override
-	public Map<MCEquipmentSlot, Float> getAllDropChances() {
-		Map<MCEquipmentSlot, Float> slots = new EnumMap<MCEquipmentSlot, Float>(MCEquipmentSlot.class);
-		for (MCEquipmentSlot key : MCEquipmentSlot.values()) {
-			switch (key) {
-				case WEAPON:
-					slots.put(key, getWeaponDropChance());
-					break;
-				case OFF_HAND:
-					if(Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)){
-						slots.put(key, getOffHandDropChance());
-					}
-					break;
-				case HELMET:
-					slots.put(key, getHelmetDropChance());
-					break;
-				case CHESTPLATE:
-					slots.put(key, getChestplateDropChance());
-					break;
-				case LEGGINGS:
-					slots.put(key, getLeggingsDropChance());
-					break;
-				case BOOTS:
-					slots.put(key, getBootsDropChance());
-					break;
-			}
-		}
-		return slots;
-	}
-	
-	@Override
-	public void setAllDropChances(Map<MCEquipmentSlot, Float> slots) {
-		float chance;
-		for (MCEquipmentSlot key : slots.keySet()) {
-			chance = slots.get(key);
-			switch (key) {
-				case WEAPON:
-					setWeaponDropChance(chance);
-					break;
-				case OFF_HAND:
-					if(Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)){
-						setOffHandDropChance(chance);
-					}
-					break;
-				case HELMET:
-					setHelmetDropChance(chance);
-					break;
-				case CHESTPLATE:
-					setChestplateDropChance(chance);
-					break;
-				case LEGGINGS:
-					setLeggingsDropChance(chance);
-					break;
-				case BOOTS:
-					setBootsDropChance(chance);
-					break;
-			}
-		}
-	}
+    @Override
+    public MCEntity getHolder() {
+        return BukkitConvertor.BukkitGetCorrectEntity(ee.getHolder());
+    }
 
-	// For the purposes of faking a normal inventory, we most likely will not be accessing
-	// anything below this line, but they are here for flexibility and completion
-	
-	@Override
-	public MCItemStack getWeapon() {
-		return new BukkitMCItemStack(ee.getItemInHand());
-	}
+    @Override
+    public Map<MCEquipmentSlot, MCItemStack> getAllEquipment() {
+        Map<MCEquipmentSlot, MCItemStack> slots = new EnumMap<MCEquipmentSlot, MCItemStack>(MCEquipmentSlot.class);
+        for (MCEquipmentSlot key : MCEquipmentSlot.values()) {
+            switch (key) {
+                case WEAPON:
+                    slots.put(key, getWeapon());
+                    break;
+                case OFF_HAND:
+                    if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)) {
+                        slots.put(key, getItemInOffHand());
+                    }
+                    break;
+                case HELMET:
+                    slots.put(key, getHelmet());
+                    break;
+                case CHESTPLATE:
+                    slots.put(key, getChestplate());
+                    break;
+                case LEGGINGS:
+                    slots.put(key, getLeggings());
+                    break;
+                case BOOTS:
+                    slots.put(key, getBoots());
+                    break;
+            }
+        }
+        return slots;
+    }
 
-	@Override
-	public MCItemStack getItemInOffHand() {
-		return new BukkitMCItemStack(ee.getItemInOffHand());
-	}
+    @Override
+    public void setAllEquipment(Map<MCEquipmentSlot, MCItemStack> slots) {
+        MCItemStack stack = null;
+        for (MCEquipmentSlot key : slots.keySet()) {
+            stack = slots.get(key);
+            switch (key) {
+                case WEAPON:
+                    setWeapon(stack);
+                    break;
+                case OFF_HAND:
+                    if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)) {
+                        setItemInOffHand(stack);
+                    }
+                    break;
+                case HELMET:
+                    setHelmet(stack);
+                    break;
+                case CHESTPLATE:
+                    setChestplate(stack);
+                    break;
+                case LEGGINGS:
+                    setLeggings(stack);
+                    break;
+                case BOOTS:
+                    setBoots(stack);
+                    break;
+            }
+        }
+    }
 
-	@Override
-	public MCItemStack getHelmet() {
-		return new BukkitMCItemStack(ee.getHelmet());
-	}
+    @Override
+    public Map<MCEquipmentSlot, Float> getAllDropChances() {
+        Map<MCEquipmentSlot, Float> slots = new EnumMap<MCEquipmentSlot, Float>(MCEquipmentSlot.class);
+        for (MCEquipmentSlot key : MCEquipmentSlot.values()) {
+            switch (key) {
+                case WEAPON:
+                    slots.put(key, getWeaponDropChance());
+                    break;
+                case OFF_HAND:
+                    if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)) {
+                        slots.put(key, getOffHandDropChance());
+                    }
+                    break;
+                case HELMET:
+                    slots.put(key, getHelmetDropChance());
+                    break;
+                case CHESTPLATE:
+                    slots.put(key, getChestplateDropChance());
+                    break;
+                case LEGGINGS:
+                    slots.put(key, getLeggingsDropChance());
+                    break;
+                case BOOTS:
+                    slots.put(key, getBootsDropChance());
+                    break;
+            }
+        }
+        return slots;
+    }
 
-	@Override
-	public MCItemStack getChestplate() {
-		return new BukkitMCItemStack(ee.getChestplate());
-	}
+    @Override
+    public void setAllDropChances(Map<MCEquipmentSlot, Float> slots) {
+        float chance;
+        for (MCEquipmentSlot key : slots.keySet()) {
+            chance = slots.get(key);
+            switch (key) {
+                case WEAPON:
+                    setWeaponDropChance(chance);
+                    break;
+                case OFF_HAND:
+                    if (Static.getServer().getMinecraftVersion().gte(MCVersion.MC1_9)) {
+                        setOffHandDropChance(chance);
+                    }
+                    break;
+                case HELMET:
+                    setHelmetDropChance(chance);
+                    break;
+                case CHESTPLATE:
+                    setChestplateDropChance(chance);
+                    break;
+                case LEGGINGS:
+                    setLeggingsDropChance(chance);
+                    break;
+                case BOOTS:
+                    setBootsDropChance(chance);
+                    break;
+            }
+        }
+    }
 
-	@Override
-	public MCItemStack getLeggings() {
-		return new BukkitMCItemStack(ee.getLeggings());
-	}
+    // For the purposes of faking a normal inventory, we most likely will not be accessing
+    // anything below this line, but they are here for flexibility and completion
 
-	@Override
-	public MCItemStack getBoots() {
-		return new BukkitMCItemStack(ee.getBoots());
-	}
+    @Override
+    public MCItemStack getWeapon() {
+        return new BukkitMCItemStack(ee.getItemInHand());
+    }
 
-	@Override
-	public void setWeapon(MCItemStack stack) {
-		ee.setItemInHand(((BukkitMCItemStack) stack).asItemStack());
-	}
+    @Override
+    public MCItemStack getItemInOffHand() {
+        return new BukkitMCItemStack(ee.getItemInOffHand());
+    }
 
-	@Override
-	public void setItemInOffHand(MCItemStack stack) {
-		ee.setItemInOffHand(((BukkitMCItemStack) stack).asItemStack());
-	}
+    @Override
+    public MCItemStack getHelmet() {
+        return new BukkitMCItemStack(ee.getHelmet());
+    }
 
-	@Override
-	public void setHelmet(MCItemStack stack) {
-		ee.setHelmet(((BukkitMCItemStack) stack).asItemStack());
-	}
+    @Override
+    public MCItemStack getChestplate() {
+        return new BukkitMCItemStack(ee.getChestplate());
+    }
 
-	@Override
-	public void setChestplate(MCItemStack stack) {
-		ee.setChestplate(((BukkitMCItemStack) stack).asItemStack());
-	}
+    @Override
+    public MCItemStack getLeggings() {
+        return new BukkitMCItemStack(ee.getLeggings());
+    }
 
-	@Override
-	public void setLeggings(MCItemStack stack) {
-		ee.setLeggings(((BukkitMCItemStack) stack).asItemStack());
-	}
+    @Override
+    public MCItemStack getBoots() {
+        return new BukkitMCItemStack(ee.getBoots());
+    }
 
-	@Override
-	public void setBoots(MCItemStack stack) {
-		ee.setBoots(((BukkitMCItemStack) stack).asItemStack());
-	}
+    @Override
+    public void setWeapon(MCItemStack stack) {
+        ee.setItemInHand(((BukkitMCItemStack) stack).asItemStack());
+    }
 
-	@Override
-	public float getWeaponDropChance() {
-		return ee.getItemInHandDropChance();
-	}
+    @Override
+    public void setItemInOffHand(MCItemStack stack) {
+        ee.setItemInOffHand(((BukkitMCItemStack) stack).asItemStack());
+    }
 
-	@Override
-	public float getOffHandDropChance() {
-		return ee.getItemInOffHandDropChance();
-	}
+    @Override
+    public void setHelmet(MCItemStack stack) {
+        ee.setHelmet(((BukkitMCItemStack) stack).asItemStack());
+    }
 
-	@Override
-	public float getHelmetDropChance() {
-		return ee.getHelmetDropChance();
-	}
+    @Override
+    public void setChestplate(MCItemStack stack) {
+        ee.setChestplate(((BukkitMCItemStack) stack).asItemStack());
+    }
 
-	@Override
-	public float getChestplateDropChance() {
-		return ee.getChestplateDropChance();
-	}
+    @Override
+    public void setLeggings(MCItemStack stack) {
+        ee.setLeggings(((BukkitMCItemStack) stack).asItemStack());
+    }
 
-	@Override
-	public float getLeggingsDropChance() {
-		return ee.getLeggingsDropChance();
-	}
+    @Override
+    public void setBoots(MCItemStack stack) {
+        ee.setBoots(((BukkitMCItemStack) stack).asItemStack());
+    }
 
-	@Override
-	public float getBootsDropChance() {
-		return ee.getBootsDropChance();
-	}
+    @Override
+    public float getWeaponDropChance() {
+        return ee.getItemInHandDropChance();
+    }
 
-	@Override
-	public void setWeaponDropChance(float chance) {
-		ee.setItemInHandDropChance(chance);
-	}
+    @Override
+    public float getOffHandDropChance() {
+        return ee.getItemInOffHandDropChance();
+    }
 
-	@Override
-	public void setOffHandDropChance(float chance) {
-		ee.setItemInOffHandDropChance(chance);
-	}
+    @Override
+    public float getHelmetDropChance() {
+        return ee.getHelmetDropChance();
+    }
 
-	@Override
-	public void setHelmetDropChance(float chance) {
-		ee.setHelmetDropChance(chance);
-	}
+    @Override
+    public float getChestplateDropChance() {
+        return ee.getChestplateDropChance();
+    }
 
-	@Override
-	public void setChestplateDropChance(float chance) {
-		ee.setChestplateDropChance(chance);
-	}
+    @Override
+    public float getLeggingsDropChance() {
+        return ee.getLeggingsDropChance();
+    }
 
-	@Override
-	public void setLeggingsDropChance(float chance) {
-		ee.setLeggingsDropChance(chance);
-	}
+    @Override
+    public float getBootsDropChance() {
+        return ee.getBootsDropChance();
+    }
 
-	@Override
-	public void setBootsDropChance(float chance) {
-		ee.setBootsDropChance(chance);
-	}
+    @Override
+    public void setWeaponDropChance(float chance) {
+        ee.setItemInHandDropChance(chance);
+    }
+
+    @Override
+    public void setOffHandDropChance(float chance) {
+        ee.setItemInOffHandDropChance(chance);
+    }
+
+    @Override
+    public void setHelmetDropChance(float chance) {
+        ee.setHelmetDropChance(chance);
+    }
+
+    @Override
+    public void setChestplateDropChance(float chance) {
+        ee.setChestplateDropChance(chance);
+    }
+
+    @Override
+    public void setLeggingsDropChance(float chance) {
+        ee.setLeggingsDropChance(chance);
+    }
+
+    @Override
+    public void setBootsDropChance(float chance) {
+        ee.setBootsDropChance(chance);
+    }
 
 }

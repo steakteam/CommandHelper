@@ -16,20 +16,20 @@ public class CREBadEntityTypeException extends CREException {
     public static final CClassType TYPE = CClassType.get("BadEntityTypeException");
 
     public CREBadEntityTypeException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREBadEntityTypeException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "Thrown if an entity has the wrong type.";
+        return "Thrown if an entity has the wrong type.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

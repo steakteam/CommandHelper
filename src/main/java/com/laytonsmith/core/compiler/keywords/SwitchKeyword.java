@@ -8,9 +8,9 @@ import com.laytonsmith.core.compiler.Keyword;
 @Keyword.keyword("switch")
 public class SwitchKeyword extends SimpleBlockKeywordFunction {
 
-	@Override
-	protected Integer[] getFunctionArgumentCount() {
-		return new Integer[]{1};
-	}
+    @Override
+    protected Integer[] getFunctionArgumentCount() {
+        return new Integer[]{1};
+    }
 
 }

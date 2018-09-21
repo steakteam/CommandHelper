@@ -14,17 +14,17 @@ public abstract class CPrimitive extends Construct {
     public static final CClassType TYPE = CClassType.get("primitive");
 
     public CPrimitive(String value, ConstructType type, Target t) {
-	super(value, type, t);
+        super(value, type, t);
     }
 
     @Override
     public String docs() {
-	return "A primitive is any non-object and non-array data type. All primitives are pass by value.";
+        return "A primitive is any non-object and non-array data type. All primitives are pass by value.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_0_1;
+        return CHVersion.V3_0_1;
     }
 
 }

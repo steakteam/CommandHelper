@@ -10,12 +10,12 @@ import com.laytonsmith.core.exceptions.CRE.CREFormatException;
  */
 public class ConvertorHelper {
 
-	public static MCColor GetColor(String colorName, Target t) throws CREFormatException {
-		if(MCColor.STANDARD_COLORS.containsKey(colorName.toUpperCase())){
-			 return MCColor.STANDARD_COLORS.get(colorName.toUpperCase());
-		} else {
-			throw new CREFormatException("Unknown color type: " + colorName, t);
-		}
-	}
+    public static MCColor GetColor(String colorName, Target t) throws CREFormatException {
+        if (MCColor.STANDARD_COLORS.containsKey(colorName.toUpperCase())) {
+            return MCColor.STANDARD_COLORS.get(colorName.toUpperCase());
+        } else {
+            throw new CREFormatException("Unknown color type: " + colorName, t);
+        }
+    }
 
 }

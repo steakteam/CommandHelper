@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCWitch extends BukkitMCLivingEntity implements MCWitch {
 
-	public BukkitMCWitch(Entity ent) {
-		super(ent);
-	}
+    public BukkitMCWitch(Entity ent) {
+        super(ent);
+    }
 
 }

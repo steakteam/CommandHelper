@@ -6,10 +6,10 @@ import com.laytonsmith.core.events.BindableEvent;
 
 public interface MCEntityToggleGlideEvent extends BindableEvent {
 
-	public boolean isGliding();
+    public boolean isGliding();
 
-	public MCEntity getEntity();
+    public MCEntity getEntity();
 
-	public MCEntityType getEntityType();
+    public MCEntityType getEntityType();
 
 }

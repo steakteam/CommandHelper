@@ -4,9 +4,9 @@ package com.laytonsmith.core.functions;
  *
  */
 public class Federation {
-	public static String docs() {
-		return "The Federation class of functions allows for servers to connect to other servers, and run code on the remote machine.";
-	}
+    public static String docs() {
+        return "The Federation class of functions allows for servers to connect to other servers, and run code on the remote machine.";
+    }
 
 //	@api
 //	@noboilerplate

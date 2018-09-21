@@ -1,10 +1,8 @@
-
-
 package com.laytonsmith.core.exceptions;
 
 /**
  *
- * 
+ *
  */
 public class EventException extends Exception {
 
@@ -16,6 +14,7 @@ public class EventException extends Exception {
 
     /**
      * Constructs an instance of <code>EventException</code> with the specified detail message.
+     *
      * @param msg the detail message.
      */
     public EventException(String msg) {

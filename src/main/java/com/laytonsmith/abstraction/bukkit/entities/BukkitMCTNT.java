@@ -1,4 +1,3 @@
-
 package com.laytonsmith.abstraction.bukkit.entities;
 
 import com.laytonsmith.abstraction.MCEntity;
@@ -8,31 +7,31 @@ import org.bukkit.entity.TNTPrimed;
 
 /**
  *
- * 
+ *
  */
 public class BukkitMCTNT extends BukkitMCEntity implements MCTNT {
-	TNTPrimed tnt;
+    TNTPrimed tnt;
 
-	public BukkitMCTNT(Entity e) {
-		super(e);
-		this.tnt = (TNTPrimed) e;
-	}	
+    public BukkitMCTNT(Entity e) {
+        super(e);
+        this.tnt = (TNTPrimed) e;
+    }
 
-	@Override
-	public MCEntity getSource() {
-		if (tnt.getSource() == null) {
-			return null;
-		}
-		return new BukkitMCEntity(tnt.getSource());
-	}
+    @Override
+    public MCEntity getSource() {
+        if (tnt.getSource() == null) {
+            return null;
+        }
+        return new BukkitMCEntity(tnt.getSource());
+    }
 
-	@Override
-	public int getFuseTicks() {
-		return tnt.getFuseTicks();
-	}
+    @Override
+    public int getFuseTicks() {
+        return tnt.getFuseTicks();
+    }
 
-	@Override
-	public void setFuseTicks(int ticks) {
-		tnt.setFuseTicks(ticks);
-	}
+    @Override
+    public void setFuseTicks(int ticks) {
+        tnt.setFuseTicks(ticks);
+    }
 }

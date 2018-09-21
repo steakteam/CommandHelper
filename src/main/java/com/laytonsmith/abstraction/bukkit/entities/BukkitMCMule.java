@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCMule extends BukkitMCChestedHorse implements MCMule {
 
-	public BukkitMCMule(Entity t) {
-		super(t);
-	}
+    public BukkitMCMule(Entity t) {
+        super(t);
+    }
 
 }

@@ -10,39 +10,40 @@ import java.util.List;
 
 public class BukkitMCFireworkMeta extends BukkitMCItemMeta implements MCFireworkMeta {
 
-	FireworkMeta fm;
-	public BukkitMCFireworkMeta(FireworkMeta im) {
-		super(im);
-		fm = im;
-	}
+    FireworkMeta fm;
 
-	@Override
-	public FireworkMeta asItemMeta() {
-		return fm;
-	}
+    public BukkitMCFireworkMeta(FireworkMeta im) {
+        super(im);
+        fm = im;
+    }
 
-	@Override
-	public int getStrength() {
-		return fm.getPower();
-	}
+    @Override
+    public FireworkMeta asItemMeta() {
+        return fm;
+    }
 
-	@Override
-	public void setStrength(int strength) {
-		fm.setPower(strength);
-	}
+    @Override
+    public int getStrength() {
+        return fm.getPower();
+    }
 
-	@Override
-	public List<MCFireworkEffect> getEffects() {
-		List<MCFireworkEffect> effects = new ArrayList<>();
-		for(FireworkEffect effect : fm.getEffects()) {
-			effects.add(new BukkitMCFireworkEffect(effect));
-		}
-		return effects;
-	}
+    @Override
+    public void setStrength(int strength) {
+        fm.setPower(strength);
+    }
 
-	@Override
-	public void addEffect(MCFireworkEffect effect){
-		fm.addEffect((FireworkEffect) effect.getHandle());
-	}
+    @Override
+    public List<MCFireworkEffect> getEffects() {
+        List<MCFireworkEffect> effects = new ArrayList<>();
+        for (FireworkEffect effect : fm.getEffects()) {
+            effects.add(new BukkitMCFireworkEffect(effect));
+        }
+        return effects;
+    }
+
+    @Override
+    public void addEffect(MCFireworkEffect effect) {
+        fm.addEffect((FireworkEffect) effect.getHandle());
+    }
 
 }

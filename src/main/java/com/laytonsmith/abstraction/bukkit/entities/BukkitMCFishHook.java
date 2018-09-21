@@ -6,11 +6,11 @@ import org.bukkit.entity.FishHook;
 
 public class BukkitMCFishHook extends BukkitMCProjectile implements MCFishHook {
 
-	FishHook f;
+    FishHook f;
 
-	public BukkitMCFishHook(Entity e) {
-		super(e);
-		f = (FishHook) e;
-	}
+    public BukkitMCFishHook(Entity e) {
+        super(e);
+        f = (FishHook) e;
+    }
 
 }

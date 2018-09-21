@@ -16,21 +16,21 @@ public class CREInsufficientArgumentsException extends CREException {
     public static final CClassType TYPE = CClassType.get("InsufficientArgumentsException");
 
     public CREInsufficientArgumentsException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREInsufficientArgumentsException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "Some var arg functions may require at least a certain number of"
-		+ " arguments to be passed to the function";
+        return "Some var arg functions may require at least a certain number of"
+                + " arguments to be passed to the function";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

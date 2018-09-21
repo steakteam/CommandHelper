@@ -4,7 +4,8 @@ import com.laytonsmith.abstraction.enums.MCEntityType;
 
 public interface MCSpawnEggMeta extends MCItemMeta {
 
-	MCEntityType getSpawnedType();
-	void setSpawnedType(MCEntityType type);
+    MCEntityType getSpawnedType();
+
+    void setSpawnedType(MCEntityType type);
 
 }

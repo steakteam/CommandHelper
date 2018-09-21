@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCElderGuardian extends BukkitMCGuardian implements MCElderGuardian {
 
-	public BukkitMCElderGuardian(Entity ent) {
-		super(ent);
-	}
+    public BukkitMCElderGuardian(Entity ent) {
+        super(ent);
+    }
 
 }

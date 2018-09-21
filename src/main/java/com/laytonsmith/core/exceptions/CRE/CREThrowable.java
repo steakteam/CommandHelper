@@ -17,23 +17,23 @@ public class CREThrowable extends AbstractCREException {
 
     @ForceImplementation
     public CREThrowable(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     @ForceImplementation
     public CREThrowable(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "All throwable types must extend this method. Otherwise, they will not be allowed to be thrown"
-		+ " by the in script system.";
+        return "All throwable types must extend this method. Otherwise, they will not be allowed to be thrown"
+                + " by the in script system.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 
 }

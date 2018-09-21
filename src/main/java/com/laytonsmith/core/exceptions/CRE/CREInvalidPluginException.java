@@ -16,21 +16,21 @@ public class CREInvalidPluginException extends CREException {
     public static final CClassType TYPE = CClassType.get("InvalidPluginException");
 
     public CREInvalidPluginException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREInvalidPluginException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "This exception is thrown if a function uses an external plugin, and"
-		+ " that plugin is not loaded, or otherwise unusable.";
+        return "This exception is thrown if a function uses an external plugin, and"
+                + " that plugin is not loaded, or otherwise unusable.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

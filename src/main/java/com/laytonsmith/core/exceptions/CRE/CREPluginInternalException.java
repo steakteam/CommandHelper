@@ -16,22 +16,22 @@ public class CREPluginInternalException extends CREException {
     public static final CClassType TYPE = CClassType.get("PluginInternalException");
 
     public CREPluginInternalException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREPluginInternalException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "This exception is thrown when a plugin is loaded, but a call to the"
-		+ " plugin failed, usually for some reason specific to the plugin. Check"
-		+ " the error message for more details about this error.";
+        return "This exception is thrown when a plugin is loaded, but a call to the"
+                + " plugin failed, usually for some reason specific to the plugin. Check"
+                + " the error message for more details about this error.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

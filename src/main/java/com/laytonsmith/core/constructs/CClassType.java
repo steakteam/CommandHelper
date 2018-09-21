@@ -4,6 +4,7 @@ import com.laytonsmith.PureUtilities.Common.StringUtils;
 import com.laytonsmith.PureUtilities.Version;
 import com.laytonsmith.annotations.typeof;
 import com.laytonsmith.core.CHVersion;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -26,47 +27,49 @@ public class CClassType extends Construct {
 
 
     static {
-	cache.put("auto", AUTO);
-	cache.put("ClassType", TYPE);
+        cache.put("auto", AUTO);
+        cache.put("ClassType", TYPE);
     }
 
     private final boolean isTypeUnion;
 
     private final SortedSet<String> types = new TreeSet<>(new Comparator<String>() {
 
-	@Override
-	public int compare(String o1, String o2) {
-	    return o1.compareTo(o2);
-	}
+        @Override
+        public int compare(String o1, String o2) {
+            return o1.compareTo(o2);
+        }
     });
 
     /**
      * Returns the singular instance of CClassType that represents this type.
+     *
      * @param type
      * @return
      */
     public static CClassType get(String type) {
-	if (!cache.containsKey(type)) {
-	    cache.put(type, new CClassType(type, Target.UNKNOWN));
-	}
-	return cache.get(type);
+        if (!cache.containsKey(type)) {
+            cache.put(type, new CClassType(type, Target.UNKNOWN));
+        }
+        return cache.get(type);
     }
 
     /**
      * Returns the singular instance of CClassType that represents this type union.
      * string|int and int|string are both considered the same type union, as they
      * are first normalized into a canonical form.
+     *
      * @param types
      * @return
      */
-    public static CClassType get(String ... types) {
-	// First, we have to canonicalize this type union
-	SortedSet<String> t = new TreeSet<>(Arrays.asList(types));
-	String type = StringUtils.Join(t, "|");
-	if(!cache.containsKey(type)) {
-	    cache.put(type, new CClassType(Target.UNKNOWN, t.toArray(new String[t.size()])));
-	}
-	return cache.get(type);
+    public static CClassType get(String... types) {
+        // First, we have to canonicalize this type union
+        SortedSet<String> t = new TreeSet<>(Arrays.asList(types));
+        String type = StringUtils.Join(t, "|");
+        if (!cache.containsKey(type)) {
+            cache.put(type, new CClassType(Target.UNKNOWN, t.toArray(new String[t.size()])));
+        }
+        return cache.get(type);
     }
 
     /**
@@ -76,9 +79,9 @@ public class CClassType extends Construct {
      * @param t
      */
     private CClassType(String type, Target t) {
-	super(type, ConstructType.CLASS_TYPE, t);
-	isTypeUnion = false;
-	types.add(type);
+        super(type, ConstructType.CLASS_TYPE, t);
+        isTypeUnion = false;
+        types.add(type);
     }
 
     /**
@@ -88,28 +91,28 @@ public class CClassType extends Construct {
      * @param types
      */
     private CClassType(Target t, String... types) {
-	super(StringUtils.Join(types, "|"), ConstructType.CLASS_TYPE, t);
-	isTypeUnion = true;
-	this.types.addAll(Arrays.asList(types));
+        super(StringUtils.Join(types, "|"), ConstructType.CLASS_TYPE, t);
+        isTypeUnion = true;
+        this.types.addAll(Arrays.asList(types));
     }
 
     @Override
     public boolean isDynamic() {
-	return false;
+        return false;
     }
 
     @Override
     @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     public boolean equals(Object obj) {
-	// Because we maintain a static list of singletons, we can short circuit this check. If obj is not == to
-	// us, we are different objects. If this is ever not correct, we have a serious problem elsewhere, as this
-	// assumption is held elsewhere in code.
-	return this == obj;
+        // Because we maintain a static list of singletons, we can short circuit this check. If obj is not == to
+        // us, we are different objects. If this is ever not correct, we have a serious problem elsewhere, as this
+        // assumption is held elsewhere in code.
+        return this == obj;
     }
 
     @Override
     public int hashCode() {
-	return super.hashCode();
+        return super.hashCode();
     }
 
     /**
@@ -118,7 +121,7 @@ public class CClassType extends Construct {
      * @return
      */
     public boolean isTypeUnion() {
-	return this.isTypeUnion;
+        return this.isTypeUnion;
     }
 
     /**
@@ -129,7 +132,7 @@ public class CClassType extends Construct {
      * @throws ClassNotFoundException
      */
     public boolean doesExtend(CClassType superClass) throws ClassNotFoundException {
-	return doesExtend(this, superClass);
+        return doesExtend(this, superClass);
     }
 
     /**
@@ -139,7 +142,7 @@ public class CClassType extends Construct {
      * @return
      */
     public boolean unsafeDoesExtend(CClassType superClass) {
-	return unsafeDoesExtend(this, superClass);
+        return unsafeDoesExtend(this, superClass);
     }
 
     /**
@@ -150,7 +153,7 @@ public class CClassType extends Construct {
      * @throws ClassNotFoundException
      */
     public boolean isExtendedBy(CClassType checkClass) throws ClassNotFoundException {
-	return doesExtend(checkClass, this);
+        return doesExtend(checkClass, this);
     }
 
     /**
@@ -160,23 +163,23 @@ public class CClassType extends Construct {
      * @return
      */
     public boolean unsafeIsExtendedBy(CClassType checkClass) {
-	return unsafeDoesExtend(checkClass, this);
+        return unsafeDoesExtend(checkClass, this);
     }
 
     /**
      * Returns a set of individual types for this type. If it is a class union, multiple types will be returned in the
      * set. Each of the CClassTypes within this set are guaranteed to not be a type union.
-     *
+     * <p>
      * This might be ok to make public if necessary in the future.
      *
      * @return
      */
     protected Set<CClassType> getTypes() {
-	Set<CClassType> t = new HashSet<>();
-	for (String type : types) {
-	    t.add(CClassType.get(type));
-	}
-	return t;
+        Set<CClassType> t = new HashSet<>();
+        for (String type : types) {
+            t.add(CClassType.get(type));
+        }
+        return t;
     }
 
     /**
@@ -184,24 +187,24 @@ public class CClassType extends Construct {
      *
      * @param checkClass
      * @param superClass
-     * @throws ClassNotFoundException If the specified class type cannot be found
      * @return
+     * @throws ClassNotFoundException If the specified class type cannot be found
      */
     public static boolean doesExtend(CClassType checkClass, CClassType superClass) throws ClassNotFoundException {
-	if (checkClass.equals(superClass)) {
-	    // more efficient check
-	    return true;
-	}
-	for (CClassType tCheck : checkClass.getTypes()) {
-	    for (CClassType tSuper : superClass.getTypes()) {
-		Class cSuper = NativeTypeList.getNativeClass(tSuper.val());
-		Class cCheck = NativeTypeList.getNativeClass(tCheck.val());
-		if (!cSuper.isAssignableFrom(cCheck)) {
-		    return false;
-		}
-	    }
-	}
-	return true;
+        if (checkClass.equals(superClass)) {
+            // more efficient check
+            return true;
+        }
+        for (CClassType tCheck : checkClass.getTypes()) {
+            for (CClassType tSuper : superClass.getTypes()) {
+                Class cSuper = NativeTypeList.getNativeClass(tSuper.val());
+                Class cCheck = NativeTypeList.getNativeClass(tCheck.val());
+                if (!cSuper.isAssignableFrom(cCheck)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -211,25 +214,25 @@ public class CClassType extends Construct {
      *
      * @param checkClass
      * @param superClass
-     * @throws Error If the specified class type cannot be found
      * @return
+     * @throws Error If the specified class type cannot be found
      */
     public static boolean unsafeDoesExtend(CClassType checkClass, CClassType superClass) throws Error {
-	try {
-	    return doesExtend(checkClass, superClass);
-	} catch (ClassNotFoundException ex) {
-	    throw new Error(ex);
-	}
+        try {
+            return doesExtend(checkClass, superClass);
+        } catch (ClassNotFoundException ex) {
+            throw new Error(ex);
+        }
     }
 
     @Override
     public String docs() {
-	return "A ClassType is a value that represents an object type. This includes primitives or other value types.";
+        return "A ClassType is a value that represents an object type. This includes primitives or other value types.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 
 }

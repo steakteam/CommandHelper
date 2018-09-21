@@ -24,7 +24,6 @@ import com.laytonsmith.abstraction.enums.MCVersion;
 import com.laytonsmith.abstraction.pluginmessages.MCMessenger;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.Target;
-import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -50,454 +49,454 @@ import java.util.UUID;
 public class BukkitMCServer implements MCServer {
 
     Server s;
-	MCVersion version;
+    MCVersion version;
 
-	public BukkitMCServer(){
+    public BukkitMCServer() {
         this.s = Bukkit.getServer();
     }
 
     public BukkitMCServer(Server server) {
-		this.s = server;
-	}
+        this.s = server;
+    }
 
-	@Override
-	public Object getHandle(){
+    @Override
+    public Object getHandle() {
         return s;
     }
 
-    public Server __Server(){
+    public Server __Server() {
         return s;
     }
 
-	@Override
+    @Override
     public String getName() {
         return s.getName();
     }
 
-	@Override
-	public Collection<MCPlayer> getOnlinePlayers() {
-		Collection<? extends Player> players = s.getOnlinePlayers();
-		Set<MCPlayer> mcpa = new HashSet<>();
-		for(Player p : players){
-			mcpa.add(new BukkitMCPlayer(p));
-		}
-		return mcpa;
-	}
+    @Override
+    public Collection<MCPlayer> getOnlinePlayers() {
+        Collection<? extends Player> players = s.getOnlinePlayers();
+        Set<MCPlayer> mcpa = new HashSet<>();
+        for (Player p : players) {
+            mcpa.add(new BukkitMCPlayer(p));
+        }
+        return mcpa;
+    }
 
     public static MCServer Get() {
         return new BukkitMCServer();
     }
 
-	@Override
-	public boolean dispatchCommand(MCCommandSender sender, String command){
-		CommandSender cs;
-		if(sender instanceof MCPlayer){
-			cs = (Player) sender.getHandle();
-		} else {
-			cs = (CommandSender) sender.getHandle();
-		}
-		return s.dispatchCommand(cs, command);
-	}
+    @Override
+    public boolean dispatchCommand(MCCommandSender sender, String command) {
+        CommandSender cs;
+        if (sender instanceof MCPlayer) {
+            cs = (Player) sender.getHandle();
+        } else {
+            cs = (CommandSender) sender.getHandle();
+        }
+        return s.dispatchCommand(cs, command);
+    }
 
-	private class CommandSenderInterceptor implements InvocationHandler {
-		private final StringBuilder buffer;
-		private final CommandSender sender;
+    private class CommandSenderInterceptor implements InvocationHandler {
+        private final StringBuilder buffer;
+        private final CommandSender sender;
 
-		public CommandSenderInterceptor(CommandSender sender){
-			this.buffer = new StringBuilder();
-			this.sender = sender;
-		}
+        public CommandSenderInterceptor(CommandSender sender) {
+            this.buffer = new StringBuilder();
+            this.sender = sender;
+        }
 
-		@Override
-		public Object invoke(Object o, Method method, Object[] args) throws Throwable {
-			if ("sendMessage".equals(method.getName())) {
-				buffer.append(args[0].toString());
-				return Void.TYPE;
-			} else {
-				return method.invoke(sender, args);
-			}
-		}
+        @Override
+        public Object invoke(Object o, Method method, Object[] args) throws Throwable {
+            if ("sendMessage".equals(method.getName())) {
+                buffer.append(args[0].toString());
+                return Void.TYPE;
+            } else {
+                return method.invoke(sender, args);
+            }
+        }
 
-		public String getBuffer(){
-			return buffer.toString();
-		}
-	}
+        public String getBuffer() {
+            return buffer.toString();
+        }
+    }
 
-	@Override
-	public String dispatchAndCaptureCommand(MCCommandSender commandSender, String cmd) {
-		// Grab the CommandSender object from the abstraction layer
-		CommandSender sender = (CommandSender)commandSender.getHandle();
+    @Override
+    public String dispatchAndCaptureCommand(MCCommandSender commandSender, String cmd) {
+        // Grab the CommandSender object from the abstraction layer
+        CommandSender sender = (CommandSender) commandSender.getHandle();
 
-		// Create the interceptor
-		CommandSenderInterceptor interceptor = new CommandSenderInterceptor(sender);
+        // Create the interceptor
+        CommandSenderInterceptor interceptor = new CommandSenderInterceptor(sender);
 
-		// Create a new proxy and abstraction layer wrapper around the proxy
-		CommandSender newCommandSender = (CommandSender)Proxy.newProxyInstance(BukkitMCServer.class.getClassLoader(), new Class[]{CommandSender.class}, interceptor);
-		BukkitMCCommandSender aCommandSender = new BukkitMCCommandSender(newCommandSender);
+        // Create a new proxy and abstraction layer wrapper around the proxy
+        CommandSender newCommandSender = (CommandSender) Proxy.newProxyInstance(BukkitMCServer.class.getClassLoader(), new Class[]{CommandSender.class}, interceptor);
+        BukkitMCCommandSender aCommandSender = new BukkitMCCommandSender(newCommandSender);
 
-		MCCommandSender oldSender = Static.UninjectPlayer(commandSender);
-		// Inject our new wrapped object
-		Static.InjectPlayer(aCommandSender);
+        MCCommandSender oldSender = Static.UninjectPlayer(commandSender);
+        // Inject our new wrapped object
+        Static.InjectPlayer(aCommandSender);
 
-		// Dispatch the command now
-		try {
-			s.dispatchCommand(newCommandSender, cmd);
-		} finally {
-			// Clean up
-			Static.UninjectPlayer(aCommandSender);
-			if(oldSender != null){
-				Static.InjectPlayer(oldSender);
-			}
-		}
+        // Dispatch the command now
+        try {
+            s.dispatchCommand(newCommandSender, cmd);
+        } finally {
+            // Clean up
+            Static.UninjectPlayer(aCommandSender);
+            if (oldSender != null) {
+                Static.InjectPlayer(oldSender);
+            }
+        }
 
-		// Return the buffered text (if any)
-		return interceptor.getBuffer();
-	}
+        // Return the buffered text (if any)
+        return interceptor.getBuffer();
+    }
 
-	@Override
+    @Override
     public MCPluginManager getPluginManager() {
-        if(s.getPluginManager() == null){
+        if (s.getPluginManager() == null) {
             return null;
         }
         return new BukkitMCPluginManager(s.getPluginManager());
     }
 
-	@Override
-	public MCPlayer getPlayer(String name) {
-		Player p = s.getPlayer(name);
-		if (p == null) {
-			return null;
-		}
-		return new BukkitMCPlayer(p);
-	}
+    @Override
+    public MCPlayer getPlayer(String name) {
+        Player p = s.getPlayer(name);
+        if (p == null) {
+            return null;
+        }
+        return new BukkitMCPlayer(p);
+    }
 
-	@Override
-	public MCPlayer getPlayer(UUID uuid) {
-		Player p = s.getPlayer(uuid);
-		if (p == null) {
-			return null;
-		}
-		return new BukkitMCPlayer(p);
-	}
+    @Override
+    public MCPlayer getPlayer(UUID uuid) {
+        Player p = s.getPlayer(uuid);
+        if (p == null) {
+            return null;
+        }
+        return new BukkitMCPlayer(p);
+    }
 
-	@Override
-	public MCWorld getWorld(String name) {
-		World w = s.getWorld(name);
-		if(w == null){
-			return null;
-		}
-		return new BukkitMCWorld(w);
-	}
+    @Override
+    public MCWorld getWorld(String name) {
+        World w = s.getWorld(name);
+        if (w == null) {
+            return null;
+        }
+        return new BukkitMCWorld(w);
+    }
 
-	@Override
-	public List<MCWorld> getWorlds(){
-		List<MCWorld> list = new ArrayList<>();
-		for(World w : s.getWorlds()){
-			list.add(new BukkitMCWorld(w));
-		}
-		return list;
-	}
+    @Override
+    public List<MCWorld> getWorlds() {
+        List<MCWorld> list = new ArrayList<>();
+        for (World w : s.getWorlds()) {
+            list.add(new BukkitMCWorld(w));
+        }
+        return list;
+    }
 
-	@Override
+    @Override
     public void broadcastMessage(String message) {
         s.broadcastMessage(message);
     }
 
-	@Override
-	public void broadcastMessage(String message, String permission) {
-		s.broadcast(message, permission);
-	}
+    @Override
+    public void broadcastMessage(String message, String permission) {
+        s.broadcast(message, permission);
+    }
 
-	@Override
-	public MCConsoleCommandSender getConsole() {
-		return new BukkitMCConsoleCommandSender(s.getConsoleSender());
-	}
+    @Override
+    public MCConsoleCommandSender getConsole() {
+        return new BukkitMCConsoleCommandSender(s.getConsoleSender());
+    }
 
-	@Override
-	public MCItemFactory getItemFactory() {
-		return new BukkitMCItemFactory(s.getItemFactory());
-	}
+    @Override
+    public MCItemFactory getItemFactory() {
+        return new BukkitMCItemFactory(s.getItemFactory());
+    }
 
-	@Override
-	public MCCommandMap getCommandMap() {
-		return new BukkitMCCommandMap((SimpleCommandMap) ReflectionUtils.invokeMethod(s.getClass(), s, "getCommandMap"));
-	}
+    @Override
+    public MCCommandMap getCommandMap() {
+        return new BukkitMCCommandMap((SimpleCommandMap) ReflectionUtils.invokeMethod(s.getClass(), s, "getCommandMap"));
+    }
 
-	@Override
-	public MCOfflinePlayer getOfflinePlayer(String player) {
-		return new BukkitMCOfflinePlayer(s.getOfflinePlayer(player));
-	}
+    @Override
+    public MCOfflinePlayer getOfflinePlayer(String player) {
+        return new BukkitMCOfflinePlayer(s.getOfflinePlayer(player));
+    }
 
-	@Override
-	public MCOfflinePlayer getOfflinePlayer(UUID uuid) {
-		return new BukkitMCOfflinePlayer(s.getOfflinePlayer(uuid));
-	}
+    @Override
+    public MCOfflinePlayer getOfflinePlayer(UUID uuid) {
+        return new BukkitMCOfflinePlayer(s.getOfflinePlayer(uuid));
+    }
 
-	@Override
-	public MCOfflinePlayer[] getOfflinePlayers() {
-		OfflinePlayer[] offp = s.getOfflinePlayers();
-		MCOfflinePlayer[] mcoff = new MCOfflinePlayer[offp.length];
-		for (int i = 0; i < offp.length; i++) {
-			mcoff[i] = new BukkitMCOfflinePlayer(offp[i]);
-		}
-		return mcoff;
-	}
+    @Override
+    public MCOfflinePlayer[] getOfflinePlayers() {
+        OfflinePlayer[] offp = s.getOfflinePlayers();
+        MCOfflinePlayer[] mcoff = new MCOfflinePlayer[offp.length];
+        for (int i = 0; i < offp.length; i++) {
+            mcoff[i] = new BukkitMCOfflinePlayer(offp[i]);
+        }
+        return mcoff;
+    }
 
     /* Boring information get methods -.- */
-	@Override
-	public String getAPIVersion() {
-		return s.getBukkitVersion();
+    @Override
+    public String getAPIVersion() {
+        return s.getBukkitVersion();
     }
 
-	@Override
-	public String getServerVersion() {
-		return s.getVersion();
+    @Override
+    public String getServerVersion() {
+        return s.getVersion();
     }
 
-	@Override
-	public MCVersion getMinecraftVersion() {
-		if (version == null) {
-			int temp = s.getBukkitVersion().indexOf('-');
-			version = MCVersion.match(s.getBukkitVersion().substring(0, temp).split("\\."));
-		}
-		return version;
-	}
+    @Override
+    public MCVersion getMinecraftVersion() {
+        if (version == null) {
+            int temp = s.getBukkitVersion().indexOf('-');
+            version = MCVersion.match(s.getBukkitVersion().substring(0, temp).split("\\."));
+        }
+        return version;
+    }
 
-	@Override
+    @Override
     public int getPort() {
         return s.getPort();
     }
 
-	@Override
+    @Override
     public String getIp() {
         return s.getIp();
     }
 
-	@Override
-	public boolean getAllowEnd() {
-		return s.getAllowEnd();
+    @Override
+    public boolean getAllowEnd() {
+        return s.getAllowEnd();
     }
 
-	@Override
-	public boolean getAllowFlight() {
-		return s.getAllowFlight();
+    @Override
+    public boolean getAllowFlight() {
+        return s.getAllowFlight();
     }
 
-	@Override
-	public boolean getAllowNether() {
-		return s.getAllowNether();
+    @Override
+    public boolean getAllowNether() {
+        return s.getAllowNether();
     }
 
-	@Override
-	public boolean getOnlineMode() {
-		return s.getOnlineMode();
+    @Override
+    public boolean getOnlineMode() {
+        return s.getOnlineMode();
     }
 
-	@Override
-	public int getViewDistance() {
-		return s.getViewDistance();
-	}
+    @Override
+    public int getViewDistance() {
+        return s.getViewDistance();
+    }
 
-	@Override
+    @Override
     public String getWorldContainer() {
         return s.getWorldContainer().getPath();
     }
 
-	@Override
+    @Override
     public String getServerName() {
         return s.getServerName();
     }
 
-	@Override
-	public String getMotd() {
-		return s.getMotd();
-	}
+    @Override
+    public String getMotd() {
+        return s.getMotd();
+    }
 
-	@Override
+    @Override
     public int getMaxPlayers() {
         return s.getMaxPlayers();
     }
 
-	@Override
-	public List<MCOfflinePlayer> getBannedPlayers() {
-		List<MCOfflinePlayer> list = new ArrayList<>();
-		for(OfflinePlayer p : s.getBannedPlayers()){
-			list.add(getOfflinePlayer(p.getName()));
-		}
-		return list;
-	}
-
-	@Override
-	public List<MCOfflinePlayer> getWhitelistedPlayers() {
-		List<MCOfflinePlayer> list = new ArrayList<>();
-		for(OfflinePlayer p : s.getWhitelistedPlayers()){
-			list.add(getOfflinePlayer(p.getName()));
-		}
-		return list;
-	}
-
-	@Override
-	public List<MCOfflinePlayer> getOperators() {
-		List<MCOfflinePlayer> list = new ArrayList<>();
-		for(OfflinePlayer p : s.getOperators()){
-			list.add(getOfflinePlayer(p.getName()));
-		}
-		return list;
-	}
-
-	@Override
-    public void runasConsole(String cmd) {
-		CommandSender sender = (CommandSender)Static.GetCommandSender("~console", Target.UNKNOWN).getHandle();
-		s.dispatchCommand(sender, cmd);
+    @Override
+    public List<MCOfflinePlayer> getBannedPlayers() {
+        List<MCOfflinePlayer> list = new ArrayList<>();
+        for (OfflinePlayer p : s.getBannedPlayers()) {
+            list.add(getOfflinePlayer(p.getName()));
+        }
+        return list;
     }
 
-	@Override
-	public String toString() {
-		return s.toString();
-	}
+    @Override
+    public List<MCOfflinePlayer> getWhitelistedPlayers() {
+        List<MCOfflinePlayer> list = new ArrayList<>();
+        for (OfflinePlayer p : s.getWhitelistedPlayers()) {
+            list.add(getOfflinePlayer(p.getName()));
+        }
+        return list;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return (obj instanceof BukkitMCServer && s.equals(((BukkitMCServer) obj).s));
-	}
+    @Override
+    public List<MCOfflinePlayer> getOperators() {
+        List<MCOfflinePlayer> list = new ArrayList<>();
+        for (OfflinePlayer p : s.getOperators()) {
+            list.add(getOfflinePlayer(p.getName()));
+        }
+        return list;
+    }
 
-	@Override
-	public int hashCode() {
-		return s.hashCode();
-	}
+    @Override
+    public void runasConsole(String cmd) {
+        CommandSender sender = (CommandSender) Static.GetCommandSender("~console", Target.UNKNOWN).getHandle();
+        s.dispatchCommand(sender, cmd);
+    }
 
-	@Override
-	public MCInventory createInventory(MCInventoryHolder holder, MCInventoryType type) {
-		InventoryHolder ih = null;
+    @Override
+    public String toString() {
+        return s.toString();
+    }
 
-		if (holder instanceof MCPlayer) {
-			ih = ((BukkitMCPlayer)holder)._Player();
-		} else if (holder instanceof MCHumanEntity) {
-			ih = ((BukkitMCHumanEntity)holder).asHumanEntity();
-		} else if (holder.getHandle() instanceof InventoryHolder) {
-			ih = (InventoryHolder)holder.getHandle();
-		}
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof BukkitMCServer && s.equals(((BukkitMCServer) obj).s));
+    }
 
-		return new BukkitMCInventory(Bukkit.createInventory(ih, InventoryType.valueOf(type.name())));
-	}
+    @Override
+    public int hashCode() {
+        return s.hashCode();
+    }
 
-	@Override
-	public MCInventory createInventory(MCInventoryHolder holder, int size) {
-		InventoryHolder ih = null;
+    @Override
+    public MCInventory createInventory(MCInventoryHolder holder, MCInventoryType type) {
+        InventoryHolder ih = null;
 
-		if (holder instanceof MCPlayer) {
-			ih = ((BukkitMCPlayer)holder)._Player();
-		} else if (holder instanceof MCHumanEntity) {
-			ih = ((BukkitMCHumanEntity)holder).asHumanEntity();
-		} else if (holder.getHandle() instanceof InventoryHolder) {
-			ih = (InventoryHolder)holder.getHandle();
-		}
+        if (holder instanceof MCPlayer) {
+            ih = ((BukkitMCPlayer) holder)._Player();
+        } else if (holder instanceof MCHumanEntity) {
+            ih = ((BukkitMCHumanEntity) holder).asHumanEntity();
+        } else if (holder.getHandle() instanceof InventoryHolder) {
+            ih = (InventoryHolder) holder.getHandle();
+        }
 
-		return new BukkitMCInventory(Bukkit.createInventory(ih, size));
-	}
+        return new BukkitMCInventory(Bukkit.createInventory(ih, InventoryType.valueOf(type.name())));
+    }
 
-	@Override
-	public MCInventory createInventory(MCInventoryHolder holder, int size, String title) {
-		InventoryHolder ih = null;
+    @Override
+    public MCInventory createInventory(MCInventoryHolder holder, int size) {
+        InventoryHolder ih = null;
 
-		if (holder instanceof MCPlayer) {
-			ih = ((BukkitMCPlayer)holder)._Player();
-		} else if (holder instanceof MCHumanEntity) {
-			ih = ((BukkitMCHumanEntity)holder).asHumanEntity();
-		} else if (holder.getHandle() instanceof InventoryHolder) {
-			ih = (InventoryHolder)holder.getHandle();
-		}
+        if (holder instanceof MCPlayer) {
+            ih = ((BukkitMCPlayer) holder)._Player();
+        } else if (holder instanceof MCHumanEntity) {
+            ih = ((BukkitMCHumanEntity) holder).asHumanEntity();
+        } else if (holder.getHandle() instanceof InventoryHolder) {
+            ih = (InventoryHolder) holder.getHandle();
+        }
 
-		return new BukkitMCInventory(Bukkit.createInventory(ih, size, title));
-	}
+        return new BukkitMCInventory(Bukkit.createInventory(ih, size));
+    }
 
-	@Override
-	public void banName(String name) {
-		s.getBanList(BanList.Type.NAME).addBan(name, null, null, null);
-	}
+    @Override
+    public MCInventory createInventory(MCInventoryHolder holder, int size, String title) {
+        InventoryHolder ih = null;
 
-	@Override
-	public void unbanName(String name) {
-		s.getBanList(BanList.Type.NAME).pardon(name);
-	}
+        if (holder instanceof MCPlayer) {
+            ih = ((BukkitMCPlayer) holder)._Player();
+        } else if (holder instanceof MCHumanEntity) {
+            ih = ((BukkitMCHumanEntity) holder).asHumanEntity();
+        } else if (holder.getHandle() instanceof InventoryHolder) {
+            ih = (InventoryHolder) holder.getHandle();
+        }
 
-	@Override
-	public void banIP(String address) {
-		s.banIP(address);
-	}
+        return new BukkitMCInventory(Bukkit.createInventory(ih, size, title));
+    }
 
-	@Override
-	public Set<String> getIPBans() {
-		return s.getIPBans();
-	}
+    @Override
+    public void banName(String name) {
+        s.getBanList(BanList.Type.NAME).addBan(name, null, null, null);
+    }
 
-	@Override
-	public void unbanIP(String address) {
-		s.unbanIP(address);
-	}
+    @Override
+    public void unbanName(String name) {
+        s.getBanList(BanList.Type.NAME).pardon(name);
+    }
 
-	@Override
-	public MCMessenger getMessenger() {
-		return new BukkitMCMessenger(s.getMessenger());
-	}
+    @Override
+    public void banIP(String address) {
+        s.banIP(address);
+    }
 
-	@Override
-	public MCScoreboard getMainScoreboard() {
-		return new BukkitMCScoreboard(s.getScoreboardManager().getMainScoreboard());
-	}
+    @Override
+    public Set<String> getIPBans() {
+        return s.getIPBans();
+    }
 
-	@Override
-	public MCScoreboard getNewScoreboard() {
-		return new BukkitMCScoreboard(s.getScoreboardManager().getNewScoreboard());
-	}
+    @Override
+    public void unbanIP(String address) {
+        s.unbanIP(address);
+    }
 
-	@Override
-	public boolean unloadWorld(MCWorld world, boolean save) {
-		return s.unloadWorld(((BukkitMCWorld) world).__World(), save);
-	}
+    @Override
+    public MCMessenger getMessenger() {
+        return new BukkitMCMessenger(s.getMessenger());
+    }
 
-	@Override
-	public void savePlayers() {
-		s.savePlayers();
-	}
+    @Override
+    public MCScoreboard getMainScoreboard() {
+        return new BukkitMCScoreboard(s.getScoreboardManager().getMainScoreboard());
+    }
 
-	@Override
-	public void shutdown() {
-		s.shutdown();
-	}
+    @Override
+    public MCScoreboard getNewScoreboard() {
+        return new BukkitMCScoreboard(s.getScoreboardManager().getNewScoreboard());
+    }
 
-	@Override
-	public boolean addRecipe(MCRecipe recipe) {
-		return s.addRecipe(((BukkitMCRecipe) recipe).r);
-	}
+    @Override
+    public boolean unloadWorld(MCWorld world, boolean save) {
+        return s.unloadWorld(((BukkitMCWorld) world).__World(), save);
+    }
 
-	@Override
-	public List<MCRecipe> getRecipesFor(MCItemStack result) {
-		List<MCRecipe> ret = new ArrayList<MCRecipe>();
-		List<Recipe> recipes = s.getRecipesFor(((BukkitMCItemStack) result).__ItemStack());
-		for (Recipe recipe : recipes) {
-			ret.add(BukkitConvertor.BukkitGetRecipe(recipe));
-		}
-		return ret;
-	}
+    @Override
+    public void savePlayers() {
+        s.savePlayers();
+    }
 
-	@Override
-	public List<MCRecipe> allRecipes() {
-		List<MCRecipe> ret = new ArrayList<MCRecipe>();
-		for (Iterator recipes = s.recipeIterator(); recipes.hasNext();) {
-			Recipe recipe = (Recipe) recipes.next();
-			ret.add(BukkitConvertor.BukkitGetRecipe(recipe));
-		}
-		return ret;
-	}
+    @Override
+    public void shutdown() {
+        s.shutdown();
+    }
 
-	@Override
-	public void clearRecipes() {
-		s.clearRecipes();
-	}
+    @Override
+    public boolean addRecipe(MCRecipe recipe) {
+        return s.addRecipe(((BukkitMCRecipe) recipe).r);
+    }
 
-	@Override
-	public void resetRecipes() {
-		s.resetRecipes();
-	}
+    @Override
+    public List<MCRecipe> getRecipesFor(MCItemStack result) {
+        List<MCRecipe> ret = new ArrayList<MCRecipe>();
+        List<Recipe> recipes = s.getRecipesFor(((BukkitMCItemStack) result).__ItemStack());
+        for (Recipe recipe : recipes) {
+            ret.add(BukkitConvertor.BukkitGetRecipe(recipe));
+        }
+        return ret;
+    }
+
+    @Override
+    public List<MCRecipe> allRecipes() {
+        List<MCRecipe> ret = new ArrayList<MCRecipe>();
+        for (Iterator recipes = s.recipeIterator(); recipes.hasNext(); ) {
+            Recipe recipe = (Recipe) recipes.next();
+            ret.add(BukkitConvertor.BukkitGetRecipe(recipe));
+        }
+        return ret;
+    }
+
+    @Override
+    public void clearRecipes() {
+        s.clearRecipes();
+    }
+
+    @Override
+    public void resetRecipes() {
+        s.resetRecipes();
+    }
 }

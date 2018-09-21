@@ -12,62 +12,62 @@ import java.util.Map;
  */
 public class Federation {
 
-	private static Federation defaultFederation;
+    private static Federation defaultFederation;
 
-	/**
-	 * Returns the default Federation object. If one isn't yet constructed, it
-	 * is constructed and returned.
-	 *
-	 * @return
-	 */
-	public static Federation GetFederation() {
-		if (defaultFederation == null) {
-			defaultFederation = new Federation();
+    /**
+     * Returns the default Federation object. If one isn't yet constructed, it
+     * is constructed and returned.
+     *
+     * @return
+     */
+    public static Federation GetFederation() {
+        if (defaultFederation == null) {
+            defaultFederation = new Federation();
 
-		}
-		return defaultFederation;
-	}
+        }
+        return defaultFederation;
+    }
 
-	/**
-	 * Clears the default Federation object. If {@link #GetFederation()} is
-	 * called after this, a new one will be constructed.
-	 */
-	public static void ClearFederation() {
-		defaultFederation = null;
-	}
+    /**
+     * Clears the default Federation object. If {@link #GetFederation()} is
+     * called after this, a new one will be constructed.
+     */
+    public static void ClearFederation() {
+        defaultFederation = null;
+    }
 
-	/**
-	 * Default master port
-	 */
-	public static final int MASTER_PORT = 55423;
-	/**
-	 * Minimum slave server port number
-	 */
-	public static final int DYNAMIC_PORT_MINIMUM = 55424;
-	/**
-	 * Maximum slave server port number
-	 */
-	public static final int DYNAMIC_PORT_MAXIMUM = 56423;
-	/**
-	 * The timeout after which a server is considered "dead", that is, it's
-	 * heartbeat hasn't connected in this many seconds.
-	 */
-	public static final int DEAD_SERVER_TIMEOUT = 10;
-	/**
-	 * The interval between heartbeats.
-	 */
-	public static final int HEARTBEAT_INTERVAL = 5;
+    /**
+     * Default master port
+     */
+    public static final int MASTER_PORT = 55423;
+    /**
+     * Minimum slave server port number
+     */
+    public static final int DYNAMIC_PORT_MINIMUM = 55424;
+    /**
+     * Maximum slave server port number
+     */
+    public static final int DYNAMIC_PORT_MAXIMUM = 56423;
+    /**
+     * The timeout after which a server is considered "dead", that is, it's
+     * heartbeat hasn't connected in this many seconds.
+     */
+    public static final int DEAD_SERVER_TIMEOUT = 10;
+    /**
+     * The interval between heartbeats.
+     */
+    public static final int HEARTBEAT_INTERVAL = 5;
 
-	/**
-	 * When this is 0, the shutdown hooks will de-register with the
-	 * DaemonManager.
-	 */
-	private int serverCount = 0;
-	private final Object serverCountLock = new Object();
+    /**
+     * When this is 0, the shutdown hooks will de-register with the
+     * DaemonManager.
+     */
+    private int serverCount = 0;
+    private final Object serverCountLock = new Object();
 
-	private Map<String, FederationConnection> federationConnections = new HashMap<>();
-	private Map<String, FederationServer> federationServers = new HashMap<>();
-	private Socket masterSocket = null;
+    private Map<String, FederationConnection> federationConnections = new HashMap<>();
+    private Map<String, FederationServer> federationServers = new HashMap<>();
+    private Socket masterSocket = null;
 
 //	/**
 //	 * If the master socket dies, we need to establish a new one. This method
@@ -208,41 +208,42 @@ public class Federation {
 //		});
 //	}
 //
-	/**
-	 * Checks to see if a specific port is available.
-	 *
-	 * @param port the port to check for availability
-	 */
-	public static boolean available(int port) {
-		if (port < 0 || port > 65535) {
-			throw new IllegalArgumentException("Invalid start port: " + port);
-		}
 
-		ServerSocket ss = null;
-		DatagramSocket ds = null;
-		try {
-			ss = new ServerSocket(port);
-			ss.setReuseAddress(true);
-			ds = new DatagramSocket(port);
-			ds.setReuseAddress(true);
-			return true;
-		} catch (IOException e) {
-		} finally {
-			if (ds != null) {
-				ds.close();
-			}
+    /**
+     * Checks to see if a specific port is available.
+     *
+     * @param port the port to check for availability
+     */
+    public static boolean available(int port) {
+        if (port < 0 || port > 65535) {
+            throw new IllegalArgumentException("Invalid start port: " + port);
+        }
 
-			if (ss != null) {
-				try {
-					ss.close();
-				} catch (IOException e) {
-					/* should not be thrown */
-				}
-			}
-		}
+        ServerSocket ss = null;
+        DatagramSocket ds = null;
+        try {
+            ss = new ServerSocket(port);
+            ss.setReuseAddress(true);
+            ds = new DatagramSocket(port);
+            ds.setReuseAddress(true);
+            return true;
+        } catch (IOException e) {
+        } finally {
+            if (ds != null) {
+                ds.close();
+            }
 
-		return false;
-	}
+            if (ss != null) {
+                try {
+                    ss.close();
+                } catch (IOException e) {
+                    /* should not be thrown */
+                }
+            }
+        }
+
+        return false;
+    }
 //
 //	private static void RegisterServer(PersistenceNetwork pn, DaemonManager dm, String serverName, int port, boolean is_master) throws DataSourceException, ReadOnlyException, IOException {
 //		FederationRegistration reg = new FederationRegistration(serverName, is_master, port);

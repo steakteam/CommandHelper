@@ -1,5 +1,3 @@
-
-
 package com.laytonsmith.annotations;
 
 import java.lang.annotation.ElementType;
@@ -13,10 +11,9 @@ import java.lang.annotation.Target;
  * or other undesired behavior. This only prevents the function execution, the rest
  * of the tests (documentation, etc) will be run, and this will not prevent specific
  * tests from being run.
- * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface noboilerplate {
-    
+
 }

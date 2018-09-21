@@ -6,20 +6,19 @@ import com.laytonsmith.abstraction.blocks.MCMaterial;
 import com.laytonsmith.core.events.BindableEvent;
 
 /**
- *
  * @author MariuszT
  */
 public interface MCEntityChangeBlockEvent extends BindableEvent {
 
-	public MCEntity getEntity();
+    public MCEntity getEntity();
 
-	public MCBlock getBlock();
+    public MCBlock getBlock();
 
-	public MCMaterial getTo();
+    public MCMaterial getTo();
 
-	public byte getData();
+    public byte getData();
 
-	public boolean isCancelled();
+    public boolean isCancelled();
 
-	public void setCancelled(boolean cancel);
+    public void setCancelled(boolean cancel);
 }

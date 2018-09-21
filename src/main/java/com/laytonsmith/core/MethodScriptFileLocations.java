@@ -4,6 +4,7 @@ import com.laytonsmith.PureUtilities.Common.StringUtils;
 import com.laytonsmith.PureUtilities.FileLocations;
 import com.laytonsmith.abstraction.Implementation;
 import com.laytonsmith.core.extensions.Extension;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -196,8 +197,9 @@ public class MethodScriptFileLocations extends FileLocations {
     /**
      * Return the location of the given extension's directory. This is simply
      * a wrapper around {@link Extension#getConfigDir}.
+     *
      * @param ext
-     * @return 
+     * @return
      */
     public File getExtensionDirectory(Extension ext) {
         return ext.getConfigDir();

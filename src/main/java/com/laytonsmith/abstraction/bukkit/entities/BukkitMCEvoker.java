@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCEvoker extends BukkitMCLivingEntity implements MCEvoker {
 
-	public BukkitMCEvoker(Entity ent) {
-		super(ent);
-	}
+    public BukkitMCEvoker(Entity ent) {
+        super(ent);
+    }
 
 }

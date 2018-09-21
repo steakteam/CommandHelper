@@ -16,21 +16,21 @@ public class CREIndexOverflowException extends CREException {
     public static final CClassType TYPE = CClassType.get("IndexOverflowException");
 
     public CREIndexOverflowException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREIndexOverflowException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "This exception is thrown if a value is requested from an array that"
-		+ " is above the highest index of the array, or a negative number.";
+        return "This exception is thrown if a value is requested from an array that"
+                + " is above the highest index of the array, or a negative number.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

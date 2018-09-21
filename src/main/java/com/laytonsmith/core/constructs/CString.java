@@ -1,5 +1,3 @@
-
-
 package com.laytonsmith.core.constructs;
 
 import com.laytonsmith.PureUtilities.Version;
@@ -9,6 +7,7 @@ import com.laytonsmith.core.Static;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.natives.interfaces.ArrayAccess;
+
 import java.util.Set;
 
 /**
@@ -21,20 +20,20 @@ public class CString extends CPrimitive implements Cloneable, ArrayAccess {
     @SuppressWarnings("FieldNameHidesFieldInSuperclass")
     public static final CClassType TYPE = CClassType.get("string");
 
-    public CString(String value, Target t){
-        super(value==null?"":value, ConstructType.STRING, t);
+    public CString(String value, Target t) {
+        super(value == null ? "" : value, ConstructType.STRING, t);
     }
 
-    public CString(char value, Target t){
+    public CString(char value, Target t) {
         this(Character.toString(value), t);
     }
 
-    public CString(CharSequence value, Target t){
+    public CString(CharSequence value, Target t) {
         this(value.toString(), t);
     }
 
     @Override
-    public CString clone() throws CloneNotSupportedException{
+    public CString clone() throws CloneNotSupportedException {
         return this;
     }
 
@@ -43,67 +42,67 @@ public class CString extends CPrimitive implements Cloneable, ArrayAccess {
         return false;
     }
 
-	@Override
+    @Override
     public Construct get(String index, Target t) {
-        try{
-            int i = (int)Integer.parseInt(index);
+        try {
+            int i = (int) Integer.parseInt(index);
             return new CString(this.val().charAt(i), t);
-        } catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             throw new CREFormatException("Expecting numerical index, but recieved " + index, t);
         }
     }
 
-	@Override
+    @Override
     public long size() {
         return val().length();
     }
 
-	@Override
+    @Override
     public boolean canBeAssociative() {
         return false;
     }
 
-	@Override
+    @Override
     public Construct slice(int begin, int end, Target t) {
-        if(begin >= end){
+        if (begin >= end) {
             return new CString("", t);
         }
         return new CString(this.val().substring(begin, end), t);
     }
 
-	@Override
-	public String getQuote(){
-		return super.getQuote();
-	}
+    @Override
+    public String getQuote() {
+        return super.getQuote();
+    }
 
-	@Override
-	public Construct get(int index, Target t) throws ConfigRuntimeException {
-		return get(Integer.toString(index), t);
-	}
+    @Override
+    public Construct get(int index, Target t) throws ConfigRuntimeException {
+        return get(Integer.toString(index), t);
+    }
 
-	@Override
-	public boolean isAssociative() {
-		return false;
-	}
+    @Override
+    public boolean isAssociative() {
+        return false;
+    }
 
-	@Override
-	public Set<Construct> keySet() {
-		throw new UnsupportedOperationException("Not supported.");
-	}
+    @Override
+    public Set<Construct> keySet() {
+        throw new UnsupportedOperationException("Not supported.");
+    }
 
-	@Override
-	public Construct get(Construct index, Target t) throws ConfigRuntimeException {
-		int i = Static.getInt32(index, t);
-		return get(i, t);
-	}
+    @Override
+    public Construct get(Construct index, Target t) throws ConfigRuntimeException {
+        int i = Static.getInt32(index, t);
+        return get(i, t);
+    }
 
-	@Override
-	public String docs() {
-		return "A string is a value that contains character data. The character encoding is stored with the string as well.";
-	}
+    @Override
+    public String docs() {
+        return "A string is a value that contains character data. The character encoding is stored with the string as well.";
+    }
 
-	@Override
-	public Version since() {
-		return CHVersion.V3_0_1;
-	}
+    @Override
+    public Version since() {
+        return CHVersion.V3_0_1;
+    }
 }

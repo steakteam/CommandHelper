@@ -1,4 +1,3 @@
-
 package com.laytonsmith.annotations;
 
 import java.lang.annotation.ElementType;
@@ -13,9 +12,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MEnum {
-	/**
-	 * The name of the enum, in MethodScript.
-	 * @return 
-	 */
-	String value();
+    /**
+     * The name of the enum, in MethodScript.
+     *
+     * @return
+     */
+    String value();
 }

@@ -4,6 +4,6 @@ import com.laytonsmith.annotations.MEnum;
 
 @MEnum("CollisionType")
 public enum MCCollisionType {
-	BLOCK,
-	ENTITY
+    BLOCK,
+    ENTITY
 }

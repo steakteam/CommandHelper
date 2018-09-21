@@ -1,9 +1,8 @@
-
 package com.laytonsmith.abstraction;
 
 /**
  *
- * 
+ *
  */
 public class MCCommandException extends RuntimeException {
 
@@ -15,6 +14,7 @@ public class MCCommandException extends RuntimeException {
 
     /**
      * Constructs an instance of <code>MCCommandException</code> with the specified detail message.
+     *
      * @param msg the detail message.
      */
     public MCCommandException(String msg) {

@@ -1,5 +1,3 @@
-
-
 package com.laytonsmith.abstraction.bukkit;
 
 import com.laytonsmith.abstraction.AbstractionObject;
@@ -16,47 +14,48 @@ import java.util.List;
 
 /**
  *
- * 
+ *
  */
 public class BukkitMCCommandSender implements MCCommandSender {
 
     CommandSender c;
-    public BukkitMCCommandSender(CommandSender c){
+
+    public BukkitMCCommandSender(CommandSender c) {
         this.c = c;
     }
-    
-    public BukkitMCCommandSender(AbstractionObject a){
-        this((CommandSender)null);
-        if(a instanceof MCCommandSender){
-            this.c = ((CommandSender)a.getHandle());
+
+    public BukkitMCCommandSender(AbstractionObject a) {
+        this((CommandSender) null);
+        if (a instanceof MCCommandSender) {
+            this.c = ((CommandSender) a.getHandle());
         } else {
             throw new ClassCastException();
         }
     }
-    
-	@Override
-    public Object getHandle(){
+
+    @Override
+    public Object getHandle() {
         return c;
-    }        
-    
-	@Override
+    }
+
+    @Override
     public void sendMessage(String string) {
         c.sendMessage(string);
     }
 
-    
-	@Override
+
+    @Override
     public MCServer getServer() {
         return new BukkitMCServer();
     }
 
-    
-	@Override
+
+    @Override
     public String getName() {
         return c.getName();
     }
 
-	@Override
+    @Override
     public boolean isOp() {
         return c.isOp();
     }
@@ -72,49 +71,49 @@ public class BukkitMCCommandSender implements MCCommandSender {
     public boolean instanceofMCConsoleCommandSender() {
         return c instanceof ConsoleCommandSender;
     }
-	
-	@Override
-	public String toString() {
-		return c.toString();
-	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return (obj instanceof BukkitMCCommandSender?c.equals(((BukkitMCCommandSender)obj).c):false);
-	}
+    @Override
+    public String toString() {
+        return c.toString();
+    }
 
-	@Override
-	public int hashCode() {
-		return c.hashCode();
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof BukkitMCCommandSender ? c.equals(((BukkitMCCommandSender) obj).c) : false);
+    }
 
-	@Override
-	public boolean hasPermission(String perm) {
-		return c.hasPermission(perm);
-	}
+    @Override
+    public int hashCode() {
+        return c.hashCode();
+    }
 
-	@Override
-	public boolean isPermissionSet(String perm) {
-		return c.isPermissionSet(perm);
-	}
+    @Override
+    public boolean hasPermission(String perm) {
+        return c.hasPermission(perm);
+    }
 
-	@Override
-	public List<String> getGroups() {
-		// As in https://github.com/sk89q/WorldEdit/blob/master/
-		// worldedit-bukkit/src/main/java/com/sk89q/wepif/DinnerPermsResolver.java#L112-L126
-		List<String> groupNames = new ArrayList<String>();
-		for (PermissionAttachmentInfo permAttach : c.getEffectivePermissions()) {
-			String perm = permAttach.getPermission();
-			if (!(perm.startsWith(Static.groupPrefix) && permAttach.getValue())) {
-				continue;
-			}
-			groupNames.add(perm.substring(Static.groupPrefix.length(), perm.length()));
-		}
-		return groupNames;
-	}
+    @Override
+    public boolean isPermissionSet(String perm) {
+        return c.isPermissionSet(perm);
+    }
 
-	@Override
-	public boolean inGroup(String groupName) {
-		return getGroups().contains(groupName);
-	}
+    @Override
+    public List<String> getGroups() {
+        // As in https://github.com/sk89q/WorldEdit/blob/master/
+        // worldedit-bukkit/src/main/java/com/sk89q/wepif/DinnerPermsResolver.java#L112-L126
+        List<String> groupNames = new ArrayList<String>();
+        for (PermissionAttachmentInfo permAttach : c.getEffectivePermissions()) {
+            String perm = permAttach.getPermission();
+            if (!(perm.startsWith(Static.groupPrefix) && permAttach.getValue())) {
+                continue;
+            }
+            groupNames.add(perm.substring(Static.groupPrefix.length(), perm.length()));
+        }
+        return groupNames;
+    }
+
+    @Override
+    public boolean inGroup(String groupName) {
+        return getGroups().contains(groupName);
+    }
 }

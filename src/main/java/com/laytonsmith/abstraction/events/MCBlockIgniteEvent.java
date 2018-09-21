@@ -6,16 +6,15 @@ import com.laytonsmith.abstraction.blocks.MCBlock;
 import com.laytonsmith.abstraction.enums.MCIgniteCause;
 
 /**
- *
  * @author MariuszT
  */
 public interface MCBlockIgniteEvent extends MCBlockEvent {
 
-	public MCIgniteCause getCause();
+    public MCIgniteCause getCause();
 
-	public MCPlayer getPlayer();
+    public MCPlayer getPlayer();
 
-	public MCEntity getIgnitingEntity();
+    public MCEntity getIgnitingEntity();
 
-	public MCBlock getIgnitingBlock();
+    public MCBlock getIgnitingBlock();
 }

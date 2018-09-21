@@ -1,7 +1,6 @@
 package com.laytonsmith.abstraction;
 
 import com.laytonsmith.PureUtilities.Vector3D;
-import com.laytonsmith.abstraction.enums.MCDamageCause;
 import com.laytonsmith.abstraction.enums.MCEntityEffect;
 import com.laytonsmith.abstraction.enums.MCEntityType;
 import com.laytonsmith.abstraction.enums.MCTeleportCause;
@@ -12,109 +11,110 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * 
- * 
+ *
+ *
  */
 public interface MCEntity extends MCMetadatable {
 
-	public boolean eject();
+    public boolean eject();
 
-	public float getFallDistance();
+    public float getFallDistance();
 
-	public int getFireTicks();
+    public int getFireTicks();
 
-	public MCEntityDamageEvent getLastDamageCause();
+    public MCEntityDamageEvent getLastDamageCause();
 
-	public MCLocation getLocation();
+    public MCLocation getLocation();
 
-	/**
-	 * Unlike {@see MCEntity#getLocation}, this will work when not run on the server
-	 * thread, but this does mean that the data recieved may be slightly outdated.
-	 * @return
-	 */
-	public MCLocation asyncGetLocation();
+    /**
+     * Unlike {@see MCEntity#getLocation}, this will work when not run on the server
+     * thread, but this does mean that the data recieved may be slightly outdated.
+     *
+     * @return
+     */
+    public MCLocation asyncGetLocation();
 
-	public int getMaxFireTicks();
+    public int getMaxFireTicks();
 
-	public List<MCEntity> getNearbyEntities(double x, double y, double z);
+    public List<MCEntity> getNearbyEntities(double x, double y, double z);
 
-	public MCEntity getPassenger();
+    public MCEntity getPassenger();
 
-	public MCServer getServer();
+    public MCServer getServer();
 
-	public int getTicksLived();
+    public int getTicksLived();
 
-	public MCEntityType getType();
+    public MCEntityType getType();
 
-	public UUID getUniqueId();
+    public UUID getUniqueId();
 
-	public MCEntity getVehicle();
+    public MCEntity getVehicle();
 
-	public Vector3D getVelocity();
+    public Vector3D getVelocity();
 
-	public void setVelocity(Vector3D v);
+    public void setVelocity(Vector3D v);
 
-	public MCWorld getWorld();
+    public MCWorld getWorld();
 
-	public boolean isDead();
+    public boolean isDead();
 
-	public boolean isEmpty();
+    public boolean isEmpty();
 
-	public boolean isInsideVehicle();
-	
-	public boolean isOnGround();
+    public boolean isInsideVehicle();
 
-	public boolean leaveVehicle();
+    public boolean isOnGround();
 
-	public void playEffect(MCEntityEffect type);
+    public boolean leaveVehicle();
 
-	public void remove();
+    public void playEffect(MCEntityEffect type);
 
-	public void setFallDistance(float distance);
+    public void remove();
 
-	public void setFireTicks(int ticks);
+    public void setFallDistance(float distance);
 
-	public void setLastDamageCause(MCEntityDamageEvent event);
+    public void setFireTicks(int ticks);
 
-	public boolean setPassenger(MCEntity passenger);
+    public void setLastDamageCause(MCEntityDamageEvent event);
 
-	public void setTicksLived(int value);
+    public boolean setPassenger(MCEntity passenger);
 
-	public boolean teleport(MCEntity destination);
+    public void setTicksLived(int value);
 
-	public boolean teleport(MCEntity destination, MCTeleportCause cause);
+    public boolean teleport(MCEntity destination);
 
-	public boolean teleport(MCLocation location);
+    public boolean teleport(MCEntity destination, MCTeleportCause cause);
 
-	public boolean teleport(MCLocation location, MCTeleportCause cause);
+    public boolean teleport(MCLocation location);
 
-	public void setCustomName(String name);
-	
-	public String getCustomName();
+    public boolean teleport(MCLocation location, MCTeleportCause cause);
 
-	public void setCustomNameVisible(boolean visible);
+    public void setCustomName(String name);
 
-	public boolean isCustomNameVisible();
-	
-	public boolean isGlowing();
-	
-	public void setGlowing(Boolean glow);
+    public String getCustomName();
 
-	public boolean hasGravity();
+    public void setCustomNameVisible(boolean visible);
 
-	public void setHasGravity(boolean gravity);
+    public boolean isCustomNameVisible();
 
-	public boolean isSilent();
+    public boolean isGlowing();
 
-	public void setSilent(boolean silent);
+    public void setGlowing(Boolean glow);
 
-	public boolean isInvulnerable();
+    public boolean hasGravity();
 
-	public void setInvulnerable(boolean invulnerable);
+    public void setHasGravity(boolean gravity);
 
-	public Set<String> getScoreboardTags();
+    public boolean isSilent();
 
-	public boolean addScoreboardTag(String tag);
+    public void setSilent(boolean silent);
 
-	public boolean removeScoreboardTag(String tag);
+    public boolean isInvulnerable();
+
+    public void setInvulnerable(boolean invulnerable);
+
+    public Set<String> getScoreboardTags();
+
+    public boolean addScoreboardTag(String tag);
+
+    public boolean removeScoreboardTag(String tag);
 }

@@ -1,4 +1,3 @@
-
 package com.laytonsmith.abstraction.enums.bukkit;
 
 import com.laytonsmith.abstraction.Implementation;
@@ -9,19 +8,19 @@ import org.bukkit.event.inventory.InventoryType;
 
 /**
  *
- * 
+ *
  */
 @abstractionenum(
-		implementation = Implementation.Type.BUKKIT,
-forAbstractEnum = MCInventoryType.class,
-forConcreteEnum = InventoryType.class)
+        implementation = Implementation.Type.BUKKIT,
+        forAbstractEnum = MCInventoryType.class,
+        forConcreteEnum = InventoryType.class)
 public class BukkitMCInventoryType extends EnumConvertor<MCInventoryType, InventoryType> {
-	private static com.laytonsmith.abstraction.enums.bukkit.BukkitMCInventoryType instance;
+    private static com.laytonsmith.abstraction.enums.bukkit.BukkitMCInventoryType instance;
 
-	public static com.laytonsmith.abstraction.enums.bukkit.BukkitMCInventoryType getConvertor() {
-		if (instance == null) {
-			instance = new com.laytonsmith.abstraction.enums.bukkit.BukkitMCInventoryType();
-		}
-		return instance;
-	}
+    public static com.laytonsmith.abstraction.enums.bukkit.BukkitMCInventoryType getConvertor() {
+        if (instance == null) {
+            instance = new com.laytonsmith.abstraction.enums.bukkit.BukkitMCInventoryType();
+        }
+        return instance;
+    }
 }

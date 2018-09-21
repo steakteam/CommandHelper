@@ -7,15 +7,16 @@ import com.laytonsmith.annotations.mobject;
  */
 public class MObjects {
 
-	private MObjects() {
-	}
-	
-	/**
-	 * Returns the name of the object, as provided by the annotation.
-	 * @param object
-	 * @return 
-	 */
-	public static String getObjectName(MObject object){
-		return object.getClass().getAnnotation(mobject.class).value();
-	}
+    private MObjects() {
+    }
+
+    /**
+     * Returns the name of the object, as provided by the annotation.
+     *
+     * @param object
+     * @return
+     */
+    public static String getObjectName(MObject object) {
+        return object.getClass().getAnnotation(mobject.class).value();
+    }
 }

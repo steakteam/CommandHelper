@@ -5,11 +5,11 @@ import com.laytonsmith.abstraction.enums.MCInstrument;
 
 public interface MCNotePlayEvent extends MCBlockEvent {
 
-	public MCNote getNote();
+    public MCNote getNote();
 
-	public void setNote(MCNote note);
+    public void setNote(MCNote note);
 
-	public MCInstrument getInstrument();
+    public MCInstrument getInstrument();
 
-	public void setInstrument(MCInstrument i);
+    public void setInstrument(MCInstrument i);
 }

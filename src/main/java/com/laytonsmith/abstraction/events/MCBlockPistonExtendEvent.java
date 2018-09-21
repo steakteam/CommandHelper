@@ -23,14 +23,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 package com.laytonsmith.abstraction.events;
 
 import com.laytonsmith.abstraction.blocks.MCBlock;
+
 import java.util.List;
 
 /**
- *
  * @author import
  */
 
 
 public interface MCBlockPistonExtendEvent extends MCBlockPistonEvent {
-	public List<MCBlock> getPushedBlocks();
+    public List<MCBlock> getPushedBlocks();
 }

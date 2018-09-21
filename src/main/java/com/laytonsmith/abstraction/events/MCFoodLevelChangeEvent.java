@@ -27,16 +27,20 @@ import com.laytonsmith.abstraction.MCHumanEntity;
 import com.laytonsmith.core.events.BindableEvent;
 
 /**
- *
  * @author import
  */
 
 
 public interface MCFoodLevelChangeEvent extends BindableEvent {
-	public MCHumanEntity getEntity();
-	public int getDifference();
-	public int getFoodLevel();
-	public void setFoodLevel(int level);
-	public boolean isCancelled();
-	public void setCancelled(boolean cancel);
+    public MCHumanEntity getEntity();
+
+    public int getDifference();
+
+    public int getFoodLevel();
+
+    public void setFoodLevel(int level);
+
+    public boolean isCancelled();
+
+    public void setCancelled(boolean cancel);
 }

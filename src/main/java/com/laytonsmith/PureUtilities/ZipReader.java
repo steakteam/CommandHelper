@@ -4,6 +4,7 @@ import com.laytonsmith.PureUtilities.Common.ArrayUtils;
 import com.laytonsmith.PureUtilities.Common.FileUtil;
 import com.laytonsmith.PureUtilities.Common.StreamUtils;
 import com.laytonsmith.PureUtilities.Common.StringUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,8 +29,8 @@ import java.util.zip.ZipInputStream;
  * Operations on a ZipReader with a path in an actual zip are expensive, so it's
  * good to keep in mind this when using the reader, you'll have to balance
  * between memory usage (caching) or CPU use (re-reading as needed).
- *
- *  Smith
+ * <p>
+ * Smith
  */
 public class ZipReader {
 
@@ -37,75 +38,76 @@ public class ZipReader {
      * The top level zip file, which represents the actual file on the file system.
      */
     private final File topZip;
-    
+
     /**
      * The chain of Files that this file represents.
      */
     private final Deque<File> chainedPath;
-    
+
     /**
      * The actual file object.
      */
     private final File file;
-    
+
     /**
      * Whether or not we have to dig down into the zip, or if
      * we can use trivial file operations.
      */
     private final boolean isZipped;
-	
-	/**
-	 * A list of zip entries, which is cached, so we don't need to re-read
-	 * the zip file each time we want to do enumerative stuff.
-	 */
-	private List<File> zipEntries = null;
-	
-	/**
-	 * The ZipEntry contains the information of whether or not the listed file is
-	 * a directory, but since we discard that information, we cache the list of directories
-	 * here.
-	 */
-	private List<File> zipDirectories = new ArrayList<File>();
 
-	/**
-	 * Convenience constructor, which allows for a URL to be passed in instead of a file,
-	 * which may be useful when working with resources.
-	 * @param url 
-	 */
-	public ZipReader(URL url){
-		this(new File(url.getFile()));
-	}
+    /**
+     * A list of zip entries, which is cached, so we don't need to re-read
+     * the zip file each time we want to do enumerative stuff.
+     */
+    private List<File> zipEntries = null;
+
+    /**
+     * The ZipEntry contains the information of whether or not the listed file is
+     * a directory, but since we discard that information, we cache the list of directories
+     * here.
+     */
+    private List<File> zipDirectories = new ArrayList<File>();
+
+    /**
+     * Convenience constructor, which allows for a URL to be passed in instead of a file,
+     * which may be useful when working with resources.
+     *
+     * @param url
+     */
+    public ZipReader(URL url) {
+        this(new File(url.getFile()));
+    }
+
     /**
      * Creates a new ZipReader object, which can be used to read from a zip
      * file, as if the zip files were simple directories. All files are checked
      * to see if they are a zip.
-     * 
+     *
      * <p>{@code new ZipReader(new File("path/to/container.zip/with/nested.zip/file.txt"));}</p>
-     * 
      *
      * @param file The path to the internal file. This needn't exist, according
-     * to File, as the zip file won't appear as a directory to other classes.
-     * This constructor will however throw a FileNotFoundException if it
-     * determines that the file doesn't exist.
+     *             to File, as the zip file won't appear as a directory to other classes.
+     *             This constructor will however throw a FileNotFoundException if it
+     *             determines that the file doesn't exist.
      */
-    public ZipReader(File file){
+    public ZipReader(File file) {
         chainedPath = new LinkedList<File>();
 
 
-		//We need to remove jar style or uri style things from the file, so do that here
-		if(file.getPath().startsWith("file:")){
-			String newFile = file.getPath().substring(5);
-			//Replace all \ with /, to simply processing, but also replace ! with /, since jar addresses
-			//use that to denote the jar. We don't care, it's just a folder, so replace that with a slash.
-			newFile = newFile.replace('\\', '/').replace('!', '/');
-			while(newFile.startsWith("//")){
-				//We only want up to one slash here
-				newFile = newFile.substring(1);
-			}
-			file = new File(newFile);
-		}
-		
-		
+        //We need to remove jar style or uri style things from the file, so do that here
+        if (file.getPath().startsWith("file:")) {
+            String newFile = file.getPath().substring(5);
+            //Replace all \ with /, to simply processing, but also replace ! with /, since jar addresses
+            //use that to denote the jar. We don't care, it's just a folder, so replace that with a slash.
+            newFile = newFile.replace('\\', '/').replace('!', '/');
+            while (newFile.startsWith("//")) {
+                //We only want up to one slash here
+                newFile = newFile.substring(1);
+            }
+            file = new File(newFile);
+        }
+
+
         //make sure file is absolute
         file = file.getAbsoluteFile();
         this.file = file;
@@ -134,72 +136,76 @@ public class ZipReader {
         //If it's not a zipped file, this will make operations easier to deal with,
         //so let's save that information
         isZipped = tempTopZip != null;
-        if(isZipped){
+        if (isZipped) {
             topZip = tempTopZip;
         } else {
             topZip = file;
         }
 
     }
-    
+
     /**
      * Returns the top level file for the underlying file. If this is not zipped, the file
      * returned will be the file this object was constructed with. Otherwise, the File
      * representing the actual file on the filesystem will be returned. This is mostly
      * useful for the case where locks need to be implemented, or to find the "root" of
      * the directory.
-     * @return 
+     *
+     * @return
      */
-    public File getTopLevelFile(){
-	    return topZip;
+    public File getTopLevelFile() {
+        return topZip;
     }
-    
+
     /**
      * Returns if this file exists or not. Note this is a non-trivial operation.
-     * 
-     * @return 
+     *
+     * @return
      */
-    public boolean exists(){
-        if(!topZip.exists()){
+    public boolean exists() {
+        if (!topZip.exists()) {
             return false; //Don't bother trying
         }
-        try{
+        try {
             getInputStream().close();
             return true;
-        } catch(IOException e){
+        } catch (IOException e) {
             return false;
         }
     }
-    
+
     /**
      * Returns true if this file is read accessible. Note that if the file is a zip,
      * the permissions are checked on the topmost zip file.
-     * @return 
+     *
+     * @return
      */
-    public boolean canRead(){
+    public boolean canRead() {
         return topZip.canRead();
     }
-    
+
     /**
      * Returns true if this file has write permissions. Note that if the file is nested
      * in a zip, then this will always return false. If the file doesn't exist, this will
      * also return false, but that doesn't imply that you won't be able to create file here,
      * so you may also need to check isZipped().
-     * @return 
+     *
+     * @return
      */
-    public boolean canWrite(){
-        if(isZipped){
+    public boolean canWrite() {
+        if (isZipped) {
             return false;
         } else {
             return topZip.canWrite();
         }
     }
-    
+
     /**
      * Returns whether or not the file is inside of a zip file or not.
-     * @return 
+     *
+     * @return
      */
-    public boolean isZipped(){
+    public boolean isZipped() {
         return isZipped;
     }
 
@@ -226,7 +232,7 @@ public class ZipReader {
             }
         };
         boolean isZip = false;
-		List<String> recurseAttempts = new ArrayList<String>();
+        List<String> recurseAttempts = new ArrayList<String>();
         while ((entry = zis.getNextEntry()) != null) {
             //This is at least a zip file
             isZip = true;
@@ -252,23 +258,23 @@ public class ZipReader {
 
             //It's a single file, it's in the chain, and the chain isn't finished, so that
             //must mean it's a container (or it's being used as one, anyways).
-			//It could be that either this is just a folder in the entry list, or it could
-			//mean that this is a zip. We will make note of this as one we need to attempt to
-			//recurse, but only if it doesn't pan out that this is a file.
-			recurseAttempts.add(zipName + File.separator + entry.getName());
+            //It could be that either this is just a folder in the entry list, or it could
+            //mean that this is a zip. We will make note of this as one we need to attempt to
+            //recurse, but only if it doesn't pan out that this is a file.
+            recurseAttempts.add(zipName + File.separator + entry.getName());
 
         }
-		for(String recurseAttempt : recurseAttempts){
-			ZipInputStream inner = new ZipInputStream(zipReader);
-			try{
-				return getFile(fullChain, recurseAttempt, inner);			
-			} catch(IOException e){
-				//We don't care if this breaks, we'll throw out own top level exception
-				//in a moment if we got here. We still need to finish going through
-				//out recurse attempts.
-			}
-		}
-        //If we get down here, it means either we recursed into not-a-zip file, or 
+        for (String recurseAttempt : recurseAttempts) {
+            ZipInputStream inner = new ZipInputStream(zipReader);
+            try {
+                return getFile(fullChain, recurseAttempt, inner);
+            } catch (IOException e) {
+                //We don't care if this breaks, we'll throw out own top level exception
+                //in a moment if we got here. We still need to finish going through
+                //out recurse attempts.
+            }
+        }
+        //If we get down here, it means either we recursed into not-a-zip file, or
         //the file was otherwise not found
         if (isZip) {
             //if this is the terminal node in the chain, it's due to a file not found.
@@ -283,12 +289,13 @@ public class ZipReader {
      * Returns a raw input stream for this file. If you just need the string contents,
      * it would probably be easer to use getFileContents instead, however, this method
      * is necessary for accessing binary files.
+     *
      * @return An InputStream that will read the specified file
      * @throws FileNotFoundException If the file is not found
-     * @throws IOException If you specify a file that isn't a zip file as if it were a folder
+     * @throws IOException           If you specify a file that isn't a zip file as if it were a folder
      */
-    public InputStream getInputStream() throws FileNotFoundException, IOException {	    
-        if (!isZipped) {           
+    public InputStream getInputStream() throws FileNotFoundException, IOException {
+        if (!isZipped) {
             return new FileInputStream(file);
         } else {
             return getFile(chainedPath, topZip.getAbsolutePath(), new ZipInputStream(new FileInputStream(topZip)));
@@ -298,22 +305,24 @@ public class ZipReader {
     /**
      * If the file is a simple text file, this function is your best option. It returns
      * the contents of the file as a string.
+     *
      * @return
      * @throws FileNotFoundException If the file is not found
-     * @throws IOException If you specify a file that isn't a zip file as if it were a folder
+     * @throws IOException           If you specify a file that isn't a zip file as if it were a folder
      */
     public String getFileContents() throws FileNotFoundException, IOException {
         if (!isZipped) {
             return FileUtil.read(file);
-        } else {            
+        } else {
             return StreamUtils.GetString(getInputStream());
         }
     }
 
     /**
      * Delegates the equals check to the underlying File object.
+     *
      * @param obj
-     * @return 
+     * @return
      */
     @Override
     public boolean equals(Object obj) {
@@ -323,125 +332,128 @@ public class ZipReader {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ZipReader other = (ZipReader) obj;        
+        final ZipReader other = (ZipReader) obj;
         return other.file.equals(this.file);
     }
 
     /**
      * Delegates the hashCode to the underlying File object.
-     * @return 
+     *
+     * @return
      */
     @Override
     public int hashCode() {
         return file.hashCode();
     }
 
-	@Override
-	public String toString() {
-		return file.toString();
-	}
-    
-    public File getFile(){
+    @Override
+    public String toString() {
+        return file.toString();
+    }
+
+    public File getFile() {
         return file;
     }
-	
-	private void initList() throws IOException{
-		if(!isZipped){
-			return;
-		}
-		if(this.zipEntries == null){
-			zipEntries = new ArrayList<File>();
-			ZipInputStream zis = new ZipInputStream(new FileInputStream(topZip));
-			ZipEntry entry;
-			while((entry = zis.getNextEntry()) != null){
-				File f = new File(topZip, entry.getName());
-				zipEntries.add(f);		
-				if(entry.isDirectory()){
-					zipDirectories.add(f);
-				}
-			}
-			zis.close();
-		}
-	}
-	
-	public boolean isDirectory() throws IOException{
-		if(!isZipped){
-			return file.isDirectory();
-		} else {
-			initList();
-			return zipDirectories.contains(file);
-		}
-	}
-	
-	public String getName(){
-		return file.getName();
-	}
-	
-	/**
-	 * Returns a list of File objects that are subfiles or directories in
-	 * this directory.
-	 * @return
-	 * @throws IOException 
-	 */
-	public File [] listFiles() throws IOException{
-		if(!isZipped){
-			return file.listFiles();
-		} else {
-			StringUtils.Join(new String[]{}, "");
-			initList();
-			List<File> files = new ArrayList<File>();
-			for(File f : zipEntries){
-				//If the paths start with the same thing...
-				if(f.getPath().startsWith(file.getPath())){
-					//...and it's not the file we're looking from to begin with...
-					if(!file.equals(f)){
-						//...and it's not in a sub-sub folder of this file...
-						if(!f.getPath().matches(Pattern.quote(file.getPath() + File.separatorChar) + "[^" + Pattern.quote(File.separator) + "]*" + Pattern.quote(File.separator) + ".*")){
-							//...add it to the list.
-							String root = f.getPath().replaceFirst(Pattern.quote(file.getPath() + File.separator), "");
-							f = new File(root);
-							files.add(f);			
-						}
-					}
-				}
-			}
-			return ArrayUtils.asArray(File.class, files);
-		}
-	}
-	
-	public ZipReader[] zipListFiles() throws IOException{
-		File[] ret = listFiles();
-		ZipReader[] zips = new ZipReader[ret.length];
-		for(int i = 0; i < ret.length; i++){
-			zips[i] = new ZipReader(new File(file, ret[i].getPath()));
-		}
-		return zips;
-	}
-	
-	/**
-	 * Copies all the files from this directory to the source directory.
-	 * If create is false, and the folder doesn't already exist, and IOException
-	 * will be thrown. This is similar to an "unzip" operation.
-	 * @param dstFolder 
-	 */
-	public void recursiveCopy(File dstFolder, boolean create) throws IOException{
-		if(create){
-			dstFolder.mkdirs();
-		}
-		if(!dstFolder.isDirectory()){
-			throw new IOException("Destination folder is not a directory!");
-		}
-		for(ZipReader r : zipListFiles()){
-			if(r.isDirectory()){
-				r.recursiveCopy(dstFolder, create);
-			} else {
-				File newFile = new File(dstFolder, r.file.getName());
-				newFile.getParentFile().mkdirs();
-				FileOutputStream fos = new FileOutputStream(newFile, false);
-				StreamUtils.Copy(r.getInputStream(), fos);
-			}
-		}
-	}
-    
-    
+
+    private void initList() throws IOException {
+        if (!isZipped) {
+            return;
+        }
+        if (this.zipEntries == null) {
+            zipEntries = new ArrayList<File>();
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(topZip));
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                File f = new File(topZip, entry.getName());
+                zipEntries.add(f);
+                if (entry.isDirectory()) {
+                    zipDirectories.add(f);
+                }
+            }
+            zis.close();
+        }
+    }
+
+    public boolean isDirectory() throws IOException {
+        if (!isZipped) {
+            return file.isDirectory();
+        } else {
+            initList();
+            return zipDirectories.contains(file);
+        }
+    }
+
+    public String getName() {
+        return file.getName();
+    }
+
+    /**
+     * Returns a list of File objects that are subfiles or directories in
+     * this directory.
+     *
+     * @return
+     * @throws IOException
+     */
+    public File[] listFiles() throws IOException {
+        if (!isZipped) {
+            return file.listFiles();
+        } else {
+            StringUtils.Join(new String[]{}, "");
+            initList();
+            List<File> files = new ArrayList<File>();
+            for (File f : zipEntries) {
+                //If the paths start with the same thing...
+                if (f.getPath().startsWith(file.getPath())) {
+                    //...and it's not the file we're looking from to begin with...
+                    if (!file.equals(f)) {
+                        //...and it's not in a sub-sub folder of this file...
+                        if (!f.getPath().matches(Pattern.quote(file.getPath() + File.separatorChar) + "[^" + Pattern.quote(File.separator) + "]*" + Pattern.quote(File.separator) + ".*")) {
+                            //...add it to the list.
+                            String root = f.getPath().replaceFirst(Pattern.quote(file.getPath() + File.separator), "");
+                            f = new File(root);
+                            files.add(f);
+                        }
+                    }
+                }
+            }
+            return ArrayUtils.asArray(File.class, files);
+        }
+    }
+
+    public ZipReader[] zipListFiles() throws IOException {
+        File[] ret = listFiles();
+        ZipReader[] zips = new ZipReader[ret.length];
+        for (int i = 0; i < ret.length; i++) {
+            zips[i] = new ZipReader(new File(file, ret[i].getPath()));
+        }
+        return zips;
+    }
+
+    /**
+     * Copies all the files from this directory to the source directory.
+     * If create is false, and the folder doesn't already exist, and IOException
+     * will be thrown. This is similar to an "unzip" operation.
+     *
+     * @param dstFolder
+     */
+    public void recursiveCopy(File dstFolder, boolean create) throws IOException {
+        if (create) {
+            dstFolder.mkdirs();
+        }
+        if (!dstFolder.isDirectory()) {
+            throw new IOException("Destination folder is not a directory!");
+        }
+        for (ZipReader r : zipListFiles()) {
+            if (r.isDirectory()) {
+                r.recursiveCopy(dstFolder, create);
+            } else {
+                File newFile = new File(dstFolder, r.file.getName());
+                newFile.getParentFile().mkdirs();
+                FileOutputStream fos = new FileOutputStream(newFile, false);
+                StreamUtils.Copy(r.getInputStream(), fos);
+            }
+        }
+    }
+
+
 }

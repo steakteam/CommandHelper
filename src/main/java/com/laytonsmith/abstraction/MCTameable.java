@@ -1,9 +1,8 @@
-
 package com.laytonsmith.abstraction;
 
 /**
  *
- * 
+ *
  */
 public interface MCTameable extends MCAgeable {
     public boolean isTamed();
@@ -12,5 +11,5 @@ public interface MCTameable extends MCAgeable {
 
     public MCAnimalTamer getOwner();
 
-    public void setOwner(MCAnimalTamer at);    
+    public void setOwner(MCAnimalTamer at);
 }

@@ -99,17 +99,17 @@ public class WeatherEvents {
 
         @Override
         public void preExecution(Environment env, BoundEvent.ActiveEvent activeEvent) {
-            if(activeEvent.getUnderlyingEvent() instanceof MCLightningStrikeEvent){
+            if (activeEvent.getUnderlyingEvent() instanceof MCLightningStrikeEvent) {
                 // Static lookups of the entity don't work here, so we need to inject them
-                MCEntity entity = ((MCLightningStrikeEvent)activeEvent.getUnderlyingEvent()).getLightning();
+                MCEntity entity = ((MCLightningStrikeEvent) activeEvent.getUnderlyingEvent()).getLightning();
                 Static.InjectEntity(entity);
             }
         }
 
         @Override
         public void postExecution(Environment env, BoundEvent.ActiveEvent activeEvent) {
-            if(activeEvent.getUnderlyingEvent() instanceof MCLightningStrikeEvent){
-                MCEntity entity = ((MCLightningStrikeEvent)activeEvent.getUnderlyingEvent()).getLightning();
+            if (activeEvent.getUnderlyingEvent() instanceof MCLightningStrikeEvent) {
+                MCEntity entity = ((MCLightningStrikeEvent) activeEvent.getUnderlyingEvent()).getLightning();
                 Static.UninjectEntity(entity);
             }
         }

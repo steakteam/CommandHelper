@@ -16,21 +16,21 @@ public class CRELengthException extends CREException {
     public static final CClassType TYPE = CClassType.get("LengthException");
 
     public CRELengthException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CRELengthException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "This exception is thrown if a function expected the length of"
-		+ " something to be a particular value, but it was not.";
+        return "This exception is thrown if a function expected the length of"
+                + " something to be a particular value, but it was not.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

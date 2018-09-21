@@ -13,18 +13,18 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GenericTreeNode<T> implements Cloneable{
+public class GenericTreeNode<T> implements Cloneable {
 
     public T data;
     public List<GenericTreeNode<T>> children;
     public boolean optimized = false;
-    
+
     @Override
-    public GenericTreeNode<T> clone() throws CloneNotSupportedException{
+    public GenericTreeNode<T> clone() throws CloneNotSupportedException {
         GenericTreeNode<T> clone = (GenericTreeNode<T>) super.clone();
         Class c = data.getClass();
-        if(Arrays.asList(c.getInterfaces()).contains(Cloneable.class)){
-            try{
+        if (Arrays.asList(c.getInterfaces()).contains(Cloneable.class)) {
+            try {
                 Method m = c.getMethod("clone", new Class[]{});
                 Object obj = m.invoke(data, new Object[]{});
                 clone.data = (T) obj;
@@ -36,7 +36,7 @@ public class GenericTreeNode<T> implements Cloneable{
                 throw new CloneNotSupportedException();
             } catch (InvocationTargetException ex) {
                 throw new CloneNotSupportedException();
-            } catch(NoSuchMethodException e){
+            } catch (NoSuchMethodException e) {
                 throw new CloneNotSupportedException();
             }
         }
@@ -102,38 +102,38 @@ public class GenericTreeNode<T> implements Cloneable{
         return getData().toString();
     }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		GenericTreeNode<?> other = (GenericTreeNode<?>) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        GenericTreeNode<?> other = (GenericTreeNode<?>) obj;
+        if (data == null) {
+            if (other.data != null) {
+                return false;
+            }
+        } else if (!data.equals(other.data)) {
+            return false;
+        }
+        return true;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((data == null) ? 0 : data.hashCode());
+        return result;
+    }
 
     public String toStringVerbose() {
         String stringRepresentation = getData().toString() + ":[";

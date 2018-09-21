@@ -9,46 +9,46 @@ package com.laytonsmith.PureUtilities.VirtualFS;
  * <li>** - Match any number of characters, including directory separators (forward slash)</li>
  * <li>? - Match exactly one character, except directory separators (forward slash)</li>
  * </ul>
- * 
+ * <p>
  * The essential operations of a glob simply ask if a particular VirtualFile actually match
  * this glob or not.
- * 
- * 
  */
 public class VirtualGlob implements Comparable<VirtualGlob> {
-	
-	private String glob;
-	
-	/**
-	 * Creates a new virtual glob object, that will match this glob
-	 * pattern.
-	 * @param glob 
-	 */
-	public VirtualGlob(String glob){
-		this.glob = glob;
-	}
-	
-	/**
-	 * Creates a glob that will match only this file.
-	 * @param file 
-	 */
-	public VirtualGlob(VirtualFile file){
-		glob = file.getPath();
-	}
-	
-	public boolean matches(VirtualFile file){
-		throw new UnsupportedOperationException("Not implemented yet.");
-	}
 
-	@Override
-	public int compareTo(VirtualGlob o) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
+    private String glob;
 
-	@Override
-	public String toString() {
-		return glob;
-	}
-	
-	
+    /**
+     * Creates a new virtual glob object, that will match this glob
+     * pattern.
+     *
+     * @param glob
+     */
+    public VirtualGlob(String glob) {
+        this.glob = glob;
+    }
+
+    /**
+     * Creates a glob that will match only this file.
+     *
+     * @param file
+     */
+    public VirtualGlob(VirtualFile file) {
+        glob = file.getPath();
+    }
+
+    public boolean matches(VirtualFile file) {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @Override
+    public int compareTo(VirtualGlob o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String toString() {
+        return glob;
+    }
+
+
 }

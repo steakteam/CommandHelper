@@ -6,7 +6,6 @@ import com.laytonsmith.abstraction.enums.MCTargetReason;
 import com.laytonsmith.core.events.BindableEvent;
 
 /**
- *
  * @author EntityReborn
  */
 public interface MCEntityTargetEvent extends BindableEvent {

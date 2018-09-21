@@ -16,21 +16,21 @@ public class CREBindException extends CREException {
     public static final CClassType TYPE = CClassType.get("BindException");
 
     public CREBindException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREBindException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "This exception is thrown if an error occurs when trying to bind() an"
-		+ " event, or if a event framework related error occurs.";
+        return "This exception is thrown if an error occurs when trying to bind() an"
+                + " event, or if a event framework related error occurs.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

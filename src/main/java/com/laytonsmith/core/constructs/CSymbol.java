@@ -1,7 +1,5 @@
 package com.laytonsmith.core.constructs;
 
-import com.laytonsmith.annotations.breakable;
-
 /**
  *
  *
@@ -60,12 +58,12 @@ public class CSymbol extends Construct {
             case LOGICAL_OR:
                 conversion = "or";
                 break;
-	    case DEFAULT_AND:
-		conversion = "dand";
-		break;
-	    case DEFAULT_OR:
-		conversion = "dor";
-		break;
+            case DEFAULT_AND:
+                conversion = "dand";
+                break;
+            case DEFAULT_OR:
+                conversion = "dor";
+                break;
             case LOGICAL_NOT:
                 conversion = "not";
                 break;
@@ -145,11 +143,11 @@ public class CSymbol extends Construct {
     }
 
     public boolean isDefaultAnd() {
-	return symbolType.isDefaultAnd();
+        return symbolType.isDefaultAnd();
     }
 
     public boolean isDefaultOr() {
-	return symbolType.isDefaultOr();
+        return symbolType.isDefaultOr();
     }
 
     @Override
@@ -163,24 +161,24 @@ public class CSymbol extends Construct {
         return symbolType.isExponential();
     }
 
-	public boolean isAssignment() {
-		return symbolType.isAssignment();
-	}
+    public boolean isAssignment() {
+        return symbolType.isAssignment();
+    }
 
-	public String convertAssignment() {
-		switch(symbolType){
-			case PLUS_ASSIGNMENT:
-				return "add";
-			case MINUS_ASSIGNMENT:
-				return "subtract";
-			case MULTIPLICATION_ASSIGNMENT:
-				return "multiply";
-			case DIVISION_ASSIGNMENT:
-				return "divide";
-			case CONCAT_ASSIGNMENT:
-				return "concat";
-			default:
-				return null;
-		}
-	}
+    public String convertAssignment() {
+        switch (symbolType) {
+            case PLUS_ASSIGNMENT:
+                return "add";
+            case MINUS_ASSIGNMENT:
+                return "subtract";
+            case MULTIPLICATION_ASSIGNMENT:
+                return "multiply";
+            case DIVISION_ASSIGNMENT:
+                return "divide";
+            case CONCAT_ASSIGNMENT:
+                return "concat";
+            default:
+                return null;
+        }
+    }
 }

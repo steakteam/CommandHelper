@@ -6,10 +6,14 @@ import java.util.List;
 
 public interface MCFireworkEffect extends AbstractionObject {
 
-	boolean hasFlicker();
-	boolean hasTrail();
-	List<MCColor> getColors();
-	List<MCColor> getFadeColors();
-	MCFireworkType getType();
+    boolean hasFlicker();
+
+    boolean hasTrail();
+
+    List<MCColor> getColors();
+
+    List<MCColor> getFadeColors();
+
+    MCFireworkType getType();
 
 }

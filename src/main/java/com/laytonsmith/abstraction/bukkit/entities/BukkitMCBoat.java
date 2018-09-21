@@ -6,20 +6,20 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCBoat extends BukkitMCVehicle implements MCBoat {
 
-	Boat b;
+    Boat b;
 
-	public BukkitMCBoat(Entity e) {
-		super(e);
-		this.b = (Boat) e;
-	}
+    public BukkitMCBoat(Entity e) {
+        super(e);
+        this.b = (Boat) e;
+    }
 
-	@Override
-	public double getMaxSpeed() {
-		return b.getMaxSpeed();
-	}
+    @Override
+    public double getMaxSpeed() {
+        return b.getMaxSpeed();
+    }
 
-	@Override
-	public void setMaxSpeed(double speed) {
-		b.setMaxSpeed(speed);
-	}
+    @Override
+    public void setMaxSpeed(double speed) {
+        b.setMaxSpeed(speed);
+    }
 }

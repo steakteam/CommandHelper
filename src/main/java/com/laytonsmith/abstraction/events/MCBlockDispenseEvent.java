@@ -4,20 +4,19 @@ import com.laytonsmith.PureUtilities.Vector3D;
 import com.laytonsmith.abstraction.MCItemStack;
 
 /**
- *
  * @author MariuszT
  */
 public interface MCBlockDispenseEvent extends MCBlockEvent {
 
-	public MCItemStack getItem();
+    public MCItemStack getItem();
 
-	public void setItem(MCItemStack item);
+    public void setItem(MCItemStack item);
 
-	public Vector3D getVelocity();
+    public Vector3D getVelocity();
 
-	public void setVelocity(Vector3D vel);
+    public void setVelocity(Vector3D vel);
 
-	public boolean isCancelled();
+    public boolean isCancelled();
 
-	public void setCancelled(boolean cancel);
+    public void setCancelled(boolean cancel);
 }

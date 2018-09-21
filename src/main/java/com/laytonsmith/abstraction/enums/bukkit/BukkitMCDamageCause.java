@@ -1,4 +1,3 @@
-
 package com.laytonsmith.abstraction.enums.bukkit;
 
 import com.laytonsmith.abstraction.Implementation;
@@ -9,19 +8,19 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 /**
  *
- * 
+ *
  */
 @abstractionenum(
-		implementation = Implementation.Type.BUKKIT,
-forAbstractEnum = MCDamageCause.class,
-forConcreteEnum = DamageCause.class)
+        implementation = Implementation.Type.BUKKIT,
+        forAbstractEnum = MCDamageCause.class,
+        forConcreteEnum = DamageCause.class)
 public class BukkitMCDamageCause extends EnumConvertor<MCDamageCause, DamageCause> {
-	private static com.laytonsmith.abstraction.enums.bukkit.BukkitMCDamageCause instance;
+    private static com.laytonsmith.abstraction.enums.bukkit.BukkitMCDamageCause instance;
 
-	public static com.laytonsmith.abstraction.enums.bukkit.BukkitMCDamageCause getConvertor() {
-		if (instance == null) {
-			instance = new com.laytonsmith.abstraction.enums.bukkit.BukkitMCDamageCause();
-		}
-		return instance;
-	}
+    public static com.laytonsmith.abstraction.enums.bukkit.BukkitMCDamageCause getConvertor() {
+        if (instance == null) {
+            instance = new com.laytonsmith.abstraction.enums.bukkit.BukkitMCDamageCause();
+        }
+        return instance;
+    }
 }

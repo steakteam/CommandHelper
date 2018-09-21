@@ -7,26 +7,25 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.util.Vector;
 
 /**
- * 
  * @author jb_aero
  */
 public class BukkitMCFireball extends BukkitMCProjectile implements MCFireball {
 
-	Fireball f;
+    Fireball f;
 
-	public BukkitMCFireball(Entity be) {
-		super(be);
-		f = (Fireball) be;
-	}
+    public BukkitMCFireball(Entity be) {
+        super(be);
+        f = (Fireball) be;
+    }
 
-	@Override
-	public Vector3D getDirection() {
-		return new Vector3D(f.getDirection().getX(), f.getDirection().getY(), f.getDirection().getZ());
-	}
+    @Override
+    public Vector3D getDirection() {
+        return new Vector3D(f.getDirection().getX(), f.getDirection().getY(), f.getDirection().getZ());
+    }
 
-	@Override
-	public void setDirection(Vector3D vector) {
-		f.setDirection(new Vector(vector.X(), vector.Y(), vector.Z()));
-	}
+    @Override
+    public void setDirection(Vector3D vector) {
+        f.setDirection(new Vector(vector.X(), vector.Y(), vector.Z()));
+    }
 
 }

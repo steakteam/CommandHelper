@@ -6,13 +6,14 @@ package com.laytonsmith.PureUtilities;
  * for updating the controller when a significant progress event happens.
  */
 public interface ProgressIterator {
-	/**
-	 * Called once a progress change is detected. This is the "current" value of the
-	 * progress, which in combination with the total progress can be used to determine
-	 * the progress percentage (by finding current/total).
-	 * @param current The current progress, always less than or equal to total, which
-	 * represents the current progress of the task.
-	 * @param total The total progress, which once reaches this value is "100% done"
-	 */
-	void progressChanged(double current, double total);
+    /**
+     * Called once a progress change is detected. This is the "current" value of the
+     * progress, which in combination with the total progress can be used to determine
+     * the progress percentage (by finding current/total).
+     *
+     * @param current The current progress, always less than or equal to total, which
+     *                represents the current progress of the task.
+     * @param total   The total progress, which once reaches this value is "100% done"
+     */
+    void progressChanged(double current, double total);
 }

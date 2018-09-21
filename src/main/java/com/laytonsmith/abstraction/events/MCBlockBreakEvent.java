@@ -8,22 +8,21 @@ import com.laytonsmith.core.events.BindableEvent;
 import java.util.List;
 
 /**
- *
  * @author EntityReborn
  */
 public interface MCBlockBreakEvent extends BindableEvent {
 
-	public MCPlayer getPlayer();
+    public MCPlayer getPlayer();
 
-	public MCBlock getBlock();
+    public MCBlock getBlock();
 
-	public int getExpToDrop();
+    public int getExpToDrop();
 
-	public void setExpToDrop(int exp);
+    public void setExpToDrop(int exp);
 
-	public List<MCItemStack> getDrops();
+    public List<MCItemStack> getDrops();
 
-	public void setDrops(List<MCItemStack> drops);
+    public void setDrops(List<MCItemStack> drops);
 
-	public boolean isModified();
+    public boolean isModified();
 }

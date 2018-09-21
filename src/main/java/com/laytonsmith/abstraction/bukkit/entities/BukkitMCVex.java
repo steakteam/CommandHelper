@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCVex extends BukkitMCLivingEntity implements MCVex {
 
-	public BukkitMCVex(Entity ent) {
-		super(ent);
-	}
+    public BukkitMCVex(Entity ent) {
+        super(ent);
+    }
 
 }

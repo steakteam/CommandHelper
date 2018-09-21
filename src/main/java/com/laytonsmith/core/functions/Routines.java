@@ -1,4 +1,3 @@
-
 package com.laytonsmith.core.functions;
 
 import com.laytonsmith.annotations.core;
@@ -8,10 +7,10 @@ import com.laytonsmith.annotations.core;
  */
 @core
 public class Routines {
-	public static String docs(){
-		return "This class of functions provides Routines capabilities. Currently all these functions"
-				+ " are only available via cmdline.";
-	}
+    public static String docs() {
+        return "This class of functions provides Routines capabilities. Currently all these functions"
+                + " are only available via cmdline.";
+    }
 //	
 //	@api public static class get_lock extends AbstractFunction {
 //

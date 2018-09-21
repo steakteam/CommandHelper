@@ -7,10 +7,10 @@ package com.laytonsmith.abstraction;
 
 /**
  *
- * 
+ *
  */
 public interface MCLeatherArmorMeta extends MCItemMeta {
-	    /**
+    /**
      * Gets the color of the armor. If it has not been set otherwise, it will be {@link ItemFactory#getDefaultLeatherColor()}.
      *
      * @return the color of the armor, never null

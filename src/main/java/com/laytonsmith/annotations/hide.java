@@ -1,4 +1,3 @@
-
 package com.laytonsmith.annotations;
 
 import java.lang.annotation.ElementType;
@@ -17,10 +16,11 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface hide {
-	/**
-	 * The reason why this element is hidden. This is likely only meant as a type of comment on the element itself,
-	 * but could potentially show up in general documentation in some cases.
-	 * @return 
-	 */
-	String value();
+    /**
+     * The reason why this element is hidden. This is likely only meant as a type of comment on the element itself,
+     * but could potentially show up in general documentation in some cases.
+     *
+     * @return
+     */
+    String value();
 }

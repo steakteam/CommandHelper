@@ -2,7 +2,6 @@ package com.laytonsmith.abstraction.bukkit;
 
 import com.laytonsmith.PureUtilities.Common.ReflectionUtils;
 import com.laytonsmith.PureUtilities.Common.StringUtils;
-import com.laytonsmith.abstraction.MCBlockCommandSender;
 import com.laytonsmith.abstraction.MCCommand;
 import com.laytonsmith.abstraction.MCCommandMap;
 import com.laytonsmith.abstraction.MCCommandSender;
@@ -21,253 +20,254 @@ import com.laytonsmith.core.events.EventUtils;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.FunctionReturnException;
 import com.laytonsmith.core.functions.Commands;
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * 
  * @author jb_aero
  */
 public class BukkitMCCommand implements MCCommand {
 
-	Command cmd;
-	public BukkitMCCommand(Command command) {
-		cmd = command;
-	}
-	
-	@Override
-	public Object getHandle() {
-		return cmd;
-	}
+    Command cmd;
 
-	@Override
-	public List<String> getAliases() {
-		return cmd.getAliases();
-	}
+    public BukkitMCCommand(Command command) {
+        cmd = command;
+    }
 
-	@Override
-	public String getDescription() {
-		return cmd.getDescription();
-	}
+    @Override
+    public Object getHandle() {
+        return cmd;
+    }
 
-	@Override
-	public String getLabel() {
-		return cmd.getLabel();
-	}
+    @Override
+    public List<String> getAliases() {
+        return cmd.getAliases();
+    }
 
-	@Override
-	public String getName() {
-		return cmd.getName();
-	}
+    @Override
+    public String getDescription() {
+        return cmd.getDescription();
+    }
 
-	@Override
-	public String getPermission() {
-		return cmd.getPermission() == null ? null : cmd.getPermission();
-	}
+    @Override
+    public String getLabel() {
+        return cmd.getLabel();
+    }
 
-	@Override
-	public String getPermissionMessage() {
-		return cmd.getPermissionMessage();
-	}
+    @Override
+    public String getName() {
+        return cmd.getName();
+    }
 
-	@Override
-	public String getUsage() {
-		return cmd.getUsage();
-	}
+    @Override
+    public String getPermission() {
+        return cmd.getPermission() == null ? null : cmd.getPermission();
+    }
 
-	@Override
-	public MCCommand setAliases(List<String> aliases) {
-		cmd.setAliases(aliases);
-		return this;
-	}
+    @Override
+    public String getPermissionMessage() {
+        return cmd.getPermissionMessage();
+    }
 
-	@Override
-	public MCCommand setDescription(String desc) {
-		cmd.setDescription(desc);
-		return this;
-	}
+    @Override
+    public String getUsage() {
+        return cmd.getUsage();
+    }
 
-	@Override
-	public MCCommand setLabel(String name) {
-		cmd.setLabel(name);
-		return this;
-	}
+    @Override
+    public MCCommand setAliases(List<String> aliases) {
+        cmd.setAliases(aliases);
+        return this;
+    }
 
-	@Override
-	public MCCommand setPermission(String perm) {
-		cmd.setPermission(perm);
-		return this;
-	}
+    @Override
+    public MCCommand setDescription(String desc) {
+        cmd.setDescription(desc);
+        return this;
+    }
 
-	@Override
-	public MCCommand setPermissionMessage(String permmsg) {
-		cmd.setPermissionMessage(permmsg);
-		return this;
-	}
+    @Override
+    public MCCommand setLabel(String name) {
+        cmd.setLabel(name);
+        return this;
+    }
 
-	@Override
-	public MCCommand setUsage(String example) {
-		cmd.setUsage(example);
-		return this;
-	}
+    @Override
+    public MCCommand setPermission(String perm) {
+        cmd.setPermission(perm);
+        return this;
+    }
 
-	@Override
-	public boolean testPermission(MCCommandSender target) {
-		return cmd.testPermission(((BukkitMCCommandSender) target)._CommandSender());
-	}
+    @Override
+    public MCCommand setPermissionMessage(String permmsg) {
+        cmd.setPermissionMessage(permmsg);
+        return this;
+    }
 
-	@Override
-	public boolean testPermissionSilent(MCCommandSender target) {
-		return cmd.testPermissionSilent(((BukkitMCCommandSender) target)._CommandSender());
-	}
+    @Override
+    public MCCommand setUsage(String example) {
+        cmd.setUsage(example);
+        return this;
+    }
 
-	@Override
-	public boolean register(MCCommandMap map) {
-		return cmd.register(((BukkitMCCommandMap) map).scm);
-	}
+    @Override
+    public boolean testPermission(MCCommandSender target) {
+        return cmd.testPermission(((BukkitMCCommandSender) target)._CommandSender());
+    }
 
-	@Override
-	public boolean isRegistered() {
-		return cmd.isRegistered();
-	}
+    @Override
+    public boolean testPermissionSilent(MCCommandSender target) {
+        return cmd.testPermissionSilent(((BukkitMCCommandSender) target)._CommandSender());
+    }
 
-	@Override
-	public boolean unregister(MCCommandMap map) {
-		return cmd.unregister(((BukkitMCCommandMap) map).scm);
-	}
-	
-	public static MCCommand newCommand(String name) {
-		return new BukkitMCCommand(ReflectionUtils.newInstance(PluginCommand.class,
-				new Class[]{String.class, Plugin.class}, new Object[]{name, CommandHelperPlugin.self}));
-	}
+    @Override
+    public boolean register(MCCommandMap map) {
+        return cmd.register(((BukkitMCCommandMap) map).scm);
+    }
 
-	@Override
-	public MCPlugin getPlugin() {
-		if (!(cmd instanceof PluginCommand)) {
-			return null;
-		}
-		return ((PluginCommand) cmd).getPlugin() == null ? null : new BukkitMCPlugin(((PluginCommand) cmd).getPlugin());
-	}
+    @Override
+    public boolean isRegistered() {
+        return cmd.isRegistered();
+    }
 
-	@Override
-	public MCPlugin getExecutor() {
-		// TODO Not all plugins execute commands in their main class, so this cast won't always work
-		if (!(cmd instanceof PluginCommand)) {
-			return null;
-		}
-		return new BukkitMCPlugin((Plugin) ((PluginCommand) cmd).getExecutor());
-	}
+    @Override
+    public boolean unregister(MCCommandMap map) {
+        return cmd.unregister(((BukkitMCCommandMap) map).scm);
+    }
 
-	@Override
-	public MCPlugin getTabCompleter() {
-		// TODO see above
-		if (!(cmd instanceof PluginCommand)) {
-			return null;
-		}
-		return new BukkitMCPlugin((Plugin) ((PluginCommand) cmd).getTabCompleter());
-	}
+    public static MCCommand newCommand(String name) {
+        return new BukkitMCCommand(ReflectionUtils.newInstance(PluginCommand.class,
+                new Class[]{String.class, Plugin.class}, new Object[]{name, CommandHelperPlugin.self}));
+    }
 
-	@Override
-	public void setExecutor(MCPlugin plugin) {
-		if (cmd instanceof PluginCommand) {
-			((PluginCommand) cmd).setExecutor(((BukkitMCPlugin) plugin).getHandle());
-		}
-	}
+    @Override
+    public MCPlugin getPlugin() {
+        if (!(cmd instanceof PluginCommand)) {
+            return null;
+        }
+        return ((PluginCommand) cmd).getPlugin() == null ? null : new BukkitMCPlugin(((PluginCommand) cmd).getPlugin());
+    }
 
-	@Override
-	public void setTabCompleter(MCPlugin plugin) {
-		if (cmd instanceof PluginCommand) {
-			((PluginCommand) cmd).setTabCompleter(((BukkitMCPlugin) plugin).getHandle());
-		}
-	}
-	
-	@Override
-	public int hashCode() {
-		return cmd.hashCode();
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return cmd.equals(obj);
-	}
-	
-	@Override
-	public String toString() {
-		return cmd.toString();
-	}
+    @Override
+    public MCPlugin getExecutor() {
+        // TODO Not all plugins execute commands in their main class, so this cast won't always work
+        if (!(cmd instanceof PluginCommand)) {
+            return null;
+        }
+        return new BukkitMCPlugin((Plugin) ((PluginCommand) cmd).getExecutor());
+    }
 
-	// I may be able to move these to c.l.c.f.Commands.java
-	@Override
-	public List<String> handleTabComplete(MCCommandSender sender, String alias, String[] args) {
-		if (Commands.onTabComplete.containsKey(cmd.getName().toLowerCase())) {
-			Target t = Target.UNKNOWN;
-			CArray cargs = new CArray(t);
-			for (String arg : args) {
-				cargs.push(new CString(arg, t), t);
-			}
-			CClosure closure = Commands.onTabComplete.get(cmd.getName().toLowerCase());
-			try {
-				closure.execute(new CString(alias, t), new CString(sender.getName(), t), cargs,
-						new CArray(t) // reserved for an obgen style command array
-				);
-			} catch (FunctionReturnException e) {
-				Construct fret = e.getReturn();
-				if (fret instanceof CArray) {
-					List<String> ret = new ArrayList<String>();
-					if (((CArray) fret).inAssociativeMode()) {
-						for (Construct key : ((CArray) fret).keySet()) {
-							ret.add(((CArray) fret).get(key, Target.UNKNOWN).val());
-						}
-					} else {
-						for (Construct value : ((CArray) fret).asList()) {
-							ret.add(value.val());
-						}
-					}
-					return ret;
-				}
-			} catch (ConfigRuntimeException cre){
-				ConfigRuntimeException.HandleUncaughtException(cre, closure.getEnv());
-				return new ArrayList<>();
-			}
-		}
-		BukkitMCCommandTabCompleteEvent event = new BukkitMCCommandTabCompleteEvent(sender, cmd, alias, args);
-		EventUtils.TriggerListener(Driver.TAB_COMPLETE, "tab_complete_command", event);
-		return event.getCompletions();
-	}
-	
-	@Override
-	public boolean handleCustomCommand(MCCommandSender sender, String label, String[] args) {
-		if (Commands.onCommand.containsKey(cmd.getName().toLowerCase())) {
-			Target t = Target.UNKNOWN;
-			CArray cargs = new CArray(t);
-			for (String arg : args) {
-				cargs.push(new CString(arg, t), t);
-			}
+    @Override
+    public MCPlugin getTabCompleter() {
+        // TODO see above
+        if (!(cmd instanceof PluginCommand)) {
+            return null;
+        }
+        return new BukkitMCPlugin((Plugin) ((PluginCommand) cmd).getTabCompleter());
+    }
 
-			CClosure closure = Commands.onCommand.get(cmd.getName().toLowerCase());
-			CommandHelperEnvironment cEnv = closure.getEnv().getEnv(CommandHelperEnvironment.class);
-			cEnv.SetCommandSender(sender);
-			cEnv.SetCommand("/" + label + StringUtils.Join(args, " "));
+    @Override
+    public void setExecutor(MCPlugin plugin) {
+        if (cmd instanceof PluginCommand) {
+            ((PluginCommand) cmd).setExecutor(((BukkitMCPlugin) plugin).getHandle());
+        }
+    }
 
-			try {
-				closure.execute(new CString(label, t), new CString(sender.getName(), t), cargs,
-						new CArray(t) // reserved for an obgen style command array
-				);
-			} catch (FunctionReturnException e) {
-				Construct fret = e.getReturn();
-				if (fret instanceof CBoolean) {
-					return ((CBoolean) fret).getBoolean();
-				}
-			} catch (ConfigRuntimeException cre) {
-				cre.setEnv(closure.getEnv());
-				ConfigRuntimeException.HandleUncaughtException(cre, closure.getEnv());
-			}
-			return true;
-		} else {
-			return false;
-		}
-	}
+    @Override
+    public void setTabCompleter(MCPlugin plugin) {
+        if (cmd instanceof PluginCommand) {
+            ((PluginCommand) cmd).setTabCompleter(((BukkitMCPlugin) plugin).getHandle());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return cmd.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return cmd.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+        return cmd.toString();
+    }
+
+    // I may be able to move these to c.l.c.f.Commands.java
+    @Override
+    public List<String> handleTabComplete(MCCommandSender sender, String alias, String[] args) {
+        if (Commands.onTabComplete.containsKey(cmd.getName().toLowerCase())) {
+            Target t = Target.UNKNOWN;
+            CArray cargs = new CArray(t);
+            for (String arg : args) {
+                cargs.push(new CString(arg, t), t);
+            }
+            CClosure closure = Commands.onTabComplete.get(cmd.getName().toLowerCase());
+            try {
+                closure.execute(new CString(alias, t), new CString(sender.getName(), t), cargs,
+                        new CArray(t) // reserved for an obgen style command array
+                );
+            } catch (FunctionReturnException e) {
+                Construct fret = e.getReturn();
+                if (fret instanceof CArray) {
+                    List<String> ret = new ArrayList<String>();
+                    if (((CArray) fret).inAssociativeMode()) {
+                        for (Construct key : ((CArray) fret).keySet()) {
+                            ret.add(((CArray) fret).get(key, Target.UNKNOWN).val());
+                        }
+                    } else {
+                        for (Construct value : ((CArray) fret).asList()) {
+                            ret.add(value.val());
+                        }
+                    }
+                    return ret;
+                }
+            } catch (ConfigRuntimeException cre) {
+                ConfigRuntimeException.HandleUncaughtException(cre, closure.getEnv());
+                return new ArrayList<>();
+            }
+        }
+        BukkitMCCommandTabCompleteEvent event = new BukkitMCCommandTabCompleteEvent(sender, cmd, alias, args);
+        EventUtils.TriggerListener(Driver.TAB_COMPLETE, "tab_complete_command", event);
+        return event.getCompletions();
+    }
+
+    @Override
+    public boolean handleCustomCommand(MCCommandSender sender, String label, String[] args) {
+        if (Commands.onCommand.containsKey(cmd.getName().toLowerCase())) {
+            Target t = Target.UNKNOWN;
+            CArray cargs = new CArray(t);
+            for (String arg : args) {
+                cargs.push(new CString(arg, t), t);
+            }
+
+            CClosure closure = Commands.onCommand.get(cmd.getName().toLowerCase());
+            CommandHelperEnvironment cEnv = closure.getEnv().getEnv(CommandHelperEnvironment.class);
+            cEnv.SetCommandSender(sender);
+            cEnv.SetCommand("/" + label + StringUtils.Join(args, " "));
+
+            try {
+                closure.execute(new CString(label, t), new CString(sender.getName(), t), cargs,
+                        new CArray(t) // reserved for an obgen style command array
+                );
+            } catch (FunctionReturnException e) {
+                Construct fret = e.getReturn();
+                if (fret instanceof CBoolean) {
+                    return ((CBoolean) fret).getBoolean();
+                }
+            } catch (ConfigRuntimeException cre) {
+                cre.setEnv(closure.getEnv());
+                ConfigRuntimeException.HandleUncaughtException(cre, closure.getEnv());
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

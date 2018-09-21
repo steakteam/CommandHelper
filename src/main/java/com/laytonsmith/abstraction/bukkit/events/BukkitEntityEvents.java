@@ -17,7 +17,6 @@ import com.laytonsmith.abstraction.bukkit.BukkitConvertor;
 import com.laytonsmith.abstraction.bukkit.BukkitMCItemStack;
 import com.laytonsmith.abstraction.bukkit.BukkitMCLocation;
 import com.laytonsmith.abstraction.bukkit.BukkitMCTravelAgent;
-import com.laytonsmith.abstraction.bukkit.BukkitMCWorld;
 import com.laytonsmith.abstraction.bukkit.blocks.BukkitMCBlock;
 import com.laytonsmith.abstraction.bukkit.blocks.BukkitMCMaterial;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCEntity;
@@ -68,7 +67,6 @@ import com.laytonsmith.abstraction.events.MCProjectileHitEvent;
 import com.laytonsmith.abstraction.events.MCProjectileLaunchEvent;
 import com.laytonsmith.annotations.abstraction;
 import org.bukkit.Location;
-import org.bukkit.TravelAgent;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -86,8 +84,6 @@ import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityToggleGlideEvent;
-import org.bukkit.event.entity.FireworkExplodeEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
@@ -109,510 +105,510 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
  * @author EntityReborn
  */
 public class BukkitEntityEvents {
 
-	public static class BukkitMCItemDespawnEvent implements MCItemDespawnEvent {
+    public static class BukkitMCItemDespawnEvent implements MCItemDespawnEvent {
 
-		ItemDespawnEvent ide;
+        ItemDespawnEvent ide;
 
-		public BukkitMCItemDespawnEvent(Event event) {
-			ide = (ItemDespawnEvent) event;
-		}
+        public BukkitMCItemDespawnEvent(Event event) {
+            ide = (ItemDespawnEvent) event;
+        }
 
-		@Override
-		public Object _GetObject() {
-			return ide;
-		}
+        @Override
+        public Object _GetObject() {
+            return ide;
+        }
 
-		@Override
-		public MCItem getEntity() {
-			return new BukkitMCItem(ide.getEntity());
-		}
+        @Override
+        public MCItem getEntity() {
+            return new BukkitMCItem(ide.getEntity());
+        }
 
-		@Override
-		public MCLocation getLocation() {
-			return new BukkitMCLocation(ide.getLocation());
-		}
-	}
-	
-	public static class BukkitMCItemSpawnEvent implements MCItemSpawnEvent {
+        @Override
+        public MCLocation getLocation() {
+            return new BukkitMCLocation(ide.getLocation());
+        }
+    }
 
-		ItemSpawnEvent ise;
+    public static class BukkitMCItemSpawnEvent implements MCItemSpawnEvent {
 
-		public BukkitMCItemSpawnEvent(Event event) {
-			ise = (ItemSpawnEvent) event;
-		}
-		
-		@Override
-		public Object _GetObject() {
-			return ise;
-		}
+        ItemSpawnEvent ise;
 
-		@Override
-		public MCItem getEntity() {
-			return new BukkitMCItem(ise.getEntity());
-		}
+        public BukkitMCItemSpawnEvent(Event event) {
+            ise = (ItemSpawnEvent) event;
+        }
 
-		@Override
-		public MCLocation getLocation() {
-			return new BukkitMCLocation(ise.getLocation());
-		}
-	}
-	
-	public static class BukkitMCEntityExplodeEvent implements MCEntityExplodeEvent {
+        @Override
+        public Object _GetObject() {
+            return ise;
+        }
 
-		EntityExplodeEvent e;
+        @Override
+        public MCItem getEntity() {
+            return new BukkitMCItem(ise.getEntity());
+        }
 
-		public BukkitMCEntityExplodeEvent(Event event) {
-			e = (EntityExplodeEvent) event;
-		}
-		
-		@Override
-		public Object _GetObject() {
-			return e;
-		}
+        @Override
+        public MCLocation getLocation() {
+            return new BukkitMCLocation(ise.getLocation());
+        }
+    }
 
-		@Override
-		public MCEntity getEntity() {
-			if (e.getEntity() != null) {
-				return BukkitConvertor.BukkitGetCorrectEntity(e.getEntity());
-			}
-			return null;
-		}
+    public static class BukkitMCEntityExplodeEvent implements MCEntityExplodeEvent {
 
-		@Override
-		public List<MCBlock> getBlocks() {
-			List<MCBlock> ret = new ArrayList<MCBlock>();
-			for (Block b : e.blockList()) {
-				ret.add(new BukkitMCBlock(b));
-			}
-			return ret;
-		}
-		
-		@Override
-		public void setBlocks(List<MCBlock> blocks) {
-			e.blockList().clear();
-			for (MCBlock b : blocks) {
-				e.blockList().add(((BukkitMCBlock) b).__Block());
-			}
-		}
+        EntityExplodeEvent e;
 
-		@Override
-		public MCLocation getLocation() {
-			return new BukkitMCLocation(e.getLocation());
-		}
+        public BukkitMCEntityExplodeEvent(Event event) {
+            e = (EntityExplodeEvent) event;
+        }
 
-		@Override
-		public float getYield() {
-			return e.getYield();
-		}
+        @Override
+        public Object _GetObject() {
+            return e;
+        }
 
-		@Override
-		public void setYield(float power) {
-			e.setYield(power);
-		}
-	}
+        @Override
+        public MCEntity getEntity() {
+            if (e.getEntity() != null) {
+                return BukkitConvertor.BukkitGetCorrectEntity(e.getEntity());
+            }
+            return null;
+        }
 
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCProjectileHitEvent implements MCProjectileHitEvent {
-		
-		ProjectileHitEvent phe;
+        @Override
+        public List<MCBlock> getBlocks() {
+            List<MCBlock> ret = new ArrayList<MCBlock>();
+            for (Block b : e.blockList()) {
+                ret.add(new BukkitMCBlock(b));
+            }
+            return ret;
+        }
 
-		public BukkitMCProjectileHitEvent(Event event) {
-			phe = (ProjectileHitEvent) event;
-		}
+        @Override
+        public void setBlocks(List<MCBlock> blocks) {
+            e.blockList().clear();
+            for (MCBlock b : blocks) {
+                e.blockList().add(((BukkitMCBlock) b).__Block());
+            }
+        }
 
-		@Override
-		public Object _GetObject() {
-			return phe;
-		}
-		
-		@Override
-		public MCProjectile getEntity() {
-			return new BukkitMCProjectile(phe.getEntity());
-		}
+        @Override
+        public MCLocation getLocation() {
+            return new BukkitMCLocation(e.getLocation());
+        }
 
-		@Override
-		public MCEntityType getEntityType() {
-			return BukkitMCEntityType.valueOfConcrete(phe.getEntityType());
-		}
-		
-		public static BukkitMCProjectileHitEvent _instantiate(MCProjectile p) {
-			return new BukkitMCProjectileHitEvent(
-					new ProjectileHitEvent(
-							((BukkitMCProjectile) p).asProjectile()));
-		}
-		
-	}
+        @Override
+        public float getYield() {
+            return e.getYield();
+        }
 
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCProjectileLaunchEvent implements MCProjectileLaunchEvent {
+        @Override
+        public void setYield(float power) {
+            e.setYield(power);
+        }
+    }
 
-		ProjectileLaunchEvent ple;
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCProjectileHitEvent implements MCProjectileHitEvent {
 
-		public BukkitMCProjectileLaunchEvent(Event event) {
-			ple = (ProjectileLaunchEvent) event;
-		}
+        ProjectileHitEvent phe;
 
-		@Override
-		public Object _GetObject() {
-			return ple;
-		}
+        public BukkitMCProjectileHitEvent(Event event) {
+            phe = (ProjectileHitEvent) event;
+        }
 
-		@Override
-		public MCProjectile getEntity() {
-			return (MCProjectile) BukkitConvertor.BukkitGetCorrectEntity(ple.getEntity());
-		}
+        @Override
+        public Object _GetObject() {
+            return phe;
+        }
 
-		@Override
-		public MCEntityType getEntityType() {
-			return BukkitMCEntityType.valueOfConcrete(ple.getEntityType());
-		}
-	}
+        @Override
+        public MCProjectile getEntity() {
+            return new BukkitMCProjectile(phe.getEntity());
+        }
 
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCPotionSplashEvent extends BukkitMCProjectileHitEvent
-			implements MCPotionSplashEvent {
-		
-		PotionSplashEvent pse;
+        @Override
+        public MCEntityType getEntityType() {
+            return BukkitMCEntityType.valueOfConcrete(phe.getEntityType());
+        }
 
-		public BukkitMCPotionSplashEvent(Event event) {
-			super(event);
-			pse = (PotionSplashEvent) event;
-		}
+        public static BukkitMCProjectileHitEvent _instantiate(MCProjectile p) {
+            return new BukkitMCProjectileHitEvent(
+                    new ProjectileHitEvent(
+                            ((BukkitMCProjectile) p).asProjectile()));
+        }
 
-		@Override
-		public Object _GetObject() {
-			return pse;
-		}
+    }
 
-		@Override
-		public Set<MCLivingEntity> getAffectedEntities() {
-			Set<MCLivingEntity> ret = new HashSet<MCLivingEntity>();
-			for (LivingEntity le : pse.getAffectedEntities()) {
-				ret.add((MCLivingEntity) BukkitConvertor.BukkitGetCorrectEntity(le));
-			}
-			return ret;
-		}
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCProjectileLaunchEvent implements MCProjectileLaunchEvent {
 
-		@Override
-		public double getIntensity(MCLivingEntity le) {
-			return pse.getIntensity(((BukkitMCLivingEntity) le).asLivingEntity());
-		}
+        ProjectileLaunchEvent ple;
 
-		@Override
-		public void setIntensity(MCLivingEntity le, double intensity) {
-			pse.setIntensity(((BukkitMCLivingEntity) le).asLivingEntity(), intensity);
-		}
-		
-	}
-	
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCEntityDeathEvent implements MCEntityDeathEvent {
+        public BukkitMCProjectileLaunchEvent(Event event) {
+            ple = (ProjectileLaunchEvent) event;
+        }
 
-		EntityDeathEvent e;
+        @Override
+        public Object _GetObject() {
+            return ple;
+        }
 
-		public BukkitMCEntityDeathEvent(Event e) {
-			this.e = (EntityDeathEvent) e;
-		}
+        @Override
+        public MCProjectile getEntity() {
+            return (MCProjectile) BukkitConvertor.BukkitGetCorrectEntity(ple.getEntity());
+        }
 
-		@Override
-		public Object _GetObject() {
-			return e;
-		}
+        @Override
+        public MCEntityType getEntityType() {
+            return BukkitMCEntityType.valueOfConcrete(ple.getEntityType());
+        }
+    }
 
-		@Override
-		public int getDroppedExp() {
-			return e.getDroppedExp();
-		}
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCPotionSplashEvent extends BukkitMCProjectileHitEvent
+            implements MCPotionSplashEvent {
 
-		@Override
-		public List<MCItemStack> getDrops() {
+        PotionSplashEvent pse;
+
+        public BukkitMCPotionSplashEvent(Event event) {
+            super(event);
+            pse = (PotionSplashEvent) event;
+        }
+
+        @Override
+        public Object _GetObject() {
+            return pse;
+        }
+
+        @Override
+        public Set<MCLivingEntity> getAffectedEntities() {
+            Set<MCLivingEntity> ret = new HashSet<MCLivingEntity>();
+            for (LivingEntity le : pse.getAffectedEntities()) {
+                ret.add((MCLivingEntity) BukkitConvertor.BukkitGetCorrectEntity(le));
+            }
+            return ret;
+        }
+
+        @Override
+        public double getIntensity(MCLivingEntity le) {
+            return pse.getIntensity(((BukkitMCLivingEntity) le).asLivingEntity());
+        }
+
+        @Override
+        public void setIntensity(MCLivingEntity le, double intensity) {
+            pse.setIntensity(((BukkitMCLivingEntity) le).asLivingEntity(), intensity);
+        }
+
+    }
+
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCEntityDeathEvent implements MCEntityDeathEvent {
+
+        EntityDeathEvent e;
+
+        public BukkitMCEntityDeathEvent(Event e) {
+            this.e = (EntityDeathEvent) e;
+        }
+
+        @Override
+        public Object _GetObject() {
+            return e;
+        }
+
+        @Override
+        public int getDroppedExp() {
+            return e.getDroppedExp();
+        }
+
+        @Override
+        public List<MCItemStack> getDrops() {
             List<ItemStack> islist = e.getDrops();
             List<MCItemStack> drops = new ArrayList<MCItemStack>();
-			
-            for(ItemStack is : islist){
+
+            for (ItemStack is : islist) {
                 drops.add(new BukkitMCItemStack(is));
             }
-			
+
             return drops;
         }
-		
-		@Override
+
+        @Override
         public void clearDrops() {
             e.getDrops().clear();
         }
-		
-		@Override
-        public void addDrop(MCItemStack is){
-            e.getDrops().add(((BukkitMCItemStack)is).__ItemStack());
+
+        @Override
+        public void addDrop(MCItemStack is) {
+            e.getDrops().add(((BukkitMCItemStack) is).__ItemStack());
         }
 
-		@Override
-		public MCLivingEntity getEntity() {
-			return new BukkitMCLivingEntity(e.getEntity());
-		}
+        @Override
+        public MCLivingEntity getEntity() {
+            return new BukkitMCLivingEntity(e.getEntity());
+        }
 
-		@Override
-		public void setDroppedExp(int exp) {
-			e.setDroppedExp(exp);
-		}
-		
-	}
-	
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCCreatureSpawnEvent implements MCCreatureSpawnEvent {
+        @Override
+        public void setDroppedExp(int exp) {
+            e.setDroppedExp(exp);
+        }
 
-		CreatureSpawnEvent e;
+    }
 
-		public BukkitMCCreatureSpawnEvent(Event event) {
-			this.e = ((CreatureSpawnEvent) event);
-		}
-		
-		@Override
-		public Object _GetObject() {
-			return e;
-		}
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCCreatureSpawnEvent implements MCCreatureSpawnEvent {
 
-		@Override
-		public MCLivingEntity getEntity() {
-			return (MCLivingEntity) BukkitConvertor.BukkitGetCorrectEntity(e.getEntity());
-		}
+        CreatureSpawnEvent e;
 
-		@Override
-		public MCLocation getLocation() {
-			return new BukkitMCLocation(e.getLocation());
-		}
+        public BukkitMCCreatureSpawnEvent(Event event) {
+            this.e = ((CreatureSpawnEvent) event);
+        }
 
-		@Override
-		public MCSpawnReason getSpawnReason() {
-			return BukkitMCSpawnReason.getConvertor().getAbstractedEnum(e.getSpawnReason());
-		}
-		
-		@Override
-		public void setType(MCMobs type) {
-			e.setCancelled(true);
-			e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.valueOf(type.name()));
-		}
-		
-	}
+        @Override
+        public Object _GetObject() {
+            return e;
+        }
 
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCPlayerInteractEntityEvent implements MCPlayerInteractEntityEvent {
+        @Override
+        public MCLivingEntity getEntity() {
+            return (MCLivingEntity) BukkitConvertor.BukkitGetCorrectEntity(e.getEntity());
+        }
 
-		PlayerInteractEntityEvent e;
+        @Override
+        public MCLocation getLocation() {
+            return new BukkitMCLocation(e.getLocation());
+        }
 
-		public BukkitMCPlayerInteractEntityEvent(Event event) {
-			this.e = (PlayerInteractEntityEvent) event;
-		}
+        @Override
+        public MCSpawnReason getSpawnReason() {
+            return BukkitMCSpawnReason.getConvertor().getAbstractedEnum(e.getSpawnReason());
+        }
 
-		@Override
-		public Object _GetObject() {
-			return e;
-		}
+        @Override
+        public void setType(MCMobs type) {
+            e.setCancelled(true);
+            e.getLocation().getWorld().spawnEntity(e.getLocation(), EntityType.valueOf(type.name()));
+        }
 
-		@Override
-		public MCEntity getEntity() {
-			return BukkitConvertor.BukkitGetCorrectEntity(e.getRightClicked());
-		}
+    }
 
-		@Override
-		public boolean isCancelled() {
-			return e.isCancelled();
-		}
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCPlayerInteractEntityEvent implements MCPlayerInteractEntityEvent {
 
-		@Override
-		public void setCancelled(boolean cancelled) {
-			e.setCancelled(cancelled);
-		}
+        PlayerInteractEntityEvent e;
 
-		@Override
-		public MCPlayer getPlayer() {
-			return new BukkitMCPlayer(e.getPlayer());
-		}
+        public BukkitMCPlayerInteractEntityEvent(Event event) {
+            this.e = (PlayerInteractEntityEvent) event;
+        }
 
-		@Override
-		public MCEquipmentSlot getHand() {
-			try {
-				if(e.getHand() == EquipmentSlot.HAND) {
-					return MCEquipmentSlot.WEAPON;
-				}
-				return MCEquipmentSlot.OFF_HAND;
-			} catch(NoSuchMethodError e) {
-				// before Bukkit 1.9
-				return MCEquipmentSlot.WEAPON;
-			}
-		}
-	}
-	
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCPlayerInteractAtEntityEvent extends BukkitMCPlayerInteractEntityEvent implements MCPlayerInteractAtEntityEvent {
+        @Override
+        public Object _GetObject() {
+            return e;
+        }
 
-		PlayerInteractAtEntityEvent e;
+        @Override
+        public MCEntity getEntity() {
+            return BukkitConvertor.BukkitGetCorrectEntity(e.getRightClicked());
+        }
 
-		public BukkitMCPlayerInteractAtEntityEvent(Event event) {
-			super(event);
-			this.e = (PlayerInteractAtEntityEvent) event;
-		}
+        @Override
+        public boolean isCancelled() {
+            return e.isCancelled();
+        }
 
-		@Override
-		public Vector3D getClickedPosition() {
-			Vector v = e.getClickedPosition();
-			return new Vector3D(v.getX(), v.getY(), v.getZ());
-		}
-	}
-	
+        @Override
+        public void setCancelled(boolean cancelled) {
+            e.setCancelled(cancelled);
+        }
+
+        @Override
+        public MCPlayer getPlayer() {
+            return new BukkitMCPlayer(e.getPlayer());
+        }
+
+        @Override
+        public MCEquipmentSlot getHand() {
+            try {
+                if (e.getHand() == EquipmentSlot.HAND) {
+                    return MCEquipmentSlot.WEAPON;
+                }
+                return MCEquipmentSlot.OFF_HAND;
+            } catch (NoSuchMethodError e) {
+                // before Bukkit 1.9
+                return MCEquipmentSlot.WEAPON;
+            }
+        }
+    }
+
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCPlayerInteractAtEntityEvent extends BukkitMCPlayerInteractEntityEvent implements MCPlayerInteractAtEntityEvent {
+
+        PlayerInteractAtEntityEvent e;
+
+        public BukkitMCPlayerInteractAtEntityEvent(Event event) {
+            super(event);
+            this.e = (PlayerInteractAtEntityEvent) event;
+        }
+
+        @Override
+        public Vector3D getClickedPosition() {
+            Vector v = e.getClickedPosition();
+            return new Vector3D(v.getX(), v.getY(), v.getZ());
+        }
+    }
+
     @abstraction(type = Implementation.Type.BUKKIT)
     public static class BukkitMCPlayerDropItemEvent implements MCPlayerDropItemEvent {
         PlayerDropItemEvent e;
 
-		public BukkitMCPlayerDropItemEvent(Event e) {
-			this.e = (PlayerDropItemEvent) e;
-		}
-        
-		@Override
+        public BukkitMCPlayerDropItemEvent(Event e) {
+            this.e = (PlayerDropItemEvent) e;
+        }
+
+        @Override
         public MCItem getItemDrop() {
             return new BukkitMCItem(e.getItemDrop());
         }
-        
-		@Override
+
+        @Override
         public void setItemStack(MCItemStack stack) {
             BukkitMCItemStack s = (BukkitMCItemStack) stack;
-            if(s.getTypeId() == 0) {
+            if (s.getTypeId() == 0) {
                 e.getItemDrop().remove();
             } else {
                 e.getItemDrop().setItemStack(s.__ItemStack());
             }
         }
-        
-		@Override
+
+        @Override
         public boolean isCancelled() {
             return e.isCancelled();
         }
-        
-		@Override
+
+        @Override
         public void setCancelled(boolean cancelled) {
             e.setCancelled(cancelled);
         }
-        
-		@Override
+
+        @Override
         public MCPlayer getPlayer() {
             return new BukkitMCPlayer(e.getPlayer());
         }
-        
-		@Override
+
+        @Override
         public Object _GetObject() {
             return e;
         }
     }
-    
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCPlayerPickupItemEvent implements MCPlayerPickupItemEvent {
-		PlayerPickupItemEvent e;
 
-		public BukkitMCPlayerPickupItemEvent(Event e) {
-			this.e = (PlayerPickupItemEvent) e;
-		}
-		@Override
-		public int getRemaining() {
-			return e.getRemaining();
-		}
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCPlayerPickupItemEvent implements MCPlayerPickupItemEvent {
+        PlayerPickupItemEvent e;
 
-		@Override
-		public MCItem getItem() {
-			return new BukkitMCItem(e.getItem());
-		}
+        public BukkitMCPlayerPickupItemEvent(Event e) {
+            this.e = (PlayerPickupItemEvent) e;
+        }
 
-		@Override
-		public void setItemStack(MCItemStack stack) {
-			BukkitMCItemStack s = (BukkitMCItemStack)stack;
-				e.setCancelled(true);
-				e.getItem().remove();
-			if(s.getTypeId() == 0) {
-				return;
-			} else {
-				e.getPlayer().getInventory().addItem(s.asItemStack());
-				//and for added realism :)
-				e.getPlayer().getWorld().playSound(e.getItem().getLocation(),
-						((BukkitMCSound) MCSound.valueOf("ITEM_PICKUP")).getConcrete(), 1, 2);
-			}
-		}
+        @Override
+        public int getRemaining() {
+            return e.getRemaining();
+        }
 
-		@Override
-		public boolean isCancelled() {
-			return e.isCancelled();
-		}
+        @Override
+        public MCItem getItem() {
+            return new BukkitMCItem(e.getItem());
+        }
 
-		@Override
-		public void setCancelled(boolean cancelled) {
-			e.setCancelled(cancelled);
-		}
+        @Override
+        public void setItemStack(MCItemStack stack) {
+            BukkitMCItemStack s = (BukkitMCItemStack) stack;
+            e.setCancelled(true);
+            e.getItem().remove();
+            if (s.getTypeId() == 0) {
+                return;
+            } else {
+                e.getPlayer().getInventory().addItem(s.asItemStack());
+                //and for added realism :)
+                e.getPlayer().getWorld().playSound(e.getItem().getLocation(),
+                        ((BukkitMCSound) MCSound.valueOf("ITEM_PICKUP")).getConcrete(), 1, 2);
+            }
+        }
 
-		@Override
-		public MCPlayer getPlayer() {
-			return new BukkitMCPlayer(e.getPlayer());
-		}
+        @Override
+        public boolean isCancelled() {
+            return e.isCancelled();
+        }
 
-		@Override
-		public Object _GetObject() {
-			return e;
-		}
-	}
-	
-	@abstraction(type = Implementation.Type.BUKKIT)
+        @Override
+        public void setCancelled(boolean cancelled) {
+            e.setCancelled(cancelled);
+        }
+
+        @Override
+        public MCPlayer getPlayer() {
+            return new BukkitMCPlayer(e.getPlayer());
+        }
+
+        @Override
+        public Object _GetObject() {
+            return e;
+        }
+    }
+
+    @abstraction(type = Implementation.Type.BUKKIT)
     public static class BukkitMCEntityDamageEvent implements MCEntityDamageEvent {
 
         EntityDamageEvent event;
 
-		public BukkitMCEntityDamageEvent(Event e) {
-			event = (EntityDamageEvent) e;
-		}
+        public BukkitMCEntityDamageEvent(Event e) {
+            event = (EntityDamageEvent) e;
+        }
 
-		@Override
+        @Override
         public Object _GetObject() {
             return event;
         }
 
-		@Override
+        @Override
         public MCDamageCause getCause() {
             return BukkitMCDamageCause.getConvertor().getAbstractedEnum(event.getCause());
         }
 
-		@Override
+        @Override
         public MCEntity getEntity() {
             return BukkitConvertor.BukkitGetCorrectEntity(event.getEntity());
         }
 
-		@Override
-		public double getFinalDamage() {
-			return event.getFinalDamage();
-		}
+        @Override
+        public double getFinalDamage() {
+            return event.getFinalDamage();
+        }
 
-		@Override
+        @Override
         public double getDamage() {
             return event.getDamage();
         }
 
-		@Override
+        @Override
         public void setDamage(double damage) {
             event.setDamage(damage);
         }
     }
 
-	@abstraction(type = Implementation.Type.BUKKIT)
+    @abstraction(type = Implementation.Type.BUKKIT)
     public static class BukkitMCEntityDamageByEntityEvent extends BukkitMCEntityDamageEvent implements MCEntityDamageByEntityEvent {
 
         EntityDamageByEntityEvent event;
 
-		public BukkitMCEntityDamageByEntityEvent(Event e) {
-			super(e);
-			event = (EntityDamageByEntityEvent) e;
-		}
+        public BukkitMCEntityDamageByEntityEvent(Event e) {
+            super(e);
+            event = (EntityDamageByEntityEvent) e;
+        }
 
-		@Override
+        @Override
         public MCEntity getDamager() {
             return BukkitConvertor.BukkitGetCorrectEntity(event.getDamager());
         }
@@ -623,327 +619,327 @@ public class BukkitEntityEvents {
 
         EntityTargetEvent pie;
 
-		public BukkitMCTargetEvent(Event e) {
-			pie = (EntityTargetEvent) e;
-		}
-
-        public static BukkitMCTargetEvent _instantiate(Entity entity, LivingEntity target, EntityTargetEvent.TargetReason reason) {
-            return new BukkitMCTargetEvent(new EntityTargetEvent(( (BukkitMCEntity) entity ).getHandle(),
-                    (LivingEntity) ( (BukkitMCLivingEntity) target ).getLivingEntity(), reason));
+        public BukkitMCTargetEvent(Event e) {
+            pie = (EntityTargetEvent) e;
         }
 
-		@Override
+        public static BukkitMCTargetEvent _instantiate(Entity entity, LivingEntity target, EntityTargetEvent.TargetReason reason) {
+            return new BukkitMCTargetEvent(new EntityTargetEvent(((BukkitMCEntity) entity).getHandle(),
+                    (LivingEntity) ((BukkitMCLivingEntity) target).getLivingEntity(), reason));
+        }
+
+        @Override
         public Object _GetObject() {
             return pie;
         }
 
-		@Override
+        @Override
         public MCEntity getTarget() {
             return BukkitConvertor.BukkitGetCorrectEntity(pie.getTarget());
         }
 
-		@Override
+        @Override
         public void setTarget(MCEntity target) {
-        	if (target == null) {
-        		pie.setTarget(null);
-        	} else {
-        		pie.setTarget(((BukkitMCEntity)target).getHandle());
-        	}
+            if (target == null) {
+                pie.setTarget(null);
+            } else {
+                pie.setTarget(((BukkitMCEntity) target).getHandle());
+            }
         }
 
-		@Override
+        @Override
         public MCEntity getEntity() {
             return BukkitConvertor.BukkitGetCorrectEntity(pie.getEntity());
         }
 
-		@Override
+        @Override
         public MCEntityType getEntityType() {
             return BukkitConvertor.BukkitGetCorrectEntity(pie.getEntity()).getType();
         }
 
-		@Override
+        @Override
         public MCTargetReason getReason() {
             return MCTargetReason.valueOf(pie.getReason().name());
         }
     }
 
-	public static class BukkitMCEntityEnterPortalEvent implements MCEntityEnterPortalEvent {
-	
-		EntityPortalEnterEvent epe;
+    public static class BukkitMCEntityEnterPortalEvent implements MCEntityEnterPortalEvent {
 
-		public BukkitMCEntityEnterPortalEvent(Event event) {
-			epe = (EntityPortalEnterEvent) event;
-		}
-		
-		@Override
-		public Object _GetObject() {
-			return epe;
-		}
-	
-		@Override
-		public MCEntity getEntity() {
-			return new BukkitMCEntity(epe.getEntity());
-		}
-	
-		@Override
-		public MCLocation getLocation() {
-			return new BukkitMCLocation(epe.getLocation());
-		}
-	}
+        EntityPortalEnterEvent epe;
 
-	public static class BukkitMCEntityChangeBlockEvent implements MCEntityChangeBlockEvent {
+        public BukkitMCEntityEnterPortalEvent(Event event) {
+            epe = (EntityPortalEnterEvent) event;
+        }
 
-		EntityChangeBlockEvent ecb;
+        @Override
+        public Object _GetObject() {
+            return epe;
+        }
 
-		public BukkitMCEntityChangeBlockEvent(Event event) {
-			ecb = (EntityChangeBlockEvent) event;
-		}
+        @Override
+        public MCEntity getEntity() {
+            return new BukkitMCEntity(epe.getEntity());
+        }
 
-		@Override
-		public MCEntity getEntity() {
-			return new BukkitMCEntity(ecb.getEntity());
-		}
+        @Override
+        public MCLocation getLocation() {
+            return new BukkitMCLocation(epe.getLocation());
+        }
+    }
 
-		@Override
-		public MCBlock getBlock() {
-			return new BukkitMCBlock(ecb.getBlock());
-		}
+    public static class BukkitMCEntityChangeBlockEvent implements MCEntityChangeBlockEvent {
 
-		@Override
-		public MCMaterial getTo() {
-			return new BukkitMCMaterial(ecb.getTo());
-		}
+        EntityChangeBlockEvent ecb;
 
-		@Override
-		public byte getData() {
-			return ecb.getData();
-		}
+        public BukkitMCEntityChangeBlockEvent(Event event) {
+            ecb = (EntityChangeBlockEvent) event;
+        }
 
-		@Override
-		public boolean isCancelled() {
-			return ecb.isCancelled();
-		}
+        @Override
+        public MCEntity getEntity() {
+            return new BukkitMCEntity(ecb.getEntity());
+        }
 
-		@Override
-		public void setCancelled(boolean cancelled) {
-			ecb.setCancelled(cancelled);
-		}
+        @Override
+        public MCBlock getBlock() {
+            return new BukkitMCBlock(ecb.getBlock());
+        }
 
-		@Override
-		public Object _GetObject() {
-			return ecb;
-		}
-	}
+        @Override
+        public MCMaterial getTo() {
+            return new BukkitMCMaterial(ecb.getTo());
+        }
 
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCEntityInteractEvent implements MCEntityInteractEvent {
+        @Override
+        public byte getData() {
+            return ecb.getData();
+        }
 
-		EntityInteractEvent eie;
+        @Override
+        public boolean isCancelled() {
+            return ecb.isCancelled();
+        }
 
-		public BukkitMCEntityInteractEvent(Event event) {
-			eie = (EntityInteractEvent) event;
-		}
+        @Override
+        public void setCancelled(boolean cancelled) {
+            ecb.setCancelled(cancelled);
+        }
 
-		@Override
-		public Object _GetObject() {
-			return eie;
-		}
+        @Override
+        public Object _GetObject() {
+            return ecb;
+        }
+    }
 
-		@Override
-		public MCEntity getEntity() {
-			return BukkitConvertor.BukkitGetCorrectEntity(eie.getEntity());
-		}
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCEntityInteractEvent implements MCEntityInteractEvent {
 
-		@Override
-		public MCBlock getBlock() {
-			return new BukkitMCBlock(eie.getBlock());
-		}
+        EntityInteractEvent eie;
 
-		@Override
-		public boolean isCancelled() {
-			return eie.isCancelled();
-		}
+        public BukkitMCEntityInteractEvent(Event event) {
+            eie = (EntityInteractEvent) event;
+        }
 
-		@Override
-		public void setCancelled(boolean cancelled) {
-			eie.setCancelled(cancelled);
-		}
-	}
+        @Override
+        public Object _GetObject() {
+            return eie;
+        }
 
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCHangingBreakEvent implements MCHangingBreakEvent {
+        @Override
+        public MCEntity getEntity() {
+            return BukkitConvertor.BukkitGetCorrectEntity(eie.getEntity());
+        }
 
-		HangingBreakEvent hbe;
+        @Override
+        public MCBlock getBlock() {
+            return new BukkitMCBlock(eie.getBlock());
+        }
 
-		public BukkitMCHangingBreakEvent(Event event) {
-			hbe = (HangingBreakEvent) event;
-		}
+        @Override
+        public boolean isCancelled() {
+            return eie.isCancelled();
+        }
 
-		@Override
-		public Object _GetObject() {
-			return hbe;
-		}
+        @Override
+        public void setCancelled(boolean cancelled) {
+            eie.setCancelled(cancelled);
+        }
+    }
 
-		@Override
-		public MCHanging getEntity() {
-			return new BukkitMCHanging(hbe.getEntity());
-		}
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCHangingBreakEvent implements MCHangingBreakEvent {
 
-		@Override
-		public MCRemoveCause getCause() {
-			return BukkitMCRemoveCause.getConvertor().getAbstractedEnum(hbe.getCause());
-		}
+        HangingBreakEvent hbe;
 
-		@Override
-		public MCEntity getRemover() {
-			if (hbe instanceof HangingBreakByEntityEvent) {
-				return BukkitConvertor.BukkitGetCorrectEntity(((HangingBreakByEntityEvent) hbe).getRemover());
-			} else {
-				return null;
-			}
-		}
-	}
-	
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCEntityToggleGlideEvent implements MCEntityToggleGlideEvent {
-		EntityToggleGlideEvent e;
+        public BukkitMCHangingBreakEvent(Event event) {
+            hbe = (HangingBreakEvent) event;
+        }
 
-		public BukkitMCEntityToggleGlideEvent(Event e) {
-			this.e = (EntityToggleGlideEvent) e;
-		}
+        @Override
+        public Object _GetObject() {
+            return hbe;
+        }
 
-		@Override
-		public Object _GetObject() {
-			return e;
-		}
+        @Override
+        public MCHanging getEntity() {
+            return new BukkitMCHanging(hbe.getEntity());
+        }
 
-		@Override
-		public boolean isGliding() {
-			return e.isGliding();
-		}
+        @Override
+        public MCRemoveCause getCause() {
+            return BukkitMCRemoveCause.getConvertor().getAbstractedEnum(hbe.getCause());
+        }
 
-		@Override
-		public MCEntity getEntity() {
-			return BukkitConvertor.BukkitGetCorrectEntity(e.getEntity());
-		}
+        @Override
+        public MCEntity getRemover() {
+            if (hbe instanceof HangingBreakByEntityEvent) {
+                return BukkitConvertor.BukkitGetCorrectEntity(((HangingBreakByEntityEvent) hbe).getRemover());
+            } else {
+                return null;
+            }
+        }
+    }
 
-		@Override
-		public MCEntityType getEntityType() {
-			return BukkitConvertor.BukkitGetCorrectEntity(e.getEntity()).getType();
-		}
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCEntityToggleGlideEvent implements MCEntityToggleGlideEvent {
+        EntityToggleGlideEvent e;
 
-	}
+        public BukkitMCEntityToggleGlideEvent(Event e) {
+            this.e = (EntityToggleGlideEvent) e;
+        }
 
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCFireworkExplodeEvent implements MCFireworkExplodeEvent {
-		FireworkExplodeEvent e;
+        @Override
+        public Object _GetObject() {
+            return e;
+        }
 
-		public BukkitMCFireworkExplodeEvent(Event e) {
-			this.e = (FireworkExplodeEvent) e;
-		}
+        @Override
+        public boolean isGliding() {
+            return e.isGliding();
+        }
 
-		@Override
-		public Object _GetObject() {
-			return e;
-		}
+        @Override
+        public MCEntity getEntity() {
+            return BukkitConvertor.BukkitGetCorrectEntity(e.getEntity());
+        }
 
-		@Override
-		public MCFirework getEntity() {
-			return new BukkitMCFirework(e.getEntity());
-		}
+        @Override
+        public MCEntityType getEntityType() {
+            return BukkitConvertor.BukkitGetCorrectEntity(e.getEntity()).getType();
+        }
 
-	}
+    }
 
-	@abstraction(type = Implementation.Type.BUKKIT)
-	public static class BukkitMCEntityRegainHealthEvent implements MCEntityRegainHealthEvent {
-		EntityRegainHealthEvent e;
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCFireworkExplodeEvent implements MCFireworkExplodeEvent {
+        FireworkExplodeEvent e;
 
-		public BukkitMCEntityRegainHealthEvent(Event e) {
-			this.e = (EntityRegainHealthEvent) e;
-		}
+        public BukkitMCFireworkExplodeEvent(Event e) {
+            this.e = (FireworkExplodeEvent) e;
+        }
 
-		@Override
-		public Object _GetObject() {
-			return e;
-		}
+        @Override
+        public Object _GetObject() {
+            return e;
+        }
 
-		@Override
-		public double getAmount() {
-			return e.getAmount();
-		}
+        @Override
+        public MCFirework getEntity() {
+            return new BukkitMCFirework(e.getEntity());
+        }
 
-		@Override
-		public void setAmount(double amount) {
-			e.setAmount(amount);
-		}
+    }
 
-		@Override
-		public MCEntity getEntity() {
-			return BukkitConvertor.BukkitGetCorrectEntity(e.getEntity());
-		}
+    @abstraction(type = Implementation.Type.BUKKIT)
+    public static class BukkitMCEntityRegainHealthEvent implements MCEntityRegainHealthEvent {
+        EntityRegainHealthEvent e;
 
-		@Override
-		public MCRegainReason getRegainReason() {
-			return BukkitMCRegainReason.getConvertor().getAbstractedEnum(e.getRegainReason());
-		}
-	}
+        public BukkitMCEntityRegainHealthEvent(Event e) {
+            this.e = (EntityRegainHealthEvent) e;
+        }
 
-	public static class BukkitMCEntityPortalEvent implements MCEntityPortalEvent {
+        @Override
+        public Object _GetObject() {
+            return e;
+        }
 
-		EntityPortalEvent epe;
+        @Override
+        public double getAmount() {
+            return e.getAmount();
+        }
 
-		public BukkitMCEntityPortalEvent(Event event) {
-			epe = (EntityPortalEvent) event;
-		}
+        @Override
+        public void setAmount(double amount) {
+            e.setAmount(amount);
+        }
 
-		@Override
-		public Object _GetObject() {
-			return epe;
-		}
+        @Override
+        public MCEntity getEntity() {
+            return BukkitConvertor.BukkitGetCorrectEntity(e.getEntity());
+        }
 
-		@Override
-		public MCEntity getEntity() {
-			return new BukkitMCEntity(epe.getEntity());
-		}
+        @Override
+        public MCRegainReason getRegainReason() {
+            return BukkitMCRegainReason.getConvertor().getAbstractedEnum(e.getRegainReason());
+        }
+    }
 
-		@Override
-		public void setTo(MCLocation newloc) {
-			World w = (World) newloc.getWorld().getHandle();
-			Location loc = new Location(w, newloc.getX(), newloc.getY(), newloc.getZ());
-			epe.setTo(loc);
-		}
+    public static class BukkitMCEntityPortalEvent implements MCEntityPortalEvent {
 
-		@Override
-		public MCLocation getFrom() {
-			return new BukkitMCLocation(epe.getFrom());
-		}
+        EntityPortalEvent epe;
 
-		@Override
-		public MCLocation getTo() {
-			if (epe.getTo() == null) {
-				return null;
-			}
-			return new BukkitMCLocation(epe.getTo());
-		}
+        public BukkitMCEntityPortalEvent(Event event) {
+            epe = (EntityPortalEvent) event;
+        }
 
-		@Override
-		public void setCancelled(boolean state) {
-			epe.setCancelled(state);
-		}
+        @Override
+        public Object _GetObject() {
+            return epe;
+        }
 
-		@Override
-		public boolean isCancelled() {
-			return epe.isCancelled();
-		}
+        @Override
+        public MCEntity getEntity() {
+            return new BukkitMCEntity(epe.getEntity());
+        }
 
-		@Override
-		public void useTravelAgent(boolean useTravelAgent) {
-			epe.useTravelAgent(useTravelAgent);
-		}
+        @Override
+        public void setTo(MCLocation newloc) {
+            World w = (World) newloc.getWorld().getHandle();
+            Location loc = new Location(w, newloc.getX(), newloc.getY(), newloc.getZ());
+            epe.setTo(loc);
+        }
 
-		@Override
-		public MCTravelAgent getPortalTravelAgent() {
-			return new BukkitMCTravelAgent(epe.getPortalTravelAgent());
-		}
-	}
+        @Override
+        public MCLocation getFrom() {
+            return new BukkitMCLocation(epe.getFrom());
+        }
+
+        @Override
+        public MCLocation getTo() {
+            if (epe.getTo() == null) {
+                return null;
+            }
+            return new BukkitMCLocation(epe.getTo());
+        }
+
+        @Override
+        public void setCancelled(boolean state) {
+            epe.setCancelled(state);
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return epe.isCancelled();
+        }
+
+        @Override
+        public void useTravelAgent(boolean useTravelAgent) {
+            epe.useTravelAgent(useTravelAgent);
+        }
+
+        @Override
+        public MCTravelAgent getPortalTravelAgent() {
+            return new BukkitMCTravelAgent(epe.getPortalTravelAgent());
+        }
+    }
 }

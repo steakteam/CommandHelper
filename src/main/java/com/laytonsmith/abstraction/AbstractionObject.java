@@ -7,13 +7,13 @@ package com.laytonsmith.abstraction;
  * a new concrete class for each type. Further, since supertypes can implement the getHandle method, only
  * subclasses that need to implement the false constructor have to. A template implementation is given in the
  * source below.
- * 
  */
 public interface AbstractionObject {
     /**
      * The underlying object that the abstraction object wraps. This can be used in combination with
      * instanceof MCType to determine if the wrapped type can be cast to Type.
-     * @return 
+     *
+     * @return
      */
     public Object getHandle();
 }

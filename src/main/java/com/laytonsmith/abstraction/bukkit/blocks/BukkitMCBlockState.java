@@ -10,51 +10,51 @@ import com.laytonsmith.abstraction.bukkit.BukkitMCMetadatable;
 import org.bukkit.block.BlockState;
 
 public class BukkitMCBlockState extends BukkitMCMetadatable implements MCBlockState {
-    
+
     BlockState bs;
 
     public BukkitMCBlockState(BlockState state) {
-		super(state);
+        super(state);
         this.bs = state;
     }
 
-	@Override
-	public BlockState getHandle() {
-		return bs;
-	}
+    @Override
+    public BlockState getHandle() {
+        return bs;
+    }
 
-	@Override
+    @Override
     public MCMaterialData getData() {
         return new BukkitMCMaterialData(bs.getData());
     }
 
-	@Override
-	public void setTypeId(int type) {
-		bs.setTypeId(type);
-	}
+    @Override
+    public void setTypeId(int type) {
+        bs.setTypeId(type);
+    }
 
-	@Override
-	public void setRawData(byte data) {
-		bs.setRawData(data);
-	}
+    @Override
+    public void setRawData(byte data) {
+        bs.setRawData(data);
+    }
 
-	@Override
+    @Override
     public int getTypeId() {
         return bs.getTypeId();
     }
 
-	@Override
-	public MCBlock getBlock() {
-		return new BukkitMCBlock(bs.getBlock());
-	}
+    @Override
+    public MCBlock getBlock() {
+        return new BukkitMCBlock(bs.getBlock());
+    }
 
-	@Override
-	public MCLocation getLocation() {
-		return new BukkitMCLocation(bs.getLocation());
-	}
+    @Override
+    public MCLocation getLocation() {
+        return new BukkitMCLocation(bs.getLocation());
+    }
 
-	@Override
-	public void update() {
-		bs.update();
-	}
+    @Override
+    public void update() {
+        bs.update();
+    }
 }

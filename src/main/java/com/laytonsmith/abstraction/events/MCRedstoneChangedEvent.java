@@ -7,6 +7,7 @@ import com.laytonsmith.core.events.BindableEvent;
  *
  */
 public interface MCRedstoneChangedEvent extends BindableEvent {
-	boolean isActive();
-	MCLocation getLocation();
+    boolean isActive();
+
+    MCLocation getLocation();
 }

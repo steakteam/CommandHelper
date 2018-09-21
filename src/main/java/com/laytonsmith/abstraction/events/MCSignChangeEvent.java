@@ -7,7 +7,6 @@ import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.events.BindableEvent;
 
 /**
- *
  * @author EntityReborn
  */
 public interface MCSignChangeEvent extends BindableEvent {

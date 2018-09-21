@@ -7,25 +7,25 @@ import com.laytonsmith.PureUtilities.Version;
  * not complex data.
  */
 public interface SimpleDocumentation {
-	/**
-	 * The name of this code element
-	 *
-	 * @return The name of this code element.
-	 */
-	String getName();
+    /**
+     * The name of this code element
+     *
+     * @return The name of this code element.
+     */
+    String getName();
 
-	/**
-	 * Returns documentation in a format that is specified by the code type
-	 *
-	 * @return
-	 */
-	String docs();
+    /**
+     * Returns documentation in a format that is specified by the code type
+     *
+     * @return
+     */
+    String docs();
 
-	/**
-	 * Returns the version number of when this functionality was added. It
-	 * should follow the format 0.0.0
-	 *
-	 * @return
-	 */
-	Version since();
+    /**
+     * Returns the version number of when this functionality was added. It
+     * should follow the format 0.0.0
+     *
+     * @return
+     */
+    Version since();
 }

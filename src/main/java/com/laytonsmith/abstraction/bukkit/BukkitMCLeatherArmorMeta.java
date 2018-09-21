@@ -11,28 +11,29 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 /**
  *
- * 
+ *
  */
 public class BukkitMCLeatherArmorMeta extends BukkitMCItemMeta implements MCLeatherArmorMeta {
-	LeatherArmorMeta lam;
-	public BukkitMCLeatherArmorMeta(LeatherArmorMeta im) {
-		super(im);
-		lam = im;
-	}
+    LeatherArmorMeta lam;
 
-	public BukkitMCLeatherArmorMeta(AbstractionObject o) {
-		super(o);
-		lam = (LeatherArmorMeta)o;
-	}
+    public BukkitMCLeatherArmorMeta(LeatherArmorMeta im) {
+        super(im);
+        lam = im;
+    }
 
-	@Override
-	public MCColor getColor() {
-		return BukkitMCColor.GetMCColor(lam.getColor());
-	}
+    public BukkitMCLeatherArmorMeta(AbstractionObject o) {
+        super(o);
+        lam = (LeatherArmorMeta) o;
+    }
 
-	@Override
-	public void setColor(MCColor color) {
-		lam.setColor(BukkitMCColor.GetColor(color));
-	}
-	
+    @Override
+    public MCColor getColor() {
+        return BukkitMCColor.GetMCColor(lam.getColor());
+    }
+
+    @Override
+    public void setColor(MCColor color) {
+        lam.setColor(BukkitMCColor.GetColor(color));
+    }
+
 }

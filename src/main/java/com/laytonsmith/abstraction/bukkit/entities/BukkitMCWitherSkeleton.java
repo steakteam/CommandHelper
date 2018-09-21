@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCWitherSkeleton extends BukkitMCSkeleton implements MCWitherSkeleton {
 
-	public BukkitMCWitherSkeleton(Entity skeleton) {
-		super(skeleton);
-	}
+    public BukkitMCWitherSkeleton(Entity skeleton) {
+        super(skeleton);
+    }
 
 }

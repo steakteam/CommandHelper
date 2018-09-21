@@ -9,6 +9,7 @@ import com.laytonsmith.core.events.BindableEvent;
  */
 public interface MCEntityRegainHealthEvent extends BindableEvent {
     double getAmount();
+
     void setAmount(double amount);
 
     MCEntity getEntity();

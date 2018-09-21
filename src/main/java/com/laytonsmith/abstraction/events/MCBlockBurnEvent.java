@@ -4,11 +4,10 @@ import com.laytonsmith.abstraction.blocks.MCBlock;
 import com.laytonsmith.core.events.BindableEvent;
 
 /**
- *
  * @author cgallarno
  */
 public interface MCBlockBurnEvent extends BindableEvent {
-	
-	public MCBlock getBlock();
-	
+
+    public MCBlock getBlock();
+
 }

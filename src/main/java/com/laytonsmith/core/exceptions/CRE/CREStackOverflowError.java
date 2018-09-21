@@ -16,21 +16,21 @@ public class CREStackOverflowError extends CREError {
     public static final CClassType TYPE = CClassType.get("StackOverflowError");
 
     public CREStackOverflowError(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREStackOverflowError(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "Thrown if a stack overflow error happens. This can occur if a"
-		+ " function recurses too deeply.";
+        return "Thrown if a stack overflow error happens. This can occur if a"
+                + " function recurses too deeply.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

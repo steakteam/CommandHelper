@@ -5,13 +5,13 @@ import org.bukkit.entity.EnderSignal;
 import org.bukkit.entity.Entity;
 
 public class BukkitMCEnderSignal extends BukkitMCEntity implements
-		MCEnderSignal {
+        MCEnderSignal {
 
-	EnderSignal es;
+    EnderSignal es;
 
-	public BukkitMCEnderSignal(Entity e) {
-		super(e);
-		this.es = (EnderSignal) e;
-	}
+    public BukkitMCEnderSignal(Entity e) {
+        super(e);
+        this.es = (EnderSignal) e;
+    }
 
 }

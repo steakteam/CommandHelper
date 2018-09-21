@@ -1,15 +1,14 @@
-
 package com.laytonsmith.abstraction.enums;
 
 import com.laytonsmith.annotations.MEnum;
 
 /**
  *
- * 
+ *
  */
 @MEnum("DyeColor")
 public enum MCDyeColor {
-	WHITE,
+    WHITE,
     ORANGE,
     MAGENTA,
     LIGHT_BLUE,

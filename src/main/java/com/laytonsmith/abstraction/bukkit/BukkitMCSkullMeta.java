@@ -6,30 +6,31 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 public class BukkitMCSkullMeta extends BukkitMCItemMeta implements MCSkullMeta {
 
-	SkullMeta sm;
-	public BukkitMCSkullMeta(SkullMeta im) {
-		super(im);
-		this.sm = im;
-	}
+    SkullMeta sm;
 
-	public BukkitMCSkullMeta(AbstractionObject o) {
-		super(o);
-		this.sm = (SkullMeta) o;
-	}
+    public BukkitMCSkullMeta(SkullMeta im) {
+        super(im);
+        this.sm = im;
+    }
 
-	@Override
-	public boolean hasOwner() {
-		return sm.hasOwner();
-	}
+    public BukkitMCSkullMeta(AbstractionObject o) {
+        super(o);
+        this.sm = (SkullMeta) o;
+    }
 
-	@Override
-	public String getOwner() {
-		return sm.getOwner();
-	}
+    @Override
+    public boolean hasOwner() {
+        return sm.hasOwner();
+    }
 
-	@Override
-	public boolean setOwner(String owner) {
-		return sm.setOwner(owner);
-	}
+    @Override
+    public String getOwner() {
+        return sm.getOwner();
+    }
+
+    @Override
+    public boolean setOwner(String owner) {
+        return sm.setOwner(owner);
+    }
 
 }

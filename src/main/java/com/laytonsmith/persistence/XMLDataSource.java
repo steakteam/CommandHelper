@@ -1,21 +1,21 @@
-
 package com.laytonsmith.persistence;
 
 import com.laytonsmith.core.CHVersion;
 import com.laytonsmith.persistence.io.ConnectionMixinFactory;
+
 import java.net.URI;
 
 /**
  *
- * 
+ *
  */
 //@datasource("xml")
-public class XMLDataSource extends StringSerializableDataSource{
-	private XMLDataSource(){
-		
-	}
-	
-    public XMLDataSource(URI uri, ConnectionMixinFactory.ConnectionMixinOptions options) throws DataSourceException{
+public class XMLDataSource extends StringSerializableDataSource {
+    private XMLDataSource() {
+
+    }
+
+    public XMLDataSource(URI uri, ConnectionMixinFactory.ConnectionMixinOptions options) throws DataSourceException {
         super(uri, options);
     }
 
@@ -29,22 +29,22 @@ public class XMLDataSource extends StringSerializableDataSource{
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-	@Override
+    @Override
     public DataSourceModifier[] implicitModifiers() {
         return null;
     }
 
-	@Override
+    @Override
     public DataSourceModifier[] invalidModifiers() {
         return null;
     }
 
-	@Override
+    @Override
     public String docs() {
         return "XML {xml://path/to/xml/file.xml} --";
     }
 
-	@Override
+    @Override
     public CHVersion since() {
         return CHVersion.V0_0_0;
     }

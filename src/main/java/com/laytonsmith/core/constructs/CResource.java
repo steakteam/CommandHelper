@@ -3,6 +3,7 @@ package com.laytonsmith.core.constructs;
 import com.laytonsmith.PureUtilities.Version;
 import com.laytonsmith.annotations.typeof;
 import com.laytonsmith.core.CHVersion;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -30,22 +31,22 @@ public class CResource<T> extends Construct {
      * @param t
      */
     public CResource(final T resource, Target t) {
-	this(resource, new ResourceToString() {
+        this(resource, new ResourceToString() {
 
-	    @Override
-	    public String getString(CResource id) {
-		// This is the original implementation of Object.toString()
-		String original = id.getResource().getClass().getName() + "@"
-			+ Integer.toHexString(id.getResource().hashCode());
-		String addendum = "";
-		if (!original.equals(id.getResource().toString())) {
-		    addendum = original + ":";
-		}
-		return "resource@" + id.getId() + ":"
-			+ addendum
-			+ id.getResource().toString();
-	    }
-	}, t);
+            @Override
+            public String getString(CResource id) {
+                // This is the original implementation of Object.toString()
+                String original = id.getResource().getClass().getName() + "@"
+                        + Integer.toHexString(id.getResource().hashCode());
+                String addendum = "";
+                if (!original.equals(id.getResource().toString())) {
+                    addendum = original + ":";
+                }
+                return "resource@" + id.getId() + ":"
+                        + addendum
+                        + id.getResource().toString();
+            }
+        }, t);
     }
 
     /**
@@ -57,57 +58,57 @@ public class CResource<T> extends Construct {
      * @param t
      */
     public CResource(T resource, ResourceToString toString, Target t) {
-	super("", ConstructType.RESOURCE, t);
-	this.resource = resource;
-	if (toString == null) {
-	    throw new NullPointerException();
-	}
-	this.toString = toString;
-	id = resourcePool.incrementAndGet();
+        super("", ConstructType.RESOURCE, t);
+        this.resource = resource;
+        if (toString == null) {
+            throw new NullPointerException();
+        }
+        this.toString = toString;
+        id = resourcePool.incrementAndGet();
     }
 
     public long getId() {
-	return id;
+        return id;
     }
 
     public T getResource() {
-	return resource;
+        return resource;
     }
 
     @Override
     public String val() {
-	return toString.getString(this);
+        return toString.getString(this);
     }
 
     @Override
     public String toString() {
-	return val();
+        return val();
     }
 
     @Override
     public boolean isDynamic() {
-	return true;
+        return true;
     }
 
     @Override
     public String docs() {
-	return "A resource is a value that represents an underlying native object. The object cannot be accessed directly.";
+        return "A resource is a value that represents an underlying native object. The object cannot be accessed directly.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 
     public static interface ResourceToString {
 
-	/**
-	 * Returns a toString for the underlying object.
-	 *
-	 * @param self The actual resource being toString'd.
-	 * @return
-	 */
-	String getString(CResource self);
+        /**
+         * Returns a toString for the underlying object.
+         *
+         * @param self The actual resource being toString'd.
+         * @return
+         */
+        String getString(CResource self);
     }
 
 }

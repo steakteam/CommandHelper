@@ -9,8 +9,9 @@ import com.laytonsmith.PureUtilities.Version;
  * for more details.
  */
 public interface TypeofRunnerIface {
-	
-	String docs();
-	Version since();
-	
+
+    String docs();
+
+    Version since();
+
 }

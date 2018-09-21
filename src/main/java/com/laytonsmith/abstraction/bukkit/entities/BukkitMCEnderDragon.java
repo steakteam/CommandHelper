@@ -9,33 +9,33 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCEnderDragon extends BukkitMCComplexLivingEntity implements MCEnderDragon {
 
-	EnderDragon ed;
+    EnderDragon ed;
 
-	public BukkitMCEnderDragon(Entity ent) {
-		super(ent);
-		ed = (EnderDragon) ent;
-	}
+    public BukkitMCEnderDragon(Entity ent) {
+        super(ent);
+        ed = (EnderDragon) ent;
+    }
 
-	public BukkitMCEnderDragon(AbstractionObject ao) {
-		this((EnderDragon) ao.getHandle());
-	}
+    public BukkitMCEnderDragon(AbstractionObject ao) {
+        this((EnderDragon) ao.getHandle());
+    }
 
-	@Override
-	public EnderDragon getHandle() {
-		return ed;
-	}
+    @Override
+    public EnderDragon getHandle() {
+        return ed;
+    }
 
-	@Override
-	public MCEnderDragonPhase getPhase() {
-		return MCEnderDragonPhase.valueOf(ed.getPhase().name());
-	}
+    @Override
+    public MCEnderDragonPhase getPhase() {
+        return MCEnderDragonPhase.valueOf(ed.getPhase().name());
+    }
 
-	@Override
-	public void setPhase(MCEnderDragonPhase phase) {
-		try {
-			ed.setPhase(BukkitMCEnderDragonPhase.getConvertor().getConcreteEnum(phase));
-		} catch(NoSuchMethodError ex) {
-			// probably prior to 1.9.2
-		}
-	}
+    @Override
+    public void setPhase(MCEnderDragonPhase phase) {
+        try {
+            ed.setPhase(BukkitMCEnderDragonPhase.getConvertor().getConcreteEnum(phase));
+        } catch (NoSuchMethodError ex) {
+            // probably prior to 1.9.2
+        }
+    }
 }

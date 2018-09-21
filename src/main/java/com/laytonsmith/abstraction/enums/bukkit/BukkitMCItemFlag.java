@@ -12,24 +12,24 @@ import org.bukkit.inventory.ItemFlag;
  * A BukkitMCItemFlag can hide some Attributes from BukkitMCItemStacks, through BukkitMCItemMeta.
  */
 @abstractionenum(
-		implementation = Implementation.Type.BUKKIT,
-		forAbstractEnum = MCItemFlag.class,
-		forConcreteEnum = ItemFlag.class)
+        implementation = Implementation.Type.BUKKIT,
+        forAbstractEnum = MCItemFlag.class,
+        forConcreteEnum = ItemFlag.class)
 public class BukkitMCItemFlag extends EnumConvertor<MCItemFlag, ItemFlag> {
-	private static BukkitMCItemFlag instance;
+    private static BukkitMCItemFlag instance;
 
-	public static BukkitMCItemFlag getConvertor() {
-		if(instance == null) {
-			instance = new BukkitMCItemFlag();
-		}
-		return instance;
-	}
+    public static BukkitMCItemFlag getConvertor() {
+        if (instance == null) {
+            instance = new BukkitMCItemFlag();
+        }
+        return instance;
+    }
 
-	@Override
-	protected ItemFlag getConcreteEnumCustom(MCItemFlag abstracted) {
-		if(Static.getServer().getMinecraftVersion().lt(MCVersion.MC1_8)) {
-			return null;
-		}
-		return super.getConcreteEnumCustom(abstracted);
-	}
+    @Override
+    protected ItemFlag getConcreteEnumCustom(MCItemFlag abstracted) {
+        if (Static.getServer().getMinecraftVersion().lt(MCVersion.MC1_8)) {
+            return null;
+        }
+        return super.getConcreteEnumCustom(abstracted);
+    }
 }

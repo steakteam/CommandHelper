@@ -1,4 +1,3 @@
-
 package com.laytonsmith.abstraction.bukkit;
 
 import com.laytonsmith.abstraction.MCCreatureSpawner;
@@ -9,24 +8,25 @@ import org.bukkit.block.CreatureSpawner;
 
 /**
  *
- * 
+ *
  */
-public class BukkitMCCreatureSpawner extends BukkitMCBlockState implements MCCreatureSpawner{
-	
-	CreatureSpawner cs;
-	public BukkitMCCreatureSpawner(CreatureSpawner cs){
-		super(cs);
-		this.cs = cs;
-	}
+public class BukkitMCCreatureSpawner extends BukkitMCBlockState implements MCCreatureSpawner {
 
-	@Override
-	public MCEntityType getSpawnedType() {
-		return BukkitMCEntityType.valueOfConcrete(cs.getSpawnedType());
-	}
+    CreatureSpawner cs;
 
-	@Override
-	public void setSpawnedType(MCEntityType type) {
-		cs.setSpawnedType(((BukkitMCEntityType) type).getConcrete());
-	}
-	
+    public BukkitMCCreatureSpawner(CreatureSpawner cs) {
+        super(cs);
+        this.cs = cs;
+    }
+
+    @Override
+    public MCEntityType getSpawnedType() {
+        return BukkitMCEntityType.valueOfConcrete(cs.getSpawnedType());
+    }
+
+    @Override
+    public void setSpawnedType(MCEntityType type) {
+        cs.setSpawnedType(((BukkitMCEntityType) type).getConcrete());
+    }
+
 }

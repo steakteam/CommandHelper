@@ -25,11 +25,10 @@ package com.laytonsmith.abstraction.events;
 import com.laytonsmith.abstraction.MCLocation;
 
 /**
- *
  * @author import
  */
 
 
 public interface MCBlockPistonRetractEvent extends MCBlockPistonEvent {
-	public MCLocation getRetractedLocation();
+    public MCLocation getRetractedLocation();
 }

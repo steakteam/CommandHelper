@@ -1,12 +1,6 @@
 package com.laytonsmith.PureUtilities.ClassLoading.ClassMirror;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import com.laytonsmith.PureUtilities.Common.StringUtils;
-
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -14,7 +8,16 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import static org.objectweb.asm.Opcodes.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import static org.objectweb.asm.Opcodes.ACC_ENUM;
+import static org.objectweb.asm.Opcodes.ACC_INTERFACE;
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
+import static org.objectweb.asm.Opcodes.ACC_VARARGS;
+import static org.objectweb.asm.Opcodes.ASM5;
 
 public class ClassMirrorVisitor extends ClassVisitor {
 
@@ -30,7 +33,7 @@ public class ClassMirrorVisitor extends ClassVisitor {
     }
 
     public ClassMirror<?> getMirror(URL source) {
-        if(!done) {
+        if (!done) {
             throw new IllegalStateException(String.format(
                     "Not done visiting %s", classInfo.name == null ? "none" : classInfo.name
             ));
@@ -42,7 +45,7 @@ public class ClassMirrorVisitor extends ClassVisitor {
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        if(done) {
+        if (done) {
             // Ensure we never visit more than one class
             throw new IllegalStateException(String.format(
                     "Can't visit %s, because we already visited %s", name, classInfo.name
@@ -105,38 +108,38 @@ public class ClassMirrorVisitor extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         if (STATIC_INITIALIZER_PATTERN.matcher(name).matches()) return null; // Ignore static initializers
-		if(ConstructorMirror.INIT.matches(name)){
-			// We want to replace the V at the end with the parent class type.
-			// Yes, technically a constructor really does return void, but.. not really.
-			desc = StringUtils.replaceLast(desc, "V", classInfo.classReferenceMirror.getJVMName());
-		}
+        if (ConstructorMirror.INIT.matches(name)) {
+            // We want to replace the V at the end with the parent class type.
+            // Yes, technically a constructor really does return void, but.. not really.
+            desc = StringUtils.replaceLast(desc, "V", classInfo.classReferenceMirror.getJVMName());
+        }
         List<ClassReferenceMirror> parameterMirrors = new ArrayList<>();
         for (Type type : Type.getArgumentTypes(desc)) {
             parameterMirrors.add(new ClassReferenceMirror(type.getDescriptor()));
         }
         AbstractMethodMirror _methodMirror;
-		if(ConstructorMirror.INIT.equals(name)){
-			_methodMirror = new ConstructorMirror(
-					classInfo.classReferenceMirror, 
-					new ModifierMirror(ModifierMirror.Type.METHOD, access),
-					new ClassReferenceMirror(Type.getReturnType(desc).getDescriptor()), 
-					name, 
-					parameterMirrors, 
-					(access & ACC_VARARGS) == ACC_VARARGS,
-					(access & ACC_SYNTHETIC) == ACC_SYNTHETIC
-			);
-		} else {
-			_methodMirror = new MethodMirror(
-                classInfo.classReferenceMirror,
+        if (ConstructorMirror.INIT.equals(name)) {
+            _methodMirror = new ConstructorMirror(
+                    classInfo.classReferenceMirror,
                     new ModifierMirror(ModifierMirror.Type.METHOD, access),
-                new ClassReferenceMirror(Type.getReturnType(desc).getDescriptor()),
-                name,
-                parameterMirrors,
-                (access & ACC_VARARGS) == ACC_VARARGS,
-                (access & ACC_SYNTHETIC) == ACC_SYNTHETIC
-			);
-		}
-		final AbstractMethodMirror methodMirror = _methodMirror;
+                    new ClassReferenceMirror(Type.getReturnType(desc).getDescriptor()),
+                    name,
+                    parameterMirrors,
+                    (access & ACC_VARARGS) == ACC_VARARGS,
+                    (access & ACC_SYNTHETIC) == ACC_SYNTHETIC
+            );
+        } else {
+            _methodMirror = new MethodMirror(
+                    classInfo.classReferenceMirror,
+                    new ModifierMirror(ModifierMirror.Type.METHOD, access),
+                    new ClassReferenceMirror(Type.getReturnType(desc).getDescriptor()),
+                    name,
+                    parameterMirrors,
+                    (access & ACC_VARARGS) == ACC_VARARGS,
+                    (access & ACC_SYNTHETIC) == ACC_SYNTHETIC
+            );
+        }
+        final AbstractMethodMirror methodMirror = _methodMirror;
         return new MethodVisitor(ASM5, super.visitMethod(access, name, desc, signature, exceptions)) {
             @Override
             public AnnotationVisitor visitAnnotation(String desc, boolean visible) {

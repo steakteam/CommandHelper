@@ -16,20 +16,20 @@ public class CREIOException extends CREException {
     public static final CClassType TYPE = CClassType.get("IOException");
 
     public CREIOException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREIOException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "This exception is thrown if a file cannot be read or written to.";
+        return "This exception is thrown if a file cannot be read or written to.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

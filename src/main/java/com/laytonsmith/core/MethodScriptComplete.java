@@ -1,10 +1,8 @@
-
-
 package com.laytonsmith.core;
 
 /**
  *
- * 
+ *
  */
 public interface MethodScriptComplete {
     /**

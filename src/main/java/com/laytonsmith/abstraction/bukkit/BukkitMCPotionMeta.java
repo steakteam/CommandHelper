@@ -15,64 +15,65 @@ import java.util.List;
 
 public class BukkitMCPotionMeta extends BukkitMCItemMeta implements MCPotionMeta {
 
-	PotionMeta pm;
-	public BukkitMCPotionMeta(PotionMeta pomet) {
-		super(pomet);
-		pm = pomet;
-	}
+    PotionMeta pm;
 
-	@Override
-	public MCPotionData getBasePotionData() {
-		return new BukkitMCPotionData(pm.getBasePotionData());
-	}
+    public BukkitMCPotionMeta(PotionMeta pomet) {
+        super(pomet);
+        pm = pomet;
+    }
 
-	@Override
-	public void setBasePotionData(MCPotionData bpd){
-		pm.setBasePotionData((PotionData) bpd.getHandle());
-	}
-	
-	@Override
-	public boolean addCustomEffect(int potionID, int strength, int seconds, boolean ambient, boolean overwrite, Target t) {
-		int maxID = PotionEffectType.values().length;
-		if (potionID < 1 || potionID > maxID) {
-			throw new CRERangeException("Invalid effect ID, must be from 1-" + maxID, t);
-		}
-		PotionEffect pe = new PotionEffect(PotionEffectType.getById(potionID), seconds * 20, strength, ambient);
-		return pm.addCustomEffect(pe, overwrite);
-	}
+    @Override
+    public MCPotionData getBasePotionData() {
+        return new BukkitMCPotionData(pm.getBasePotionData());
+    }
 
-	@Override
-	public boolean clearCustomEffects() {
-		return pm.clearCustomEffects();
-	}
+    @Override
+    public void setBasePotionData(MCPotionData bpd) {
+        pm.setBasePotionData((PotionData) bpd.getHandle());
+    }
 
-	@Override
-	public List<MCEffect> getCustomEffects() {
-		List<MCEffect> list = new ArrayList<MCEffect>();
-		for (PotionEffect pe : pm.getCustomEffects()) {
-			list.add(new MCEffect(pe.getType().getId(), pe.getAmplifier(), pe.getDuration() / 20, pe.isAmbient()));
-		}
-		return list;
-	}
+    @Override
+    public boolean addCustomEffect(int potionID, int strength, int seconds, boolean ambient, boolean overwrite, Target t) {
+        int maxID = PotionEffectType.values().length;
+        if (potionID < 1 || potionID > maxID) {
+            throw new CRERangeException("Invalid effect ID, must be from 1-" + maxID, t);
+        }
+        PotionEffect pe = new PotionEffect(PotionEffectType.getById(potionID), seconds * 20, strength, ambient);
+        return pm.addCustomEffect(pe, overwrite);
+    }
 
-	@Override
-	public boolean hasCustomEffect(int id) {
-		return pm.hasCustomEffect(PotionEffectType.getById(id));
-	}
+    @Override
+    public boolean clearCustomEffects() {
+        return pm.clearCustomEffects();
+    }
 
-	@Override
-	public boolean hasCustomEffects() {
-		return pm.hasCustomEffects();
-	}
+    @Override
+    public List<MCEffect> getCustomEffects() {
+        List<MCEffect> list = new ArrayList<MCEffect>();
+        for (PotionEffect pe : pm.getCustomEffects()) {
+            list.add(new MCEffect(pe.getType().getId(), pe.getAmplifier(), pe.getDuration() / 20, pe.isAmbient()));
+        }
+        return list;
+    }
 
-	@Override
-	public boolean removeCustomEffect(int id) {
-		return pm.removeCustomEffect(PotionEffectType.getById(id));
-	}
+    @Override
+    public boolean hasCustomEffect(int id) {
+        return pm.hasCustomEffect(PotionEffectType.getById(id));
+    }
 
-	@Override
-	public boolean setMainEffect(int id) {
-		return pm.setMainEffect(PotionEffectType.getById(id));
-	}
+    @Override
+    public boolean hasCustomEffects() {
+        return pm.hasCustomEffects();
+    }
+
+    @Override
+    public boolean removeCustomEffect(int id) {
+        return pm.removeCustomEffect(PotionEffectType.getById(id));
+    }
+
+    @Override
+    public boolean setMainEffect(int id) {
+        return pm.setMainEffect(PotionEffectType.getById(id));
+    }
 
 }

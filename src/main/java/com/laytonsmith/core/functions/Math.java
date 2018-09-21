@@ -35,8 +35,8 @@ import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.natives.interfaces.ArrayAccess;
-import java.text.DecimalFormat;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -115,10 +115,10 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Demonstrates adding two numbers together", "msg(add(2, 2))"),
-                new ExampleScript("Demonstrates adding two numbers together, using the operator syntax", "2 + 2"),
-                new ExampleScript("Demonstrates grouping with parenthesis", "(2 + 5) * 2"),
-                new ExampleScript("Demonstrates order of operations", "2 + 5 * 2"),};
+                    new ExampleScript("Demonstrates adding two numbers together", "msg(add(2, 2))"),
+                    new ExampleScript("Demonstrates adding two numbers together, using the operator syntax", "2 + 2"),
+                    new ExampleScript("Demonstrates grouping with parenthesis", "(2 + 5) * 2"),
+                    new ExampleScript("Demonstrates order of operations", "2 + 5 * 2"),};
         }
 
         @Override
@@ -197,8 +197,8 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Demonstrates basic usage", "subtract(4 - 3)"),
-                new ExampleScript("Demonstrates operator syntax", "12 - 5"),};
+                    new ExampleScript("Demonstrates basic usage", "subtract(4 - 3)"),
+                    new ExampleScript("Demonstrates operator syntax", "12 - 5"),};
         }
 
         @Override
@@ -276,8 +276,8 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Functional usage", "multiply(8, 8)"),
-                new ExampleScript("Operator syntax", "8 * 8"),};
+                    new ExampleScript("Functional usage", "multiply(8, 8)"),
+                    new ExampleScript("Operator syntax", "8 * 8"),};
         }
 
         @Override
@@ -351,10 +351,10 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Functional usage", "divide(4, 2)"),
-                new ExampleScript("Demonstrates double return", "divide(2, 4)"),
-                new ExampleScript("Operator syntax", "2 / 4"),
-                new ExampleScript("Demonstrates divide by zero error", "@zero = 0;\nmsg(1 / @zero);"),};
+                    new ExampleScript("Functional usage", "divide(4, 2)"),
+                    new ExampleScript("Demonstrates double return", "divide(2, 4)"),
+                    new ExampleScript("Operator syntax", "2 / 4"),
+                    new ExampleScript("Demonstrates divide by zero error", "@zero = 0;\nmsg(1 / @zero);"),};
         }
 
         @Override
@@ -417,8 +417,8 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Functional usage", "mod(2, 2)"),
-                new ExampleScript("Operator syntax", "2 % 2"),};
+                    new ExampleScript("Functional usage", "mod(2, 2)"),
+                    new ExampleScript("Operator syntax", "2 % 2"),};
         }
 
         @Override
@@ -478,8 +478,8 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Functional usage", "pow(2, 4)"),
-                new ExampleScript("Operator syntax", "2 ** 4"),};
+                    new ExampleScript("Functional usage", "pow(2, 4)"),
+                    new ExampleScript("Operator syntax", "2 ** 4"),};
         }
 
         @Override
@@ -499,8 +499,8 @@ public class Math {
      * @return
      */
     protected static Construct doIncrementDecrement(ParseTree[] nodes,
-            Script parent, Environment env, Target t,
-            Function func, boolean pre, boolean inc) {
+                                                    Script parent, Environment env, Target t,
+                                                    Function func, boolean pre, boolean inc) {
         if (nodes[0].getData() instanceof CFunction) {
             Function f;
             try {
@@ -662,11 +662,11 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Demonstrates basic usage", "@x = 0;\nmsg(@x);\ninc(@x);\nmsg(@x);"),
-                new ExampleScript("Demonstrates symbolic usage", "@x = 0;\n"
-                + "msg(@x);\n"
-                + "(++@x); // Note the use of parenthesis, which is required in this case, otherwise it applies to the previous operation\n"
-                + "msg(@x);"),};
+                    new ExampleScript("Demonstrates basic usage", "@x = 0;\nmsg(@x);\ninc(@x);\nmsg(@x);"),
+                    new ExampleScript("Demonstrates symbolic usage", "@x = 0;\n"
+                            + "msg(@x);\n"
+                            + "(++@x); // Note the use of parenthesis, which is required in this case, otherwise it applies to the previous operation\n"
+                            + "msg(@x);"),};
         }
 
         @Override
@@ -801,15 +801,15 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Basic functional usage", "@a = 5;\n"
-                + "msg(postinc(@a));\n"
-                + "msg(@a);"),
-                new ExampleScript("Basic functional usage, with optional value set", "@a = 5;\n"
-                + "msg(postinc(@a, 6));\n"
-                + "msg(@a);"),
-                new ExampleScript("Operator syntax", "@a = 5;\n"
-                + "msg(@a++);\n"
-                + "msg(@a);"),};
+                    new ExampleScript("Basic functional usage", "@a = 5;\n"
+                            + "msg(postinc(@a));\n"
+                            + "msg(@a);"),
+                    new ExampleScript("Basic functional usage, with optional value set", "@a = 5;\n"
+                            + "msg(postinc(@a, 6));\n"
+                            + "msg(@a);"),
+                    new ExampleScript("Operator syntax", "@a = 5;\n"
+                            + "msg(@a++);\n"
+                            + "msg(@a);"),};
         }
 
     }
@@ -923,11 +923,11 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Demonstrates basic usage", "@x = 1;\nmsg(@x);\ndec(@x);\nmsg(@x);"),
-                new ExampleScript("Demonstrates symbolic usage", "@x = 1;\n"
-                + "msg(@x);\n"
-                + "(--@x); // Note the use of parenthesis, which is required in this case, otherwise it applies to the previous operation\n"
-                + "msg(@x);"),};
+                    new ExampleScript("Demonstrates basic usage", "@x = 1;\nmsg(@x);\ndec(@x);\nmsg(@x);"),
+                    new ExampleScript("Demonstrates symbolic usage", "@x = 1;\n"
+                            + "msg(@x);\n"
+                            + "(--@x); // Note the use of parenthesis, which is required in this case, otherwise it applies to the previous operation\n"
+                            + "msg(@x);"),};
         }
 
     }
@@ -1047,15 +1047,15 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Basic functional usage", "@a = 5;\n"
-                + "msg(postdec(@a));\n"
-                + "msg(@a);"),
-                new ExampleScript("Basic functional usage, with optional value set", "@a = 5;\n"
-                + "msg(postdec(@a, 6));\n"
-                + "msg(@a);"),
-                new ExampleScript("Operator syntax", "@a = 5;\n"
-                + "msg(@a--);\n"
-                + "msg(@a);"),};
+                    new ExampleScript("Basic functional usage", "@a = 5;\n"
+                            + "msg(postdec(@a));\n"
+                            + "msg(@a);"),
+                    new ExampleScript("Basic functional usage, with optional value set", "@a = 5;\n"
+                            + "msg(postdec(@a, 6));\n"
+                            + "msg(@a);"),
+                    new ExampleScript("Operator syntax", "@a = 5;\n"
+                            + "msg(@a--);\n"
+                            + "msg(@a);"),};
         }
     }
 
@@ -1133,9 +1133,9 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Basic usage, with one paramter", "rand(10)", ":5"),
-                new ExampleScript("Basic usage, with a range", "rand(50, 100)", ":95"),
-                new ExampleScript("Usage with no parameters", "rand()", ":0.720543709668052")
+                    new ExampleScript("Basic usage, with one paramter", "rand(10)", ":5"),
+                    new ExampleScript("Basic usage, with a range", "rand(50, 100)", ":95"),
+                    new ExampleScript("Usage with no parameters", "rand()", ":0.720543709668052")
             };
         }
 
@@ -1191,8 +1191,8 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Demonstrates a positive number", "abs(5)"),
-                new ExampleScript("Demonstrates a negative number", "abs(-5)")
+                    new ExampleScript("Demonstrates a positive number", "abs(5)"),
+                    new ExampleScript("Demonstrates a negative number", "abs(-5)")
             };
         }
 
@@ -2221,9 +2221,9 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Rounding up", "round(2.5)"),
-                new ExampleScript("Rounding down", "round(2.229)"),
-                new ExampleScript("Higher precision round", "round(2.229, 2)"),};
+                    new ExampleScript("Rounding up", "round(2.5)"),
+                    new ExampleScript("Rounding down", "round(2.229)"),
+                    new ExampleScript("Higher precision round", "round(2.229, 2)"),};
         }
 
         @Override
@@ -2301,8 +2301,8 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Without round15", "sin(math_const('PI'));"),
-                new ExampleScript("With round15", "round15(sin(math_const('PI')));")
+                    new ExampleScript("Without round15", "sin(math_const('PI'));"),
+                    new ExampleScript("With round15", "round15(sin(math_const('PI')));")
             };
         }
 
@@ -2543,13 +2543,13 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("log base e (mathematical equivalent of ln)", "logarithm(1)"),
-                new ExampleScript("log base e (mathematical equivalent of ln)", "logarithm(3)"),
-                new ExampleScript("log base 10", "logarithm(100)"),
-                new ExampleScript("log base 10", "logarithm(1000)"),
-                new ExampleScript("log base n", "logarithm(123, 3)"),
-                new ExampleScript("Error condition", "logarithm(0)"),
-                new ExampleScript("Error condition", "logarithm(-1)"),};
+                    new ExampleScript("log base e (mathematical equivalent of ln)", "logarithm(1)"),
+                    new ExampleScript("log base e (mathematical equivalent of ln)", "logarithm(3)"),
+                    new ExampleScript("log base 10", "logarithm(100)"),
+                    new ExampleScript("log base 10", "logarithm(1000)"),
+                    new ExampleScript("log base n", "logarithm(123, 3)"),
+                    new ExampleScript("Error condition", "logarithm(0)"),
+                    new ExampleScript("Error condition", "logarithm(-1)"),};
         }
 
     }
@@ -2670,7 +2670,7 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("Basic usage", "math_const('PI');")
+                    new ExampleScript("Basic usage", "math_const('PI');")
             };
         }
 
@@ -2700,28 +2700,28 @@ public class Math {
             double min = Static.getDouble(args[1], t);
             double max = Static.getDouble(args[2], t);
             double v;
-            if(min == max) {
+            if (min == max) {
                 v = min;
-            } else if(min < max) {
+            } else if (min < max) {
                 // Normal mode
-                if(value < min) {
+                if (value < min) {
                     v = min;
-                } else if(value > max) {
+                } else if (value > max) {
                     v = max;
                 } else {
                     v = value;
                 }
             } else {
                 // Reverse mode
-                if(value < max) {
+                if (value < max) {
                     // Actually min
                     v = value;
-                } else if(value > min) {
+                } else if (value > min) {
                     // Actually max
                     v = value;
                 } else {
                     // Special handling, find the closer value
-                    if(value - max <= min - value) {
+                    if (value - max <= min - value) {
                         v = max;
                     } else {
                         v = min;
@@ -2767,18 +2767,17 @@ public class Math {
         @Override
         public ExampleScript[] examples() throws ConfigCompileException {
             return new ExampleScript[]{
-                new ExampleScript("No clamping", "clamp(8, 1, 10);"),
-                new ExampleScript("Clamp to minimum", "clamp(1, 10, 20);"),
-                new ExampleScript("Clamp to maximum", "clamp(50, 10, 25);"),
-                new ExampleScript("Reverse mode, no clamping below", "clamp(5, 20, 10);"),
-                new ExampleScript("Reverse mode, no clamping above", "clamp(50, 20, 10);"),
-                new ExampleScript("Reverse mode, clamping to minimum", "clamp(12, 20, 10);"),
-                new ExampleScript("Reverse mode, clamping to maximum", "clamp(19, 20, 10);"),
-                new ExampleScript("Reverse mode, clamping to minimum due to equal distance", "clamp(15, 20, 10);")
+                    new ExampleScript("No clamping", "clamp(8, 1, 10);"),
+                    new ExampleScript("Clamp to minimum", "clamp(1, 10, 20);"),
+                    new ExampleScript("Clamp to maximum", "clamp(50, 10, 25);"),
+                    new ExampleScript("Reverse mode, no clamping below", "clamp(5, 20, 10);"),
+                    new ExampleScript("Reverse mode, no clamping above", "clamp(50, 20, 10);"),
+                    new ExampleScript("Reverse mode, clamping to minimum", "clamp(12, 20, 10);"),
+                    new ExampleScript("Reverse mode, clamping to maximum", "clamp(19, 20, 10);"),
+                    new ExampleScript("Reverse mode, clamping to minimum due to equal distance", "clamp(15, 20, 10);")
             };
         }
-        
-        
+
 
     }
 

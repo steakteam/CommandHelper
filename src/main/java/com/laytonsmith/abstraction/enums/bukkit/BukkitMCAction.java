@@ -1,4 +1,3 @@
-
 package com.laytonsmith.abstraction.enums.bukkit;
 
 import com.laytonsmith.abstraction.Implementation;
@@ -9,21 +8,21 @@ import org.bukkit.event.block.Action;
 
 /**
  *
- * 
+ *
  */
 @abstractionenum(
-		implementation= Implementation.Type.BUKKIT,
-		forAbstractEnum=MCAction.class,
-		forConcreteEnum=Action.class
+        implementation = Implementation.Type.BUKKIT,
+        forAbstractEnum = MCAction.class,
+        forConcreteEnum = Action.class
 )
-public class BukkitMCAction extends EnumConvertor<MCAction, Action>{
-	
-	private static BukkitMCAction instance;
-	
-	public static BukkitMCAction getConvertor(){
-		if(instance == null){
-			instance = new BukkitMCAction();
-		}
-		return instance;
-	}
+public class BukkitMCAction extends EnumConvertor<MCAction, Action> {
+
+    private static BukkitMCAction instance;
+
+    public static BukkitMCAction getConvertor() {
+        if (instance == null) {
+            instance = new BukkitMCAction();
+        }
+        return instance;
+    }
 }

@@ -7,22 +7,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 /**
- *
  * @author Jason Unger <entityreborn@gmail.com>
  */
 public class CommandHelperMessageListener implements PluginMessageListener {
-	private static final CommandHelperMessageListener instance = new CommandHelperMessageListener();
+    private static final CommandHelperMessageListener instance = new CommandHelperMessageListener();
 
-	public static CommandHelperMessageListener getInstance() {
-		return instance;
-	}
+    public static CommandHelperMessageListener getInstance() {
+        return instance;
+    }
 
-	private CommandHelperMessageListener() {
-	}
+    private CommandHelperMessageListener() {
+    }
 
-	@Override
-	public void onPluginMessageReceived(final String channel, final Player player, final byte[] bytes) {
-		BukkitMCPluginIncomingMessageEvent event = new BukkitMCPluginIncomingMessageEvent(player, channel, bytes);
-		EventUtils.TriggerListener(Driver.PLUGIN_MESSAGE_RECEIVED, "plugin_message_received", event);
-	}
+    @Override
+    public void onPluginMessageReceived(final String channel, final Player player, final byte[] bytes) {
+        BukkitMCPluginIncomingMessageEvent event = new BukkitMCPluginIncomingMessageEvent(player, channel, bytes);
+        EventUtils.TriggerListener(Driver.PLUGIN_MESSAGE_RECEIVED, "plugin_message_received", event);
+    }
 }

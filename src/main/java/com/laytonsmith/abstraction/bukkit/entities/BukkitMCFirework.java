@@ -8,21 +8,21 @@ import org.bukkit.entity.Firework;
 
 public class BukkitMCFirework extends BukkitMCEntity implements MCFirework {
 
-	Firework f;
+    Firework f;
 
-	public BukkitMCFirework(Entity e) {
-		super(e);
-		f = (Firework) e;
-	}
+    public BukkitMCFirework(Entity e) {
+        super(e);
+        f = (Firework) e;
+    }
 
-	@Override
-	public MCFireworkMeta getFireWorkMeta() {
-		return new BukkitMCFireworkMeta(f.getFireworkMeta());
-	}
+    @Override
+    public MCFireworkMeta getFireWorkMeta() {
+        return new BukkitMCFireworkMeta(f.getFireworkMeta());
+    }
 
-	@Override
-	public void setFireWorkMeta(MCFireworkMeta fm) {
-		f.setFireworkMeta(((BukkitMCFireworkMeta) fm).asItemMeta());
-	}
+    @Override
+    public void setFireWorkMeta(MCFireworkMeta fm) {
+        f.setFireworkMeta(((BukkitMCFireworkMeta) fm).asItemMeta());
+    }
 
 }

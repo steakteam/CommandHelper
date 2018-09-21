@@ -6,10 +6,12 @@ import com.laytonsmith.core.events.BindableEvent;
 
 /**
  *
- * 
+ *
  */
 public interface MCWorldChangedEvent extends BindableEvent {
     public MCPlayer getPlayer();
+
     public MCWorld getFrom();
+
     public MCWorld getTo();
 }

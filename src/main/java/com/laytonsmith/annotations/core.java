@@ -1,4 +1,3 @@
-
 package com.laytonsmith.annotations;
 
 import java.lang.annotation.ElementType;
@@ -12,8 +11,8 @@ import java.lang.annotation.Target;
  * a legal meaning. Functions tagged with this annotation are unable to be overridden
  * by external code, both for consistency reasons and security reasons. Additionally,
  * any implementation of MethodScript must correctly implement all of the functions
- * labelled as core in order to be considered a valid implementation. 
- * 
+ * labelled as core in order to be considered a valid implementation.
+ * <p>
  * This also has a legal purpose. All functions tagged as part of the core fall under the
  * special contribution license, and any modifications by third parties must be
  * released of all copyrights.

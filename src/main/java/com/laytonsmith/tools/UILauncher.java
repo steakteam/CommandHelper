@@ -3,115 +3,114 @@ package com.laytonsmith.tools;
 import com.laytonsmith.PureUtilities.Common.UIUtils;
 import com.laytonsmith.tools.docgen.DocGenUI;
 import com.laytonsmith.tools.pnviewer.PNViewer;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.AbstractListModel;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 /**
  *
  */
 public class UILauncher extends javax.swing.JFrame {
 
-	private List<UI> uis = new ArrayList<>();
-	private UI selectedUI = null;
+    private List<UI> uis = new ArrayList<>();
+    private UI selectedUI = null;
 
-	/**
-	 * Creates new form UILauncher
-	 */
-	public UILauncher() {
-		final String[] args = {};
-		uis.add(new UI("Persistence Network Viewer", "Allows easier visualization of the Persistence Network", new Runnable() {
+    /**
+     * Creates new form UILauncher
+     */
+    public UILauncher() {
+        final String[] args = {};
+        uis.add(new UI("Persistence Network Viewer", "Allows easier visualization of the Persistence Network", new Runnable() {
 
-			@Override
-			public void run() {
-				PNViewer.main(args);
-			}
-		}));
+            @Override
+            public void run() {
+                PNViewer.main(args);
+            }
+        }));
 
-		uis.add(new UI("DocGen", "Allows uploading of the built-in documentation to MediaWiki software.", new Runnable() {
+        uis.add(new UI("DocGen", "Allows uploading of the built-in documentation to MediaWiki software.", new Runnable() {
 
-			@Override
-			public void run() {
-				DocGenUI.main(args);
-			}
-		}));
+            @Override
+            public void run() {
+                DocGenUI.main(args);
+            }
+        }));
 
-		initComponents();
+        initComponents();
 
-		setTitle("MethodScript UI Tool Launcher");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("MethodScript UI Tool Launcher");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		launchButton.addActionListener(new ActionListener() {
+        launchButton.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(selectedUI == null){
-					JOptionPane.showMessageDialog(UILauncher.this, "Please select a tool from the list on the left.", "Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				selectedUI.getLauncher().run();
-				UILauncher.this.setVisible(false);
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (selectedUI == null) {
+                    JOptionPane.showMessageDialog(UILauncher.this, "Please select a tool from the list on the left.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                selectedUI.getLauncher().run();
+                UILauncher.this.setVisible(false);
+            }
+        });
 
-		exitButton.addActionListener(new ActionListener() {
+        exitButton.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
 
-		launcherList.setModel(new AbstractListModel() {
+        launcherList.setModel(new AbstractListModel() {
 
-			@Override
-			public int getSize() {
-				return uis.size();
-			}
+            @Override
+            public int getSize() {
+                return uis.size();
+            }
 
-			@Override
-			public Object getElementAt(int index) {
-				return uis.get(index);
-			}
+            @Override
+            public Object getElementAt(int index) {
+                return uis.get(index);
+            }
 
-		});
+        });
 
-		launcherList.addListSelectionListener(new ListSelectionListener() {
+        launcherList.addListSelectionListener(new ListSelectionListener() {
 
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				UI ui = uis.get(e.getFirstIndex());
-				descriptionTextArea.setText(ui.getTooltip());
-				selectedUI = ui;
-			}
-		});
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                UI ui = uis.get(e.getFirstIndex());
+                descriptionTextArea.setText(ui.getTooltip());
+                selectedUI = ui;
+            }
+        });
 
-		launcherList.addMouseListener(new MouseAdapter() {
+        launcherList.addMouseListener(new MouseAdapter() {
 
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount() == 2){
-					launchButton.doClick();
-				}
-			}
-		});
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    launchButton.doClick();
+                }
+            }
+        });
 
-	}
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is always
-	 * regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -142,103 +141,104 @@ public class UILauncher extends javax.swing.JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(launchButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(exitButton)))
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(launchButton)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(exitButton)))
+                                .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(launchButton)
-                    .addComponent(exitButton))
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(launchButton)
+                                        .addComponent(exitButton))
+                                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-		 * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(UILauncher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(UILauncher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(UILauncher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(UILauncher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(UILauncher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(UILauncher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(UILauncher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(UILauncher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
         //</editor-fold>
 
-		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				UILauncher ui = new UILauncher();
-				UIUtils.centerWindow(ui);
-				ui.setVisible(true);
-			}
-		});
-	}
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                UILauncher ui = new UILauncher();
+                UIUtils.centerWindow(ui);
+                ui.setVisible(true);
+            }
+        });
+    }
 
-	private static class UI {
-		private final String name;
-		private final String tooltip;
-		private final Runnable launch;
-		public UI(String name, String tooltip, Runnable launch){
-			this.name = name;
-			this.tooltip = tooltip;
-			this.launch = launch;
-		}
+    private static class UI {
+        private final String name;
+        private final String tooltip;
+        private final Runnable launch;
 
-		public String getName(){
-			return name;
-		}
+        public UI(String name, String tooltip, Runnable launch) {
+            this.name = name;
+            this.tooltip = tooltip;
+            this.launch = launch;
+        }
 
-		public String getTooltip(){
-			return tooltip;
-		}
+        public String getName() {
+            return name;
+        }
 
-		public Runnable getLauncher(){
-			return launch;
-		}
+        public String getTooltip() {
+            return tooltip;
+        }
 
-		@Override
-		public String toString() {
-			return name;
-		}
+        public Runnable getLauncher() {
+            return launch;
+        }
 
-	}
+        @Override
+        public String toString() {
+            return name;
+        }
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea descriptionTextArea;

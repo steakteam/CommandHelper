@@ -11,32 +11,31 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Skeleton;
 
 /**
- *
  * @author Hekta
  */
 public class BukkitMCSkeleton extends BukkitMCLivingEntity implements MCSkeleton {
 
-	public BukkitMCSkeleton(Entity skeleton) {
-		super(skeleton);
-	}
+    public BukkitMCSkeleton(Entity skeleton) {
+        super(skeleton);
+    }
 
-	public BukkitMCSkeleton(AbstractionObject ao) {
-		this((Skeleton) ao.getHandle());
-	}
+    public BukkitMCSkeleton(AbstractionObject ao) {
+        this((Skeleton) ao.getHandle());
+    }
 
-	@Override
-	public MCSkeletonType getSkeletonType() {
-		return BukkitMCSkeletonType.getConvertor().getAbstractedEnum(((Skeleton)getHandle()).getSkeletonType());
-	}
+    @Override
+    public MCSkeletonType getSkeletonType() {
+        return BukkitMCSkeletonType.getConvertor().getAbstractedEnum(((Skeleton) getHandle()).getSkeletonType());
+    }
 
-	@Override
-	public void setSkeletonType(MCSkeletonType type) {
-		try {
-			((Skeleton) getHandle()).setSkeletonType(BukkitMCSkeletonType.getConvertor().getConcreteEnum(type));
-		} catch(UnsupportedOperationException ex){
-			// 1.11 or later
-			CHLog.GetLogger().Log(CHLog.Tags.DEPRECATION, LogLevel.ERROR,
-					"Cannot change Skeleton to Stray or WitherSkeleton in Minecraft 1.11+", Target.UNKNOWN);
-		}
-	}
+    @Override
+    public void setSkeletonType(MCSkeletonType type) {
+        try {
+            ((Skeleton) getHandle()).setSkeletonType(BukkitMCSkeletonType.getConvertor().getConcreteEnum(type));
+        } catch (UnsupportedOperationException ex) {
+            // 1.11 or later
+            CHLog.GetLogger().Log(CHLog.Tags.DEPRECATION, LogLevel.ERROR,
+                    "Cannot change Skeleton to Stray or WitherSkeleton in Minecraft 1.11+", Target.UNKNOWN);
+        }
+    }
 }

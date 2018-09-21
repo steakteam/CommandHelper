@@ -6,6 +6,7 @@ import com.laytonsmith.core.constructs.CLabel;
 import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
+
 import java.util.List;
 
 /**
@@ -13,18 +14,18 @@ import java.util.List;
  */
 public abstract class LiteralKeyword extends Keyword {
 
-	@Override
-	public int process(List<ParseTree> list, int keywordPosition) throws ConfigCompileException {
-		if(list.get(keywordPosition).getData() instanceof CLabel) {
-			list.set(keywordPosition, new ParseTree(new CLabel(getValue(list.get(keywordPosition).getTarget())),
-					list.get(keywordPosition).getFileOptions()));
-		} else {
-			list.set(keywordPosition, new ParseTree(getValue(list.get(keywordPosition).getTarget()),
-					list.get(keywordPosition).getFileOptions()));
-		}
-		return keywordPosition;
-	}
+    @Override
+    public int process(List<ParseTree> list, int keywordPosition) throws ConfigCompileException {
+        if (list.get(keywordPosition).getData() instanceof CLabel) {
+            list.set(keywordPosition, new ParseTree(new CLabel(getValue(list.get(keywordPosition).getTarget())),
+                    list.get(keywordPosition).getFileOptions()));
+        } else {
+            list.set(keywordPosition, new ParseTree(getValue(list.get(keywordPosition).getTarget()),
+                    list.get(keywordPosition).getFileOptions()));
+        }
+        return keywordPosition;
+    }
 
-	protected abstract Construct getValue(Target t);
+    protected abstract Construct getValue(Target t);
 
 }

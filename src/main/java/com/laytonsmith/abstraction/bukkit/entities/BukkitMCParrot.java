@@ -7,30 +7,31 @@ import org.bukkit.entity.Parrot;
 
 public class BukkitMCParrot extends BukkitMCTameable implements MCParrot {
 
-	Parrot p;
-	public BukkitMCParrot(Entity be) {
-		super(be);
-		this.p = (Parrot) be;
-	}
+    Parrot p;
 
-	@Override
-	public boolean isSitting() {
-		return p.isSitting();
-	}
+    public BukkitMCParrot(Entity be) {
+        super(be);
+        this.p = (Parrot) be;
+    }
 
-	@Override
-	public void setSitting(boolean sitting) {
-		p.setSitting(sitting);
-	}
+    @Override
+    public boolean isSitting() {
+        return p.isSitting();
+    }
 
-	@Override
-	public MCParrotType getVariant() {
-		return MCParrotType.valueOf(p.getVariant().name());
-	}
+    @Override
+    public void setSitting(boolean sitting) {
+        p.setSitting(sitting);
+    }
 
-	@Override
-	public void setVariant(MCParrotType variant) {
-		p.setVariant(Parrot.Variant.valueOf(variant.name()));
-	}
+    @Override
+    public MCParrotType getVariant() {
+        return MCParrotType.valueOf(p.getVariant().name());
+    }
+
+    @Override
+    public void setVariant(MCParrotType variant) {
+        p.setVariant(Parrot.Variant.valueOf(variant.name()));
+    }
 
 }

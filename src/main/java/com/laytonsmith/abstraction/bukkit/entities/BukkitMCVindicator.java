@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCVindicator extends BukkitMCLivingEntity implements MCVindicator {
 
-	public BukkitMCVindicator(Entity ent) {
-		super(ent);
-	}
+    public BukkitMCVindicator(Entity ent) {
+        super(ent);
+    }
 
 }

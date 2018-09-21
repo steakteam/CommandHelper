@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCSkeletonHorse extends BukkitMCAbstractHorse implements MCSkeletonHorse {
 
-	public BukkitMCSkeletonHorse(Entity t) {
-		super(t);
-	}
+    public BukkitMCSkeletonHorse(Entity t) {
+        super(t);
+    }
 
 }

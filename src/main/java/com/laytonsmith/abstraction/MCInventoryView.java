@@ -4,29 +4,29 @@ import com.laytonsmith.abstraction.enums.MCInventoryType;
 
 /**
  *
- * 
+ *
  */
 public interface MCInventoryView {
 
-	public MCInventory getBottomInventory();
+    public MCInventory getBottomInventory();
 
-	public MCInventory getTopInventory();
+    public MCInventory getTopInventory();
 
-	public void close();
+    public void close();
 
-	public int countSlots();
+    public int countSlots();
 
-	public int convertSlot(int rawSlot);
+    public int convertSlot(int rawSlot);
 
-	public MCItemStack getItem(int slot);
+    public MCItemStack getItem(int slot);
 
-	public MCHumanEntity getPlayer();
+    public MCHumanEntity getPlayer();
 
-	public String getTitle();
-	
-	public MCInventoryType getType();
+    public String getTitle();
 
-	public void setCursor(MCItemStack item);
+    public MCInventoryType getType();
 
-	public void setItem(int slot, MCItemStack item);
+    public void setCursor(MCItemStack item);
+
+    public void setItem(int slot, MCItemStack item);
 }

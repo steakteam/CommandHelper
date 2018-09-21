@@ -85,19 +85,19 @@ public class CommandHelperListener implements Listener {
      *
      * @param event Relevant event details
      */
-    @EventHandler(priority= EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        if(CommandHelperPlugin.self.interpreterListener
-                .isInInterpreterMode(event.getPlayer().getName())){
+        if (CommandHelperPlugin.self.interpreterListener
+                .isInInterpreterMode(event.getPlayer().getName())) {
             //They are in interpreter mode, so we want it to handle this, not everything else.
             return;
         }
         MCPlayerCommandEvent mpce = new BukkitPlayerEvents.BukkitMCPlayerCommandEvent(event);
         EventUtils.TriggerListener(Driver.PLAYER_COMMAND, "player_command", mpce);
-        if(mpce.isCancelled()){
+        if (mpce.isCancelled()) {
             return;
         }
-        String cmd = event.getMessage();        
+        String cmd = event.getMessage();
         MCPlayer player = new BukkitMCPlayer(event.getPlayer());
         BukkitDirtyRegisteredListener.PlayDirty();
 
@@ -110,7 +110,7 @@ public class CommandHelperListener implements Listener {
         try {
             if (runAlias(event.getMessage(), player)) {
                 event.setCancelled(true);
-                if(Prefs.PlayDirty()){
+                if (Prefs.PlayDirty()) {
                     //Super cancel the event
                     BukkitDirtyRegisteredListener.setCancelled(event);
                 }
@@ -127,13 +127,13 @@ public class CommandHelperListener implements Listener {
         }
     }
 
-    @EventHandler(priority= EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Static.HostnameCache(event.getPlayer().getName(), event.getPlayer().getAddress());
     }
-    
-    @EventHandler(priority= EventPriority.NORMAL)
-    public void onPlayerLogin(PlayerLoginEvent event){
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerLogin(PlayerLoginEvent event) {
         Static.SetPlayerHost(event.getPlayer().getName(), event.getHostname());
     }
 }

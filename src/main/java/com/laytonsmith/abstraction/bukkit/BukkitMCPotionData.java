@@ -7,43 +7,44 @@ import org.bukkit.potion.PotionData;
 
 public class BukkitMCPotionData implements MCPotionData {
 
-	PotionData pd;
-	public BukkitMCPotionData(PotionData poda) {
-		pd = poda;
-	}
+    PotionData pd;
 
-	@Override
-	public MCPotionType getType(){
-		return BukkitMCPotionType.getConvertor().getAbstractedEnum(pd.getType());
-	}
+    public BukkitMCPotionData(PotionData poda) {
+        pd = poda;
+    }
 
-	@Override
-	public boolean isExtended(){
-		return pd.isExtended();
-	}
+    @Override
+    public MCPotionType getType() {
+        return BukkitMCPotionType.getConvertor().getAbstractedEnum(pd.getType());
+    }
 
-	@Override
-	public boolean isUpgraded(){
-		return pd.isUpgraded();
-	}
+    @Override
+    public boolean isExtended() {
+        return pd.isExtended();
+    }
 
-	@Override
-	public Object getHandle(){
-		return pd;
-	}
+    @Override
+    public boolean isUpgraded() {
+        return pd.isUpgraded();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return pd.equals(obj);
-	}
+    @Override
+    public Object getHandle() {
+        return pd;
+    }
 
-	@Override
-	public int hashCode() {
-		return pd.hashCode();
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return pd.equals(obj);
+    }
 
-	@Override
-	public String toString() {
-		return pd.toString();
-	}
+    @Override
+    public int hashCode() {
+        return pd.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return pd.toString();
+    }
 }

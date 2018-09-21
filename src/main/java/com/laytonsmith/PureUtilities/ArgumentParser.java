@@ -10,7 +10,6 @@ import java.util.List;
  * which will be automatically parsed and validated. Additionally,
  * automatically generated help text can be retrieved and displayed, perhaps
  * if a --help argument is present.
- * 
  */
 public class ArgumentParser {
 
@@ -293,8 +292,7 @@ public class ArgumentParser {
                     b.append(val);
                 }
                 return b.toString();
-            }
-            catch (ResultUseException e) {
+            } catch (ResultUseException e) {
                 return "";
             }
         }
@@ -388,8 +386,7 @@ public class ArgumentParser {
                     return new ArrayList<String>();
                 }
                 return new ArrayList<String>(a.arrayVal);
-            }
-            catch (ResultUseException e) {
+            } catch (ResultUseException e) {
                 return new ArrayList<String>();
             }
         }
@@ -546,21 +543,21 @@ public class ArgumentParser {
     /**
      * Adds an argument to this argument parser. This is the most complex method
      * of adding an argument, all other methods are wrappers around this.
-     *
+     * <p>
      * The short code and long code for a switch both represent the underlying
      * switch, that is, they both "addresses" of a single underlying switch.
      * When accessing the argument later, you may use either the short code or
      * the long code to retrieve the value of the switch, but it is important to
      * understand that they are both pointing to the same item.
      *
-     * @param shortArg The short code for this switch.
-     * @param longArg The long code for this switch.
-     * @param argType The expected type of this switch.
-     * @param defaultVal The default value of this switch. If defaultVal is not
-     * null, the switch will always exist when calling get*Argument from the
-     * results. If argType is BOOLEAN, setting this will cause the switch to
+     * @param shortArg    The short code for this switch.
+     * @param longArg     The long code for this switch.
+     * @param argType     The expected type of this switch.
+     * @param defaultVal  The default value of this switch. If defaultVal is not
+     *                    null, the switch will always exist when calling get*Argument from the
+     *                    results. If argType is BOOLEAN, setting this will cause the switch to
      * @param description The description of this argument, which is used when
-     * building the help text created by getBuiltDescription.
+     *                    building the help text created by getBuiltDescription.
      * @return
      */
     public ArgumentParser addArgument(Character shortArg, String longArg, Type argType, String defaultVal, String description, String usageName, boolean required) {
@@ -820,24 +817,24 @@ public class ArgumentParser {
             }
             usage.append(">");
 
-			if(a.defaultVal != null && !"".equals(a.defaultVal)){
-				usage.append(" (default ");
-				if(a.argType == Type.STRING){
-					usage.append("\"");
-				}
-				usage.append(a.defaultVal);
-				if(a.argType == Type.STRING){
-					usage.append("\"");
-				}
-				usage.append(")");
-			}
-			
+            if (a.defaultVal != null && !"".equals(a.defaultVal)) {
+                usage.append(" (default ");
+                if (a.argType == Type.STRING) {
+                    usage.append("\"");
+                }
+                usage.append(a.defaultVal);
+                if (a.argType == Type.STRING) {
+                    usage.append("\"");
+                }
+                usage.append(")");
+            }
+
             if (!a.required) {
                 usage.append("]");
             }
             parts.add(usage.toString());
         }
-		
+
         //Now, if the default switch exists, put it here too
         if (getArgument() != null) {
             parts.add("<" + getArgument().usageName + ", ...>");
@@ -853,9 +850,9 @@ public class ArgumentParser {
                 first = false;
                 b.append(part);
             }
-			if(parts.isEmpty()){
-				usage.append("No arguments.");
-			}
+            if (parts.isEmpty()) {
+                usage.append("No arguments.");
+            }
             b.append(usage.toString());
         }
         b.append("\n\nOptions:\n\n");
@@ -873,16 +870,16 @@ public class ArgumentParser {
             b.append(flags.toString());
             b.append("\n");
         }
-		
-		if(shortCodes.isEmpty() && longCodes.isEmpty() && def == null && flags.length() == 0){
-			b.append("\tNo flags or options.\n");
-		} else {
-			if(shortCodes.isEmpty() && longCodes.isEmpty() && def == null){
-				b.append("\tNo options.\n");
-			} else if(flags.length() == 0){
-				b.append("\tNo flags.\n");
-			}
-		}
+
+        if (shortCodes.isEmpty() && longCodes.isEmpty() && def == null && flags.length() == 0) {
+            b.append("\tNo flags or options.\n");
+        } else {
+            if (shortCodes.isEmpty() && longCodes.isEmpty() && def == null) {
+                b.append("\tNo options.\n");
+            } else if (flags.length() == 0) {
+                b.append("\tNo flags.\n");
+            }
+        }
 
         for (Character c : shortCodes) {
             if (!shortCodesDone.contains(c)) {
@@ -896,15 +893,16 @@ public class ArgumentParser {
         }
         return b.toString();
     }
-	
-	/**
-	 * Returns just the description that was registered with {@see #addDescription(String)}.
-	 * @return The description, or null, if one has not been set yet.
-	 * @see #getBuiltDescription()
-	 */
-	public String getDescription(){
-		return description;
-	}
+
+    /**
+     * Returns just the description that was registered with {@see #addDescription(String)}.
+     *
+     * @return The description, or null, if one has not been set yet.
+     * @see #getBuiltDescription()
+     */
+    public String getDescription() {
+        return description;
+    }
 
     /**
      * This method takes a raw string, which represents the arguments as a
@@ -926,12 +924,13 @@ public class ArgumentParser {
         return parse(lex(args));
     }
 
-	/**
-	 * Returns a simple List of the arguments, parsed into a proper argument list.
-	 * This will work essentially identically to how general shell arguments are parsed.
-	 * @param args
-	 * @return 
-	 */
+    /**
+     * Returns a simple List of the arguments, parsed into a proper argument list.
+     * This will work essentially identically to how general shell arguments are parsed.
+     *
+     * @param args
+     * @return
+     */
     static List<String> lex(String args) {
         //First, we have to tokenize the strings. Since we can have quoted arguments, we can't simply split on spaces.
         List<String> arguments = new ArrayList<String>();
@@ -946,7 +945,7 @@ public class ArgumentParser {
                 if (c1 == '\'' && state_in_single_quote
                         || c1 == '"' && state_in_double_quote
                         || c1 == ' ' && !state_in_double_quote && !state_in_single_quote
-                        || c1 == '\\' && ( state_in_double_quote || state_in_single_quote )) {
+                        || c1 == '\\' && (state_in_double_quote || state_in_single_quote)) {
                     //We are escaping the next character. Add it to the buffer instead, and
                     //skip ahead two
                     buf.append(c1);
@@ -1008,14 +1007,14 @@ public class ArgumentParser {
         for (Argument arg : argumentModel) {
             if (arg.defaultVal != null) {
                 //For flags, we simply don't add them if they default to false.
-                if (!arg.isFlag() || ( arg.isFlag() && arg.defaultVal != null )) {
+                if (!arg.isFlag() || (arg.isFlag() && arg.defaultVal != null)) {
                     Argument newArg = new Argument(arg);
                     newArg.setValue(arg.defaultVal);
                     results.updateArgument(newArg);
                 }
             }
         }
-        //These are arguments that are not flags. 
+        //These are arguments that are not flags.
         List<String> looseArgs = new ArrayList<>();
         Argument lastArg = null;
         for (String arg : args) {
@@ -1047,9 +1046,9 @@ public class ArgumentParser {
                 for (int i = 1; i < arg.length(); i++) {
                     Character c = arg.charAt(i);
                     Argument vArg = getArgument(c);
-					if(vArg == null){
-						throw new ValidationException("Unrecognized flag: " + c);
-					}
+                    if (vArg == null) {
+                        throw new ValidationException("Unrecognized flag: " + c);
+                    }
                     if (!vArg.isFlag() && hasNonFlagArg) {
                         //We have already come across a non-flag argument, and since this one isn't
                         //a flag, we need to throw an exception.
@@ -1071,17 +1070,17 @@ public class ArgumentParser {
                 }
                 continue;
             }
-			
-			//It's just a loose arg, so we'll add it to the list and deal with it at the end
-			looseArgs.add(arg);
+
+            //It's just a loose arg, so we'll add it to the list and deal with it at the end
+            looseArgs.add(arg);
         }
 
         //Finish up the last argument
         results.updateArgument(validateArgument(lastArg, looseArgs));
-		if(looseArgs.size() > 0){
-			//There are loose arguments left, so add them to the loose argument list.
-			results.updateArgument(validateArgument(null, looseArgs));
-		}
+        if (looseArgs.size() > 0) {
+            //There are loose arguments left, so add them to the loose argument list.
+            results.updateArgument(validateArgument(null, looseArgs));
+        }
         //TODO: Check to see if all the required values are here
 
         return results;
@@ -1089,20 +1088,20 @@ public class ArgumentParser {
 
     private Argument validateArgument(Argument arg, List<String> looseArgs) throws ValidationException {
         if (arg == null) {
-			if(!looseArgs.isEmpty()){
-				//All the loose arguments are accounted for. Either we're done with the arguments,
-				//or we just hit a -(-)specifier, so we can stop parsing these, and go ahead and
-				//add them to the results.
-				Argument a = new Argument(ArgumentParser.this.getArgument());
-				a.setValue(looseArgs);
-				looseArgs.clear();
-				return a;
-			}
+            if (!looseArgs.isEmpty()) {
+                //All the loose arguments are accounted for. Either we're done with the arguments,
+                //or we just hit a -(-)specifier, so we can stop parsing these, and go ahead and
+                //add them to the results.
+                Argument a = new Argument(ArgumentParser.this.getArgument());
+                a.setValue(looseArgs);
+                looseArgs.clear();
+                return a;
+            }
             return null;
         }
         Argument finishedArgument = new Argument(arg);
         if (arg.isSingle()) {
-            //Just the first loose argument is associated with this argument, 
+            //Just the first loose argument is associated with this argument,
             //the rest (if any) belong to the default loose argument list.
             //Of course, looseArgs could be empty, in which case we won't add anything to the list.
             if (looseArgs.size() > 0) {
@@ -1112,8 +1111,7 @@ public class ArgumentParser {
                 if (arg.isNumeric()) {
                     try {
                         Double.parseDouble(looseArg);
-                    }
-                    catch (NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         throw new ValidationException("Expecting a numeric value, but \"" + looseArg + "\" was encountered.");
                     }
                 }
@@ -1126,8 +1124,7 @@ public class ArgumentParser {
                 for (String val : looseArgs) {
                     try {
                         Double.parseDouble(val);
-                    }
-                    catch (NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         throw new ValidationException("Expecting a numeric value, but \"" + val + "\" was encountered.");
                     }
                 }

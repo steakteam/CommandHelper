@@ -5,6 +5,7 @@ import com.laytonsmith.PureUtilities.Pair;
 import com.laytonsmith.annotations.datasource;
 import com.laytonsmith.core.CHVersion;
 import com.laytonsmith.persistence.io.ConnectionMixinFactory;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
@@ -13,19 +14,19 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * 
+ *
  */
 @datasource("ini")
 public class INIDataSource extends StringSerializableDataSource {
-	
-	private INIDataSource() {
-		
-	}
 
-    public INIDataSource(URI uri, ConnectionMixinFactory.ConnectionMixinOptions options) throws DataSourceException{
+    private INIDataSource() {
+
+    }
+
+    public INIDataSource(URI uri, ConnectionMixinFactory.ConnectionMixinOptions options) throws DataSourceException {
         super(uri, options);
     }
-    
+
     @Override
     protected void populateModel(String data) throws DataSourceException {
         Properties props = new Properties();
@@ -34,34 +35,34 @@ public class INIDataSource extends StringSerializableDataSource {
         } catch (IOException ex) {
             //Won't ever happen, but sure.
             throw new DataSourceException(null, ex);
-			}
+        }
         List<Pair<String, String>> list = new ArrayList<Pair<String, String>>();
-        for(String key : props.stringPropertyNames()){
+        for (String key : props.stringPropertyNames()) {
             list.add(new Pair<String, String>(key, props.getProperty(key)));
-			}
+        }
         model = new DataSourceModel(list);
     }
 
     @Override
     protected String serializeModel() {
-        StringBuilder b = new StringBuilder();        
-        for(String [] key : model.keySet()){
+        StringBuilder b = new StringBuilder();
+        for (String[] key : model.keySet()) {
             b.append(StringUtils.Join(key, ".")).append("=").append(model.get(key)).append("\n");
         }
         return b.toString();
     }
 
-	@Override
+    @Override
     public DataSourceModifier[] implicitModifiers() {
         return null;
     }
 
-	@Override
+    @Override
     public DataSourceModifier[] invalidModifiers() {
         return new DataSourceModifier[]{DataSourceModifier.PRETTYPRINT};
     }
 
-	@Override
+    @Override
     public String docs() {
         return "INI {ini:///path/to/ini/file.ini} This type stores data in plain"
                 + " text, in a ini style. All the pros and cons of yml apply here,"
@@ -70,9 +71,9 @@ public class INIDataSource extends StringSerializableDataSource {
                 + " since whitespace is relevant to the meta information.";
     }
 
-	@Override
+    @Override
     public CHVersion since() {
         return CHVersion.V3_3_1;
     }
-    
+
 }

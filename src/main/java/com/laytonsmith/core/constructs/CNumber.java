@@ -14,17 +14,17 @@ public abstract class CNumber extends CPrimitive {
     public static final CClassType TYPE = CClassType.get("number");
 
     public CNumber(String value, ConstructType type, Target t) {
-	super(value, type, t);
+        super(value, type, t);
     }
 
     @Override
     public String docs() {
-	return "A number is any double or integer number.";
+        return "A number is any double or integer number.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_0_1;
+        return CHVersion.V3_0_1;
     }
 
 }

@@ -1,4 +1,3 @@
-
 package com.laytonsmith.core.functions;
 
 //import com.laytonsmith.PureUtilities.Version;
@@ -18,10 +17,10 @@ package com.laytonsmith.core.functions;
  *
  */
 public class Redis {
-	public static String docs(){
-		return "This class of functions provides hooks into a redis system.";
-	}
-	
+    public static String docs() {
+        return "This class of functions provides hooks into a redis system.";
+    }
+
 //	@api 
 //	public static class redis extends AbstractFunction {
 //		

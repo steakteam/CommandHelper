@@ -27,7 +27,6 @@ import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -46,227 +45,230 @@ import java.util.ArrayList;
  */
 public class ExampleScript {
 
-	String description;
-	String originalScript;
-	ParseTree script;
-	String output;
-	StringBuilder playerOutput = null;
+    String description;
+    String originalScript;
+    ParseTree script;
+    String output;
+    StringBuilder playerOutput = null;
 
-	MCPlayer fakePlayer;
-	static MCServer fakeServer;
-	static Plugin fakePlugin;
-	static AliasCore fakeCore;
-	static boolean init = false;
+    MCPlayer fakePlayer;
+    static MCServer fakeServer;
+    static Plugin fakePlugin;
+    static AliasCore fakeCore;
+    static boolean init = false;
 
 
-	/**
-	 * Creates a new example script, where the output will come from the
-	 * script itself.
-	 * @param description
-	 * @param script
-	 */
-	public ExampleScript(String description, String script) throws ConfigCompileException{
-		this(description, script, null, false);
-	}
+    /**
+     * Creates a new example script, where the output will come from the
+     * script itself.
+     *
+     * @param description
+     * @param script
+     */
+    public ExampleScript(String description, String script) throws ConfigCompileException {
+        this(description, script, null, false);
+    }
 
-	public ExampleScript(String description, String script, boolean intentionalCompileError) throws ConfigCompileException{
-		this(description, script, null, intentionalCompileError);
-	}
+    public ExampleScript(String description, String script, boolean intentionalCompileError) throws ConfigCompileException {
+        this(description, script, null, intentionalCompileError);
+    }
 
-	/**
-	 * Creates a new example script, but the output is also specified. Use
-	 * this in cases where the script cannot be run.
-	 * @param description
-	 * @param script
-	 * @param output
-	 * @throws ConfigCompileException
-	 */
-	public ExampleScript(String description, String script, String output) throws ConfigCompileException{
-		this(description, script, output, false);
-	}
+    /**
+     * Creates a new example script, but the output is also specified. Use
+     * this in cases where the script cannot be run.
+     *
+     * @param description
+     * @param script
+     * @param output
+     * @throws ConfigCompileException
+     */
+    public ExampleScript(String description, String script, String output) throws ConfigCompileException {
+        this(description, script, output, false);
+    }
 
-	/**
-	 * Works like {@link #ExampleScript(java.lang.String, java.lang.String, java.lang.String)} but prints
-	 * a message in the normal output when a compile error is encountered, instead of triggering the exceptional
-	 * handling.
-	 * @param description
-	 * @param script
-	 * @param output
-	 * @param intentionalCompileError
-	 * @throws ConfigCompileException 
-	 */
-	private ExampleScript(String description, String script, String output, boolean intentionalCompileError) throws ConfigCompileException{
-		this.description = description;
-		this.originalScript = script;
-		try{
-			this.script = MethodScriptCompiler.compile(MethodScriptCompiler.lex(script, new File((OSUtils.GetOS() == OSUtils.OS.WINDOWS ? "C:\\" : "/") + "Examples.ms"), true));
-			this.output = output;
-		} catch(ConfigCompileException e){
-			if(intentionalCompileError){
-				this.output = "Causes compile error: " + e.getMessage();
-			}
-		} catch(ConfigCompileGroupException ex){
-			if(intentionalCompileError){
-				StringBuilder b = new StringBuilder();
-				b.append("Causes compile errors:\n");
-				for(ConfigCompileException e : ex.getList()){
-					b.append(e.getMessage()).append("\n");
-				}
-				this.output = b.toString();
-			}
-		}
-		playerOutput = new StringBuilder();
+    /**
+     * Works like {@link #ExampleScript(java.lang.String, java.lang.String, java.lang.String)} but prints
+     * a message in the normal output when a compile error is encountered, instead of triggering the exceptional
+     * handling.
+     *
+     * @param description
+     * @param script
+     * @param output
+     * @param intentionalCompileError
+     * @throws ConfigCompileException
+     */
+    private ExampleScript(String description, String script, String output, boolean intentionalCompileError) throws ConfigCompileException {
+        this.description = description;
+        this.originalScript = script;
+        try {
+            this.script = MethodScriptCompiler.compile(MethodScriptCompiler.lex(script, new File((OSUtils.GetOS() == OSUtils.OS.WINDOWS ? "C:\\" : "/") + "Examples.ms"), true));
+            this.output = output;
+        } catch (ConfigCompileException e) {
+            if (intentionalCompileError) {
+                this.output = "Causes compile error: " + e.getMessage();
+            }
+        } catch (ConfigCompileGroupException ex) {
+            if (intentionalCompileError) {
+                StringBuilder b = new StringBuilder();
+                b.append("Causes compile errors:\n");
+                for (ConfigCompileException e : ex.getList()) {
+                    b.append(e.getMessage()).append("\n");
+                }
+                this.output = b.toString();
+            }
+        }
+        playerOutput = new StringBuilder();
 
-		fakePlayer = (MCPlayer)Proxy.newProxyInstance(ExampleScript.class.getClassLoader(), new Class[]{MCPlayer.class}, new InvocationHandler() {
+        fakePlayer = (MCPlayer) Proxy.newProxyInstance(ExampleScript.class.getClassLoader(), new Class[]{MCPlayer.class}, new InvocationHandler() {
 
-			@Override
-			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-				if(method.getName().equals("getName") || method.getName().equals("getDisplayName")){
-					return "Player";
-				}
-				if(method.getName().equals("getServer")){
-					return fakeServer;
-				}
-				if(method.getName().equals("sendMessage")){
-					playerOutput.append(args[0].toString()).append("\n");
-				}
-				if(method.getName().equals("isOnline")){
-					return true;
-				}
-				return genericReturn(method.getReturnType());
-			}
-		});
-		if(!init){
-			init = true;
-			fakeServer = (MCServer)Proxy.newProxyInstance(ExampleScript.class.getClassLoader(), new Class[]{MCServer.class}, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                if (method.getName().equals("getName") || method.getName().equals("getDisplayName")) {
+                    return "Player";
+                }
+                if (method.getName().equals("getServer")) {
+                    return fakeServer;
+                }
+                if (method.getName().equals("sendMessage")) {
+                    playerOutput.append(args[0].toString()).append("\n");
+                }
+                if (method.getName().equals("isOnline")) {
+                    return true;
+                }
+                return genericReturn(method.getReturnType());
+            }
+        });
+        if (!init) {
+            init = true;
+            fakeServer = (MCServer) Proxy.newProxyInstance(ExampleScript.class.getClassLoader(), new Class[]{MCServer.class}, new InvocationHandler() {
 
-				@Override
-				public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-					return genericReturn(method.getReturnType());
-				}
-			});
-			final PluginManager bukkitPluginManager = (PluginManager)Proxy.newProxyInstance(ExampleScript.class.getClassLoader(), new Class[]{PluginManager.class}, new InvocationHandler() {
+                @Override
+                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                    return genericReturn(method.getReturnType());
+                }
+            });
+            final PluginManager bukkitPluginManager = (PluginManager) Proxy.newProxyInstance(ExampleScript.class.getClassLoader(), new Class[]{PluginManager.class}, new InvocationHandler() {
 
-				@Override
-				public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-					StreamUtils.GetSystemOut().println(method.getReturnType().getSimpleName() + " " + method.getName());
-					return genericReturn(method.getReturnType());
-				}
-			});
-			final Server bukkitServer = (Server)Proxy.newProxyInstance(ExampleScript.class.getClassLoader(), new Class[]{Server.class}, new InvocationHandler() {
+                @Override
+                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                    StreamUtils.GetSystemOut().println(method.getReturnType().getSimpleName() + " " + method.getName());
+                    return genericReturn(method.getReturnType());
+                }
+            });
+            final Server bukkitServer = (Server) Proxy.newProxyInstance(ExampleScript.class.getClassLoader(), new Class[]{Server.class}, new InvocationHandler() {
 
-				@Override
-				public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-					StreamUtils.GetSystemOut().println(method.getReturnType().getSimpleName() + " " + method.getName());
-					if(method.getName().equals("getPluginManager")){
-						return bukkitPluginManager;
-					}
-					return genericReturn(method.getReturnType());
-				}
-			});
-			fakePlugin = (Plugin)Proxy.newProxyInstance(ExampleScript.class.getClassLoader(), new Class[]{Plugin.class}, new InvocationHandler() {
+                @Override
+                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                    StreamUtils.GetSystemOut().println(method.getReturnType().getSimpleName() + " " + method.getName());
+                    if (method.getName().equals("getPluginManager")) {
+                        return bukkitPluginManager;
+                    }
+                    return genericReturn(method.getReturnType());
+                }
+            });
+            fakePlugin = (Plugin) Proxy.newProxyInstance(ExampleScript.class.getClassLoader(), new Class[]{Plugin.class}, new InvocationHandler() {
 
-				@Override
-				public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-					StreamUtils.GetSystemOut().println(method.getReturnType().getSimpleName() + " " + method.getName());
-					if(method.getName().equals("getServer")){
-						return bukkitServer;
-					}
-					return genericReturn(method.getReturnType());
-				}
-			});
-			fakeCore = new FakeCore();
-			ReflectionUtils.set(CommandHelperPlugin.class, "ac", fakeCore);
-		}
+                @Override
+                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                    StreamUtils.GetSystemOut().println(method.getReturnType().getSimpleName() + " " + method.getName());
+                    if (method.getName().equals("getServer")) {
+                        return bukkitServer;
+                    }
+                    return genericReturn(method.getReturnType());
+                }
+            });
+            fakeCore = new FakeCore();
+            ReflectionUtils.set(CommandHelperPlugin.class, "ac", fakeCore);
+        }
 
-	}
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public boolean isAutomatic(){
-		return output == null;
-	}
+    public boolean isAutomatic() {
+        return output == null;
+    }
 
-	private class FakeCore extends AliasCore{
-		public FakeCore(){
-			super(null, null, null, null, null);
-			this.autoIncludes = new ArrayList<>();
-		}
-	}
+    private class FakeCore extends AliasCore {
+        public FakeCore() {
+            super(null, null, null, null, null);
+            this.autoIncludes = new ArrayList<>();
+        }
+    }
 
-	private Object genericReturn(Class r){
-			if(r.isPrimitive()){
-				if(r == int.class){
-					return 0;
-				} else if(r == byte.class){
-					return (byte)0;
-				} else if(r == double.class){
-					return 0.0;
-				} else if(r == float.class){
-					return 0.0f;
-				} else if(r == char.class){
-					return '\0';
-				} else if(r == short.class){
-					return (short)0;
-				} else if(r == boolean.class){
-					return false;
-				} else { //long
-					return 0L;
-				}
-			} else {
-				if(r == String.class){
-					return "";
-				}
-				return null;
-			}
-	}
+    private Object genericReturn(Class r) {
+        if (r.isPrimitive()) {
+            if (r == int.class) {
+                return 0;
+            } else if (r == byte.class) {
+                return (byte) 0;
+            } else if (r == double.class) {
+                return 0.0;
+            } else if (r == float.class) {
+                return 0.0f;
+            } else if (r == char.class) {
+                return '\0';
+            } else if (r == short.class) {
+                return (short) 0;
+            } else if (r == boolean.class) {
+                return false;
+            } else { //long
+                return 0L;
+            }
+        } else {
+            if (r == String.class) {
+                return "";
+            }
+            return null;
+        }
+    }
 
-	public String getScript(){
-		return originalScript;
-	}
+    public String getScript() {
+        return originalScript;
+    }
 
-	public String getOutput() throws IOException, DataSourceException, URISyntaxException{
-		if(output != null){
-			return output;
-		}
-		Script s = Script.GenerateScript(script, Static.GLOBAL_PERMISSION);
-		Environment env;
-		try {
-			env = Static.GenerateStandaloneEnvironment();
-		} catch (Profiles.InvalidProfileException ex) {
-			throw new RuntimeException(ex);
-		}
-		env.getEnv(CommandHelperEnvironment.class).SetPlayer(fakePlayer);
-		final StringBuilder finalOutput = new StringBuilder();
-		String thrown = null;
-		try{
-			s.run(new ArrayList<Variable>(), env, new MethodScriptComplete() {
+    public String getOutput() throws IOException, DataSourceException, URISyntaxException {
+        if (output != null) {
+            return output;
+        }
+        Script s = Script.GenerateScript(script, Static.GLOBAL_PERMISSION);
+        Environment env;
+        try {
+            env = Static.GenerateStandaloneEnvironment();
+        } catch (Profiles.InvalidProfileException ex) {
+            throw new RuntimeException(ex);
+        }
+        env.getEnv(CommandHelperEnvironment.class).SetPlayer(fakePlayer);
+        final StringBuilder finalOutput = new StringBuilder();
+        String thrown = null;
+        try {
+            s.run(new ArrayList<Variable>(), env, new MethodScriptComplete() {
 
-				@Override
-				public void done(String output) {
-					if(output != null){
-						finalOutput.append(output);
-					}
-				}
-			});
-		} catch(ConfigRuntimeException e){
-			String name = e.getClass().getName();
-			if(e instanceof AbstractCREException){
-				name = ((AbstractCREException)e).getName();
-			}
-			thrown = "\n(Throws " + name + ": " + e.getMessage() + ")";
-		}
-		String playerOut = playerOutput.toString().trim();
-		String finalOut = finalOutput.toString().trim();
+                @Override
+                public void done(String output) {
+                    if (output != null) {
+                        finalOutput.append(output);
+                    }
+                }
+            });
+        } catch (ConfigRuntimeException e) {
+            String name = e.getClass().getName();
+            if (e instanceof AbstractCREException) {
+                name = ((AbstractCREException) e).getName();
+            }
+            thrown = "\n(Throws " + name + ": " + e.getMessage() + ")";
+        }
+        String playerOut = playerOutput.toString().trim();
+        String finalOut = finalOutput.toString().trim();
 
-		String out = (playerOut.equals("")?"":playerOut) + (finalOut.equals("")||!playerOut.trim().equals("") ?"":":" + finalOut);
-		if(thrown != null){
-			out += thrown;
-		}
-		return out;
-	}
+        String out = (playerOut.equals("") ? "" : playerOut) + (finalOut.equals("") || !playerOut.trim().equals("") ? "" : ":" + finalOut);
+        if (thrown != null) {
+            out += thrown;
+        }
+        return out;
+    }
 
 
 }

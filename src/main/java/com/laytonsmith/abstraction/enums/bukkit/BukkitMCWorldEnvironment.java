@@ -1,4 +1,3 @@
-
 package com.laytonsmith.abstraction.enums.bukkit;
 
 import com.laytonsmith.abstraction.Implementation;
@@ -9,19 +8,19 @@ import org.bukkit.World;
 
 /**
  *
- * 
+ *
  */
 @abstractionenum(
-		implementation = Implementation.Type.BUKKIT,
-forAbstractEnum = MCWorldEnvironment.class,
-forConcreteEnum = World.Environment.class)
-public class BukkitMCWorldEnvironment extends EnumConvertor<MCWorldEnvironment, World.Environment>{
-	private static com.laytonsmith.abstraction.enums.bukkit.BukkitMCWorldEnvironment instance;
+        implementation = Implementation.Type.BUKKIT,
+        forAbstractEnum = MCWorldEnvironment.class,
+        forConcreteEnum = World.Environment.class)
+public class BukkitMCWorldEnvironment extends EnumConvertor<MCWorldEnvironment, World.Environment> {
+    private static com.laytonsmith.abstraction.enums.bukkit.BukkitMCWorldEnvironment instance;
 
-	public static com.laytonsmith.abstraction.enums.bukkit.BukkitMCWorldEnvironment getConvertor() {
-		if (instance == null) {
-			instance = new com.laytonsmith.abstraction.enums.bukkit.BukkitMCWorldEnvironment();
-		}
-		return instance;
-	}
+    public static com.laytonsmith.abstraction.enums.bukkit.BukkitMCWorldEnvironment getConvertor() {
+        if (instance == null) {
+            instance = new com.laytonsmith.abstraction.enums.bukkit.BukkitMCWorldEnvironment();
+        }
+        return instance;
+    }
 }

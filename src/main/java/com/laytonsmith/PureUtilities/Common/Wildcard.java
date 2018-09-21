@@ -16,9 +16,7 @@ package com.laytonsmith.PureUtilities.Common;
  * /home/user/files/file2.htm, /home/user/files/file3.html, etc, but it would
  * not match /home/user/files/resources/frame.html, because the last match does
  * not span segments. However, "/home/user/files/**.htm?" would match.
- *
- * 
  */
 public class Wildcard {
-	
+
 }

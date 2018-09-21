@@ -27,101 +27,100 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author KingFisher
  */
 public final class BukkitWorldEvents {
 
-	private BukkitWorldEvents() {
-	}
+    private BukkitWorldEvents() {
+    }
 
-	public static abstract class BukkitMCWorldEvent implements MCWorldEvent {
+    public static abstract class BukkitMCWorldEvent implements MCWorldEvent {
 
-		private final WorldEvent _event;
+        private final WorldEvent _event;
 
-		public BukkitMCWorldEvent(WorldEvent event) {
-			_event = event;
-		}
+        public BukkitMCWorldEvent(WorldEvent event) {
+            _event = event;
+        }
 
-		@Override
-		public Object _GetObject() {
-			return _event;
-		}
+        @Override
+        public Object _GetObject() {
+            return _event;
+        }
 
-		@Override
-		public MCWorld getWorld() {
-			return new BukkitMCWorld(_event.getWorld());
-		}
-	}
+        @Override
+        public MCWorld getWorld() {
+            return new BukkitMCWorld(_event.getWorld());
+        }
+    }
 
-	public static class BukkitMCStructureGrowEvent extends BukkitMCWorldEvent implements MCStructureGrowEvent {
+    public static class BukkitMCStructureGrowEvent extends BukkitMCWorldEvent implements MCStructureGrowEvent {
 
-		private final StructureGrowEvent _event;
+        private final StructureGrowEvent _event;
 
-		public BukkitMCStructureGrowEvent(StructureGrowEvent event) {
-			super(event);
-			_event = event;
-		}
+        public BukkitMCStructureGrowEvent(StructureGrowEvent event) {
+            super(event);
+            _event = event;
+        }
 
-		@Override
-		public List<MCBlockState> getBlocks() {
-			List<BlockState> blocks = _event.getBlocks();
-			ArrayList<MCBlockState> r = new ArrayList<>(blocks.size());
-			for (BlockState block : blocks) {
-				r.add(new BukkitMCBlockState(block));
-			}
-			return r;
-		}
+        @Override
+        public List<MCBlockState> getBlocks() {
+            List<BlockState> blocks = _event.getBlocks();
+            ArrayList<MCBlockState> r = new ArrayList<>(blocks.size());
+            for (BlockState block : blocks) {
+                r.add(new BukkitMCBlockState(block));
+            }
+            return r;
+        }
 
-		@Override
-		public MCLocation getLocation() {
-			return new BukkitMCLocation(_event.getLocation());
-		}
+        @Override
+        public MCLocation getLocation() {
+            return new BukkitMCLocation(_event.getLocation());
+        }
 
-		@Override
-		public MCPlayer getPlayer() {
-			Player player = _event.getPlayer();
-			return player == null ? null : new BukkitMCPlayer(_event.getPlayer());
-		}
+        @Override
+        public MCPlayer getPlayer() {
+            Player player = _event.getPlayer();
+            return player == null ? null : new BukkitMCPlayer(_event.getPlayer());
+        }
 
-		@Override
-		public MCTreeType getSpecies() {
-			return BukkitMCTreeType.getConvertor().getAbstractedEnum(_event.getSpecies());
-		}
+        @Override
+        public MCTreeType getSpecies() {
+            return BukkitMCTreeType.getConvertor().getAbstractedEnum(_event.getSpecies());
+        }
 
-		@Override
-		public boolean isFromBonemeal() {
-			return _event.isFromBonemeal();
-		}
-	}
+        @Override
+        public boolean isFromBonemeal() {
+            return _event.isFromBonemeal();
+        }
+    }
 
-	public static class BukkitMCWorldSaveEvent extends BukkitMCWorldEvent implements MCWorldSaveEvent {
+    public static class BukkitMCWorldSaveEvent extends BukkitMCWorldEvent implements MCWorldSaveEvent {
 
-		private final WorldSaveEvent _event;
+        private final WorldSaveEvent _event;
 
-		public BukkitMCWorldSaveEvent(WorldSaveEvent event) {
-			super(event);
-			_event = event;
-		}
-	}
+        public BukkitMCWorldSaveEvent(WorldSaveEvent event) {
+            super(event);
+            _event = event;
+        }
+    }
 
-	public static class BukkitMCWorldUnloadEvent extends BukkitMCWorldEvent implements MCWorldUnloadEvent {
+    public static class BukkitMCWorldUnloadEvent extends BukkitMCWorldEvent implements MCWorldUnloadEvent {
 
-		private final WorldUnloadEvent _event;
+        private final WorldUnloadEvent _event;
 
-		public BukkitMCWorldUnloadEvent(WorldUnloadEvent event) {
-			super(event);
-			_event = event;
-		}
-	}
+        public BukkitMCWorldUnloadEvent(WorldUnloadEvent event) {
+            super(event);
+            _event = event;
+        }
+    }
 
-	public static class BukkitMCWorldLoadEvent extends BukkitMCWorldEvent implements MCWorldLoadEvent {
+    public static class BukkitMCWorldLoadEvent extends BukkitMCWorldEvent implements MCWorldLoadEvent {
 
-		private final WorldLoadEvent _event;
+        private final WorldLoadEvent _event;
 
-		public BukkitMCWorldLoadEvent(WorldLoadEvent event) {
-			super(event);
-			_event = event;
-		}
-	}
+        public BukkitMCWorldLoadEvent(WorldLoadEvent event) {
+            super(event);
+            _event = event;
+        }
+    }
 }

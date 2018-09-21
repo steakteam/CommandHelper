@@ -1,4 +1,3 @@
-
 package com.laytonsmith.core.events;
 
 /**
@@ -6,9 +5,10 @@ package com.laytonsmith.core.events;
  * isn't cancellable. If so, it should implement this interface.
  */
 public interface CancellableEvent {
-	/**
-	 * If the state is true, cancels the underlying event.
-	 * @param state 
-	 */
-	void cancel(boolean state);
+    /**
+     * If the state is true, cancels the underlying event.
+     *
+     * @param state
+     */
+    void cancel(boolean state);
 }

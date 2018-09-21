@@ -1,4 +1,3 @@
-
 package com.laytonsmith.abstraction.bukkit.entities;
 
 import com.laytonsmith.abstraction.AbstractionObject;
@@ -7,28 +6,27 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 
 /**
- *
  * @author Jason Unger <entityreborn@gmail.com>
  */
 public class BukkitMCCreeper extends BukkitMCLivingEntity implements MCCreeper {
-	Creeper creeper;
+    Creeper creeper;
 
-	public BukkitMCCreeper(Entity c) {
-		super(c);
-		creeper = (Creeper) c;
-	}
-	
-	public BukkitMCCreeper(AbstractionObject ao) {
-		this ((Creeper) ao.getHandle());
-	}
+    public BukkitMCCreeper(Entity c) {
+        super(c);
+        creeper = (Creeper) c;
+    }
 
-	@Override
-	public boolean isPowered() {
-		return creeper.isPowered();
-	}
+    public BukkitMCCreeper(AbstractionObject ao) {
+        this((Creeper) ao.getHandle());
+    }
 
-	@Override
-	public void setPowered(boolean powered) {
-		creeper.setPowered(powered);
-	}
+    @Override
+    public boolean isPowered() {
+        return creeper.isPowered();
+    }
+
+    @Override
+    public void setPowered(boolean powered) {
+        creeper.setPowered(powered);
+    }
 }

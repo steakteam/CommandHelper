@@ -1,10 +1,15 @@
-
-
 package com.laytonsmith.commandhelper;
 
 import com.laytonsmith.core.Prefs;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.EventExecutor;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredListener;
+
 import java.lang.reflect.Field;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -14,16 +19,10 @@ import java.util.TreeSet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.EventExecutor;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredListener;
 
 /**
  *
- * 
+ *
  */
 public class BukkitDirtyRegisteredListener extends RegisteredListener {
 
@@ -35,7 +34,7 @@ public class BukkitDirtyRegisteredListener extends RegisteredListener {
     private static Queue<Event> cancelledEvents = new LinkedBlockingQueue<Event>(queueCapacity);
 
     public BukkitDirtyRegisteredListener(final Listener pluginListener, final EventExecutor eventExecutor, final EventPriority eventPriority, final Plugin registeredPlugin,
-            boolean ignoreCancelled) {
+                                         boolean ignoreCancelled) {
         super(pluginListener, eventExecutor, eventPriority, registeredPlugin, ignoreCancelled);
         listener = pluginListener;
         priority = eventPriority;
@@ -56,8 +55,8 @@ public class BukkitDirtyRegisteredListener extends RegisteredListener {
         public DirtyEnumMap(Map<K, ? extends V> m) {
             super(m);
         }
-        
-		@Override
+
+        @Override
         public V put(K key, V value) {
             if (!(value instanceof DirtyTreeSet) && value instanceof TreeSet) {
                 return super.put(key, (V) DirtyTreeSet.GenerateDirtyTreeSet((TreeSet) value));
@@ -71,22 +70,22 @@ public class BukkitDirtyRegisteredListener extends RegisteredListener {
     public static class DirtyTreeSet<E> extends TreeSet {
 
         public static DirtyTreeSet GenerateDirtyTreeSet(TreeSet ts) {
-            DirtyTreeSet dts = new DirtyTreeSet(ts.comparator());            
+            DirtyTreeSet dts = new DirtyTreeSet(ts.comparator());
             for (Object o : ts) {
                 dts.add(o);
             }
             return dts;
         }
-        
+
         public DirtyTreeSet(Comparator<? super E> comparator) {
             super(comparator);
         }
 
         @Override
         public boolean add(Object e) {
-            if(!(e instanceof BukkitDirtyRegisteredListener) && e instanceof RegisteredListener){
+            if (!(e instanceof BukkitDirtyRegisteredListener) && e instanceof RegisteredListener) {
                 try {
-                    return super.add(Generate((RegisteredListener)e));
+                    return super.add(Generate((RegisteredListener) e));
                 } catch (NoSuchFieldException ex) {
                     Logger.getLogger(BukkitDirtyRegisteredListener.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IllegalArgumentException ex) {
@@ -99,7 +98,7 @@ public class BukkitDirtyRegisteredListener extends RegisteredListener {
             }
             return false;
         }
-                
+
     }
 
     public static void Repopulate() throws NoSuchFieldException, ClassCastException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException {
@@ -192,7 +191,7 @@ public class BukkitDirtyRegisteredListener extends RegisteredListener {
         Field rExecutor = real.getClass().getDeclaredField("executor");
         rExecutor.setAccessible(true);
         EventExecutor nExecutor = (EventExecutor) rExecutor.get(real);
-        
+
         Field rIgnoreCancelled = real.getClass().getDeclaredField("ignoreCancelled");
         rIgnoreCancelled.setAccessible(true);
         boolean nIgnoreCancelled = rIgnoreCancelled.getBoolean(real);
@@ -204,7 +203,8 @@ public class BukkitDirtyRegisteredListener extends RegisteredListener {
      * This is the magic method we need to override. When we call the event, if it
      * is "super cancelled", then we don't run it. Cancelled events are still run
      * if they aren't "super cancelled", which mirrors existing behavior.
-     * @param event 
+     *
+     * @param event
      */
     @Override
     public void callEvent(Event event) {
@@ -309,19 +309,19 @@ public class BukkitDirtyRegisteredListener extends RegisteredListener {
 //        }
     }
 
-	/**
-	 * Sets up CommandHelper to play-dirty, if the user has specified as such
-	 */
-	public static void PlayDirty() {
-		if (Prefs.PlayDirty()) {
-			try {
-				//Set up our "proxy"
-				BukkitDirtyRegisteredListener.Repopulate();
-			} catch (NoSuchMethodException ex) {
-				Logger.getLogger(Static.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (NoSuchFieldException | ClassCastException | IllegalArgumentException | IllegalAccessException ex) {
-				Static.getLogger().log(Level.SEVERE, "Uh oh, play dirty mode isn't working.", ex);
-			}
-		} //else play nice :(
-	}
+    /**
+     * Sets up CommandHelper to play-dirty, if the user has specified as such
+     */
+    public static void PlayDirty() {
+        if (Prefs.PlayDirty()) {
+            try {
+                //Set up our "proxy"
+                BukkitDirtyRegisteredListener.Repopulate();
+            } catch (NoSuchMethodException ex) {
+                Logger.getLogger(Static.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoSuchFieldException | ClassCastException | IllegalArgumentException | IllegalAccessException ex) {
+                Static.getLogger().log(Level.SEVERE, "Uh oh, play dirty mode isn't working.", ex);
+            }
+        } //else play nice :(
+    }
 }

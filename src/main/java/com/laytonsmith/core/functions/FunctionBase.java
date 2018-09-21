@@ -17,7 +17,8 @@ public interface FunctionBase {
      * </pre>
      * In other words, it must start with a letter or underscore, and may have any number of
      * letters, numbers, or underscores after it.
-     * @return 
+     *
+     * @return
      */
     public String getName();
 
@@ -25,35 +26,40 @@ public interface FunctionBase {
      * The number of arguments this function can accept. Some functions may be able to accept multiple numbers
      * of arguments, so this function returns an array. If you return Integer.MAX_VALUE as one of the
      * items in the array, then any number of arguments may be sent.
-     * @return 
+     *
+     * @return
      */
     public Integer[] numArgs();
 
     /**
      * If a user asks for information about a particular function, this method is called to obtain the functions
      * usage. The returned string must follow the following format:
+     *
      * @return A string with the documentation, or null, which will give a standard message to the user telling them there
      * is no documentation for this function yet.
      */
     public String docs();
-    
+
     /**
      * Some functions don't need to show up in documentation. Maybe they are experimental, or magic
      * functions. If they shouldn't show up in the normal API documentation, return false.
-	 * @return
+     *
+     * @return
      */
     public boolean appearInDocumentation();
-	
-	/**
-	 * Returns the package permission required to use this function.
-	 * @return 
-	 */
-	public PackagePermission getPermission();
-	
-	/**
-	 * Returns whether or not this function, or the function's containing class is
-	 * annotated with the {@link core} annotation.
-	 * @return 
-	 */
-	public boolean isCore();
+
+    /**
+     * Returns the package permission required to use this function.
+     *
+     * @return
+     */
+    public PackagePermission getPermission();
+
+    /**
+     * Returns whether or not this function, or the function's containing class is
+     * annotated with the {@link core} annotation.
+     *
+     * @return
+     */
+    public boolean isCore();
 }

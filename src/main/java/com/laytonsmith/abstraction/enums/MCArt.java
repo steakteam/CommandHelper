@@ -3,11 +3,11 @@ package com.laytonsmith.abstraction.enums;
 import com.laytonsmith.annotations.MEnum;
 
 /**
- * 
+ *
  */
 @MEnum("Art")
 public enum MCArt {
-	KEBAB,
+    KEBAB,
     AZTEC,
     ALBAN,
     AZTEC2,

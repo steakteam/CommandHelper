@@ -7,22 +7,21 @@ import org.bukkit.entity.ComplexEntityPart;
 import org.bukkit.entity.Entity;
 
 /**
- *
  * @author Hekta
  */
 public class BukkitMCComplexEntityPart extends BukkitMCEntity implements MCComplexEntityPart {
 
-	public BukkitMCComplexEntityPart(Entity part) {
-		super(part);
-	}
+    public BukkitMCComplexEntityPart(Entity part) {
+        super(part);
+    }
 
-	@Override
-	public ComplexEntityPart getHandle() {
-		return (ComplexEntityPart)super.getHandle();
-	}
+    @Override
+    public ComplexEntityPart getHandle() {
+        return (ComplexEntityPart) super.getHandle();
+    }
 
-	@Override
-	public MCComplexLivingEntity getParent() {
-		return (MCComplexLivingEntity) BukkitConvertor.BukkitGetCorrectEntity(getHandle().getParent());
-	}
+    @Override
+    public MCComplexLivingEntity getParent() {
+        return (MCComplexLivingEntity) BukkitConvertor.BukkitGetCorrectEntity(getHandle().getParent());
+    }
 }

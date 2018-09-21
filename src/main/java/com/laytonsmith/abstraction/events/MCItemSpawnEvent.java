@@ -6,7 +6,7 @@ import com.laytonsmith.core.events.BindableEvent;
 
 public interface MCItemSpawnEvent extends BindableEvent {
 
-	public MCItem getEntity();
-	
-	public MCLocation getLocation();
+    public MCItem getEntity();
+
+    public MCLocation getLocation();
 }

@@ -16,20 +16,20 @@ public class CREShellException extends CREException {
     public static final CClassType TYPE = CClassType.get("ShellException");
 
     public CREShellException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREShellException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "Thrown if a shell exception occurs.";
+        return "Thrown if a shell exception occurs.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

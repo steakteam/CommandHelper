@@ -7,14 +7,14 @@ import java.lang.annotation.Target;
 
 /**
  * Used to tag data store implementations.
- * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface datasource {
     /**
      * Returns the protocol handler associated with this data source.
-     * @return 
+     *
+     * @return
      */
     String value();
 }

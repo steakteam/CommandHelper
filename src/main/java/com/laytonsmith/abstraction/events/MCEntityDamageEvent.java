@@ -5,7 +5,6 @@ import com.laytonsmith.abstraction.enums.MCDamageCause;
 import com.laytonsmith.core.events.BindableEvent;
 
 /**
- *
  * @author EntityReborn
  */
 public interface MCEntityDamageEvent extends BindableEvent {

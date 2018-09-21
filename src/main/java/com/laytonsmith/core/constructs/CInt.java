@@ -1,6 +1,3 @@
-
-
-
 package com.laytonsmith.core.constructs;
 
 import com.laytonsmith.PureUtilities.Version;
@@ -20,26 +17,27 @@ public class CInt extends CNumber implements Cloneable {
 
     public static final long serialVersionUID = 1L;
     final long val;
-    public CInt(String value, Target t){
+
+    public CInt(String value, Target t) {
         super(value, ConstructType.INT, t);
-        try{
+        try {
             val = Long.parseLong(value);
-        } catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             throw new CREFormatException("Could not parse " + value + " as an integer", t);
         }
     }
 
-    public CInt(long value, Target t){
+    public CInt(long value, Target t) {
         super(Long.toString(value), ConstructType.INT, t);
         val = value;
     }
 
-    public long getInt(){
+    public long getInt() {
         return val;
     }
 
     @Override
-    public CInt clone() throws CloneNotSupportedException{
+    public CInt clone() throws CloneNotSupportedException {
         return this;
     }
 
@@ -48,14 +46,14 @@ public class CInt extends CNumber implements Cloneable {
         return false;
     }
 
-	@Override
-	public String docs() {
-		return "An integer is a discreet numerical value. All positive and negative counting numbers, as well as 0.";
-	}
+    @Override
+    public String docs() {
+        return "An integer is a discreet numerical value. All positive and negative counting numbers, as well as 0.";
+    }
 
-	@Override
-	public Version since() {
-		return CHVersion.V3_0_1;
-	}
+    @Override
+    public Version since() {
+        return CHVersion.V3_0_1;
+    }
 
 }

@@ -5,7 +5,8 @@ import com.laytonsmith.abstraction.enums.MCPatternShape;
 
 public interface MCPattern extends AbstractionObject {
 
-	public MCDyeColor getColor();
-	public MCPatternShape getShape();
-	
+    public MCDyeColor getColor();
+
+    public MCPatternShape getShape();
+
 }

@@ -6,16 +6,15 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.MagmaCube;
 
 /**
- *
  * @author Hekta
  */
 public class BukkitMCMagmaCube extends BukkitMCSlime implements MCMagmaCube {
 
-	public BukkitMCMagmaCube(Entity cube) {
-		super(cube);
-	}
+    public BukkitMCMagmaCube(Entity cube) {
+        super(cube);
+    }
 
-	public BukkitMCMagmaCube(AbstractionObject ao) {
-		this((MagmaCube) ao.getHandle());
-	}
+    public BukkitMCMagmaCube(AbstractionObject ao) {
+        this((MagmaCube) ao.getHandle());
+    }
 }

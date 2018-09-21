@@ -2,7 +2,7 @@ package com.laytonsmith.persistence;
 
 /**
  *
- * 
+ *
  */
 public class ReadOnlyException extends Exception {
 

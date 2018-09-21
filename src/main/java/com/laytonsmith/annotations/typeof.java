@@ -1,4 +1,3 @@
-
 package com.laytonsmith.annotations;
 
 import java.lang.annotation.ElementType;
@@ -13,9 +12,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface typeof {
-	/**
-	 * The name of this object, as defined in MethodScript.
-	 * @return 
-	 */
-	String value();
+    /**
+     * The name of this object, as defined in MethodScript.
+     *
+     * @return
+     */
+    String value();
 }

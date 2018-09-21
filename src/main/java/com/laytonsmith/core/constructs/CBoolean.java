@@ -38,8 +38,8 @@ public final class CBoolean extends CPrimitive implements Cloneable {
      * @param t
      */
     private CBoolean(boolean value, Target t) {
-	super(Boolean.toString(value), ConstructType.BOOLEAN, t);
-	val = value;
+        super(Boolean.toString(value), ConstructType.BOOLEAN, t);
+        val = value;
     }
 
     /**
@@ -49,19 +49,19 @@ public final class CBoolean extends CPrimitive implements Cloneable {
      * @return
      */
     public static CBoolean get(boolean b) {
-	return b ? CBoolean.TRUE : CBoolean.FALSE;
+        return b ? CBoolean.TRUE : CBoolean.FALSE;
     }
 
     public static CBoolean get(String value) {
-	try {
-	    return get(Long.parseLong(value) != 0);
-	} catch (NumberFormatException e) {
-	    try {
-		return get(Double.parseDouble(value) != 0);
-	    } catch (NumberFormatException f) {
-		return get(Boolean.parseBoolean(value));
-	    }
-	}
+        try {
+            return get(Long.parseLong(value) != 0);
+        } catch (NumberFormatException e) {
+            try {
+                return get(Double.parseDouble(value) != 0);
+            } catch (NumberFormatException f) {
+                return get(Boolean.parseBoolean(value));
+            }
+        }
     }
 
     /**
@@ -74,7 +74,7 @@ public final class CBoolean extends CPrimitive implements Cloneable {
      * @return
      */
     public static CBoolean GenerateCBoolean(boolean b, Target t) {
-	return (t == Target.UNKNOWN) ? get(b) : new CBoolean(b, t);
+        return (t == Target.UNKNOWN) ? get(b) : new CBoolean(b, t);
     }
 
     /**
@@ -83,7 +83,7 @@ public final class CBoolean extends CPrimitive implements Cloneable {
      * @return
      */
     public boolean getBoolean() {
-	return val;
+        return val;
     }
 
     /**
@@ -92,27 +92,27 @@ public final class CBoolean extends CPrimitive implements Cloneable {
      * @return
      */
     public CBoolean not() {
-	return GenerateCBoolean(!val, getTarget());
+        return GenerateCBoolean(!val, getTarget());
     }
 
     @Override
     @SuppressWarnings("CloneDoesntCallSuperClone")
     public CBoolean clone() throws CloneNotSupportedException {
-	return this;
+        return this;
     }
 
     @Override
     public boolean isDynamic() {
-	return false;
+        return false;
     }
 
     @Override
     public String docs() {
-	return "A boolean represents a true or false value.";
+        return "A boolean represents a true or false value.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_0_1;
+        return CHVersion.V3_0_1;
     }
 }

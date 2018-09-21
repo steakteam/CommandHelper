@@ -16,20 +16,20 @@ public class CRENotFoundException extends CREException {
     public static final CClassType TYPE = CClassType.get("NotFoundException");
 
     public CRENotFoundException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CRENotFoundException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "Thrown if data was not found, but expected.";
+        return "Thrown if data was not found, but expected.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

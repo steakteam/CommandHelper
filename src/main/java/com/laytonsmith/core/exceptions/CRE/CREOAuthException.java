@@ -7,7 +7,6 @@ import com.laytonsmith.core.constructs.CClassType;
 import com.laytonsmith.core.constructs.Target;
 
 /**
- *
  * @author cailin
  */
 @typeof("OAuthException")
@@ -17,21 +16,21 @@ public class CREOAuthException extends CREException {
     public static final CClassType TYPE = CClassType.get("OAuthException");
 
     public CREOAuthException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREOAuthException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "This exception is thrown in cases where the OAuth system failed.";
+        return "This exception is thrown in cases where the OAuth system failed.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_2;
+        return CHVersion.V3_3_2;
     }
 
 }

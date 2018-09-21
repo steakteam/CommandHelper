@@ -29,11 +29,11 @@ public final class CVoid extends Construct implements Cloneable {
      * @return
      */
     public static CVoid GenerateCVoid(Target t) {
-	if (t == Target.UNKNOWN) {
-	    return VOID;
-	} else {
-	    return new CVoid(t);
-	}
+        if (t == Target.UNKNOWN) {
+            return VOID;
+        } else {
+            return new CVoid(t);
+        }
     }
 
     /**
@@ -43,40 +43,40 @@ public final class CVoid extends Construct implements Cloneable {
      * @param t
      */
     private CVoid(Target t) {
-	super("", ConstructType.VOID, t);
+        super("", ConstructType.VOID, t);
     }
 
     @Override
     @SuppressWarnings("CloneDoesntCallSuperClone")
     public CVoid clone() throws CloneNotSupportedException {
-	return this;
+        return this;
     }
 
     @Override
     public boolean equals(Object obj) {
-	return obj instanceof CVoid;
+        return obj instanceof CVoid;
     }
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	return hash;
+        int hash = 7;
+        return hash;
     }
 
     @Override
     public boolean isDynamic() {
-	return false;
+        return false;
     }
 
     @Override
     public String docs() {
-	return "void isn't a datatype per se, but represents a lack of a datatype. Void values can't be assigned to variables,"
-		+ " or otherwise used.";
+        return "void isn't a datatype per se, but represents a lack of a datatype. Void values can't be assigned to variables,"
+                + " or otherwise used.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_0_1;
+        return CHVersion.V3_0_1;
     }
 
 }

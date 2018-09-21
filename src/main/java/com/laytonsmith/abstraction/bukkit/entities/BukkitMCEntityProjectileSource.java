@@ -14,65 +14,66 @@ import org.bukkit.util.Vector;
 
 /**
  * Workaround class to accommodate for the likelihood of non-living entities that can shoot stuff.
- * 
+ *
  * @author jb_aero
  */
 public class BukkitMCEntityProjectileSource extends BukkitMCEntity implements MCProjectileSource {
 
-	ProjectileSource eps;
-	public BukkitMCEntityProjectileSource(Entity source) {
-		super(source);
-		if (!(source instanceof ProjectileSource)) {
-			throw new IllegalArgumentException("Tried to construct BukkitMCEntityProjectileSource from invalid source.");
-		}
-		eps = (ProjectileSource) source;
-	}
-	
-	@Override
-	public MCProjectile launchProjectile(MCProjectileType projectile) {
-		EntityType et = EntityType.valueOf(projectile.name());
-		Class<? extends Entity> c = et.getEntityClass();
-		Projectile proj = eps.launchProjectile(c.asSubclass(Projectile.class));
+    ProjectileSource eps;
 
-		MCEntity mcproj = BukkitConvertor.BukkitGetCorrectEntity(proj);
+    public BukkitMCEntityProjectileSource(Entity source) {
+        super(source);
+        if (!(source instanceof ProjectileSource)) {
+            throw new IllegalArgumentException("Tried to construct BukkitMCEntityProjectileSource from invalid source.");
+        }
+        eps = (ProjectileSource) source;
+    }
 
-		if (mcproj instanceof MCProjectile) {
-			return (MCProjectile) mcproj;
-		} else {
-			return null;
-		}
-	}
+    @Override
+    public MCProjectile launchProjectile(MCProjectileType projectile) {
+        EntityType et = EntityType.valueOf(projectile.name());
+        Class<? extends Entity> c = et.getEntityClass();
+        Projectile proj = eps.launchProjectile(c.asSubclass(Projectile.class));
 
-	@Override
-	public MCProjectile launchProjectile(MCProjectileType projectile, Vector3D init) {
-		EntityType et = EntityType.valueOf(projectile.name());
-		Class<? extends Entity> c = et.getEntityClass();
-		Vector vector = new Vector(init.X(), init.Y(), init.Z());
-		Projectile proj = eps.launchProjectile(c.asSubclass(Projectile.class), vector);
+        MCEntity mcproj = BukkitConvertor.BukkitGetCorrectEntity(proj);
 
-		MCEntity mcproj = BukkitConvertor.BukkitGetCorrectEntity(proj);
+        if (mcproj instanceof MCProjectile) {
+            return (MCProjectile) mcproj;
+        } else {
+            return null;
+        }
+    }
 
-		if (mcproj instanceof MCProjectile) {
-			return (MCProjectile) mcproj;
-		} else {
-			return null;
-		}
-	}
+    @Override
+    public MCProjectile launchProjectile(MCProjectileType projectile, Vector3D init) {
+        EntityType et = EntityType.valueOf(projectile.name());
+        Class<? extends Entity> c = et.getEntityClass();
+        Vector vector = new Vector(init.X(), init.Y(), init.Z());
+        Projectile proj = eps.launchProjectile(c.asSubclass(Projectile.class), vector);
 
-	@Override
-	public String toString() {
-		return eps.toString();
-	}
+        MCEntity mcproj = BukkitConvertor.BukkitGetCorrectEntity(proj);
 
-	@Override
-	public int hashCode() {
-		return eps.hashCode();
-	}
+        if (mcproj instanceof MCProjectile) {
+            return (MCProjectile) mcproj;
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return eps.equals(obj);
-	}
-	
-	
+    @Override
+    public String toString() {
+        return eps.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return eps.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return eps.equals(obj);
+    }
+
+
 }

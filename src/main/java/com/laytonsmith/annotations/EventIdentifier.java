@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EventIdentifier {
 
-	String className();
+    String className();
 
-	Driver event();
+    Driver event();
 }

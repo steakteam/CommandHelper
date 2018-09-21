@@ -16,21 +16,21 @@ public class CREPluginChannelException extends CREException {
     public static final CClassType TYPE = CClassType.get("PluginChannelException");
 
     public CREPluginChannelException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREPluginChannelException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "Thrown if trying to register a plugin channel that is"
-		+ " already registered, or unregister one that isn't registered.";
+        return "Thrown if trying to register a plugin channel that is"
+                + " already registered, or unregister one that isn't registered.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

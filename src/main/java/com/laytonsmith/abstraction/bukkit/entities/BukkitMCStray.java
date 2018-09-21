@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 public class BukkitMCStray extends BukkitMCSkeleton implements MCStray {
 
-	public BukkitMCStray(Entity skeleton) {
-		super(skeleton);
-	}
+    public BukkitMCStray(Entity skeleton) {
+        super(skeleton);
+    }
 
 }

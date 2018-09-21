@@ -4,14 +4,13 @@ import com.laytonsmith.abstraction.pluginmessages.MCPluginMessageListenerRegistr
 import org.bukkit.plugin.messaging.PluginMessageListenerRegistration;
 
 /**
- *
  * @author Jason Unger <entityreborn@gmail.com>
  */
 public class BukkitMCPluginMessageListenerRegistration implements MCPluginMessageListenerRegistration {
-	PluginMessageListenerRegistration registration;
+    PluginMessageListenerRegistration registration;
 
-	public BukkitMCPluginMessageListenerRegistration(PluginMessageListenerRegistration registration) {
-		this.registration = registration;
-	}
-	
+    public BukkitMCPluginMessageListenerRegistration(PluginMessageListenerRegistration registration) {
+        this.registration = registration;
+    }
+
 }

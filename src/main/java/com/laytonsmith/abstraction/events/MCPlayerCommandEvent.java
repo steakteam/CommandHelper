@@ -2,7 +2,7 @@ package com.laytonsmith.abstraction.events;
 
 /**
  *
- * 
+ *
  */
 public interface MCPlayerCommandEvent extends MCPlayerEvent {
     public String getCommand();

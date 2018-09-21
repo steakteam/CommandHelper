@@ -1,13 +1,12 @@
-
 package com.laytonsmith.abstraction;
 
 import java.util.UUID;
 
 /**
  *
- * 
+ *
  */
-public interface MCOfflinePlayer extends MCAnimalTamer{
+public interface MCOfflinePlayer extends MCAnimalTamer {
     public long getFirstPlayed();
 
     public long getLastPlayed();
@@ -17,7 +16,7 @@ public interface MCOfflinePlayer extends MCAnimalTamer{
      *
      * @return Player name
      */
-	@Override
+    @Override
     public String getName();
 
     /**
@@ -53,20 +52,20 @@ public interface MCOfflinePlayer extends MCAnimalTamer{
      */
     public boolean isWhitelisted();
 
-	/**
-	 * Sets if this player is whitelisted or not.
-	 * Depending on how the server retrieved the player, this may or may not work.
-	 *
+    /**
+     * Sets if this player is whitelisted or not.
+     * Depending on how the server retrieved the player, this may or may not work.
+     *
      * @param value true if whitelisted
      */
     public void setWhitelisted(boolean value);
 
-	/**
+    /**
      * Gets the Location where the player will spawn at their bed, null if they have not slept in one or their current bed spawn is invalid.
      *
      * @return Bed Spawn Location if bed exists, otherwise null.
      */
-	public MCLocation getBedSpawnLocation();
+    public MCLocation getBedSpawnLocation();
 
-	public UUID getUniqueID();
+    public UUID getUniqueID();
 }

@@ -1,11 +1,8 @@
-
-
 package com.laytonsmith.core.exceptions;
 
 /**
  * Thrown if a prefilter is set, and doesn't match. A missing prefilter
  * is a match, and a matching prefilter is a match.
- * 
  */
 public class PrefilterNonMatchException extends Exception {
 
@@ -16,7 +13,7 @@ public class PrefilterNonMatchException extends Exception {
     }
 
     @Override
-    public Throwable fillInStackTrace(){
+    public Throwable fillInStackTrace() {
         return this;
     }
 }

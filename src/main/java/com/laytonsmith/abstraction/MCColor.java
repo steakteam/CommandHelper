@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public interface MCColor {
 
-	/**
+    /**
      * White, or (0xFF,0xFF,0xFF) in (R,G,B)
      */
     public static final MCColor WHITE = StaticLayer.GetConvertor().GetColor(0xFF, 0xFF, 0xFF);
@@ -99,48 +99,51 @@ public interface MCColor {
      */
     public static final MCColor ORANGE = StaticLayer.GetConvertor().GetColor(0xFF, 0xA5, 0x00);
 
-	/**
-	 * A mapping of string color name values to the standard MCColor objects.
-	 * Note that the map is immutable, so any attempts to write to it will fail.
-	 */
-	public static final Map<String, MCColor> STANDARD_COLORS = Internal.buildColors();
+    /**
+     * A mapping of string color name values to the standard MCColor objects.
+     * Note that the map is immutable, so any attempts to write to it will fail.
+     */
+    public static final Map<String, MCColor> STANDARD_COLORS = Internal.buildColors();
 
-	int getRed();
-	int getGreen();
-	int getBlue();
+    int getRed();
 
-	/**
-	 * Returns a NEW instance of a color, given the specified RGB values.
-	 * @param red
-	 * @param green
-	 * @param blue
-	 * @return
-	 */
-	MCColor build(int red, int green, int blue);
+    int getGreen();
 
-	static class Internal {
-		private static Map<String, MCColor> buildColors(){
-			Map<String, MCColor> map = new HashMap<>();
-			map.put("AQUA", AQUA);
-			map.put("BLACK", BLACK);
-			map.put("BLUE", BLUE);
-			map.put("FUCHSIA", FUCHSIA);
-			map.put("GRAY", GRAY);
-			map.put("GREY", GRAY);
-			map.put("GREEN", GREEN);
-			map.put("LIME", LIME);
-			map.put("MAROON", MAROON);
-			map.put("NAVY", NAVY);
-			map.put("OLIVE", OLIVE);
-			map.put("ORANGE", ORANGE);
-			map.put("PURPLE", PURPLE);
-			map.put("RED", RED);
-			map.put("SILVER", SILVER);
-			map.put("TEAL", TEAL);
-			map.put("WHITE", WHITE);
-			map.put("YELLOW", YELLOW);
-			return Collections.unmodifiableMap(map);
-		}
-	}
+    int getBlue();
+
+    /**
+     * Returns a NEW instance of a color, given the specified RGB values.
+     *
+     * @param red
+     * @param green
+     * @param blue
+     * @return
+     */
+    MCColor build(int red, int green, int blue);
+
+    static class Internal {
+        private static Map<String, MCColor> buildColors() {
+            Map<String, MCColor> map = new HashMap<>();
+            map.put("AQUA", AQUA);
+            map.put("BLACK", BLACK);
+            map.put("BLUE", BLUE);
+            map.put("FUCHSIA", FUCHSIA);
+            map.put("GRAY", GRAY);
+            map.put("GREY", GRAY);
+            map.put("GREEN", GREEN);
+            map.put("LIME", LIME);
+            map.put("MAROON", MAROON);
+            map.put("NAVY", NAVY);
+            map.put("OLIVE", OLIVE);
+            map.put("ORANGE", ORANGE);
+            map.put("PURPLE", PURPLE);
+            map.put("RED", RED);
+            map.put("SILVER", SILVER);
+            map.put("TEAL", TEAL);
+            map.put("WHITE", WHITE);
+            map.put("YELLOW", YELLOW);
+            return Collections.unmodifiableMap(map);
+        }
+    }
 
 }

@@ -11,9 +11,9 @@ import com.laytonsmith.core.constructs.Target;
 @Keyword.keyword("null")
 public class NullKeyword extends LiteralKeyword {
 
-	@Override
-	protected Construct getValue(Target t) {
-		return CNull.GenerateCNull(t);
-	}
+    @Override
+    protected Construct getValue(Target t) {
+        return CNull.GenerateCNull(t);
+    }
 
 }

@@ -1,5 +1,3 @@
-
-
 package com.laytonsmith.abstraction.blocks;
 
 import com.laytonsmith.abstraction.MCItemStack;
@@ -11,7 +9,7 @@ import java.util.Collection;
 
 /**
  *
- * 
+ *
  */
 public interface MCBlock extends MCMetadatable {
 
@@ -23,9 +21,9 @@ public interface MCBlock extends MCMetadatable {
 
     public void setData(byte imeta);
 
-	public void setTypeAndData(int type, byte data, boolean physics);
+    public void setTypeAndData(int type, byte data, boolean physics);
 
-	public double getTemperature();
+    public double getTemperature();
 
     public MCBlockState getState();
 
@@ -39,45 +37,45 @@ public interface MCBlock extends MCMetadatable {
 
     public int getZ();
 
-	public MCLocation getLocation();
+    public MCLocation getLocation();
 
     public MCSign getSign();
 
     public boolean isSign();
-	
-	public MCCommandBlock getCommandBlock();
-	
-	public boolean isCommandBlock();
 
-	public MCDispenser getDispenser();
+    public MCCommandBlock getCommandBlock();
 
-	public boolean isDispenser();
+    public boolean isCommandBlock();
+
+    public MCDispenser getDispenser();
+
+    public boolean isDispenser();
 
     public boolean isNull();
-	
-	public boolean isSolid();
-	
-	public boolean isFlammable();
-	
-	public boolean isTransparent();
-	
-	public boolean isOccluding();
-	
-	public boolean isBurnable();
+
+    public boolean isSolid();
+
+    public boolean isFlammable();
+
+    public boolean isTransparent();
+
+    public boolean isOccluding();
+
+    public boolean isBurnable();
 
     public Collection<MCItemStack> getDrops();
 
-	public Collection<MCItemStack> getDrops(MCItemStack tool);
+    public Collection<MCItemStack> getDrops(MCItemStack tool);
 
-	public int getLightLevel();
+    public int getLightLevel();
 
-	public int getBlockPower();
-	
-	public boolean isBlockPowered();
-	
-	public boolean isBlockIndirectlyPowered();
+    public int getBlockPower();
 
-	public MCBlock getRelative(MCBlockFace face);
+    public boolean isBlockPowered();
 
-	public MCBlockFace getFace(MCBlock get);
+    public boolean isBlockIndirectlyPowered();
+
+    public MCBlock getRelative(MCBlockFace face);
+
+    public MCBlockFace getFace(MCBlock get);
 }

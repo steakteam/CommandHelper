@@ -7,28 +7,28 @@ import org.bukkit.entity.ShulkerBullet;
 
 public class BukkitMCShulkerBullet extends BukkitMCProjectile implements MCShulkerBullet {
 
-	private ShulkerBullet sb;
+    private ShulkerBullet sb;
 
-	public BukkitMCShulkerBullet(Entity be) {
-		super(be);
-		this.sb = (ShulkerBullet) be;
-	}
+    public BukkitMCShulkerBullet(Entity be) {
+        super(be);
+        this.sb = (ShulkerBullet) be;
+    }
 
-	@Override
-	public void setTarget(MCEntity entity) {
-		if(entity == null) {
-			sb.setTarget(null);
-		} else {
-			sb.setTarget((Entity) entity.getHandle());
-		}
-	}
+    @Override
+    public void setTarget(MCEntity entity) {
+        if (entity == null) {
+            sb.setTarget(null);
+        } else {
+            sb.setTarget((Entity) entity.getHandle());
+        }
+    }
 
-	@Override
-	public MCEntity getTarget() {
-		Entity e = sb.getTarget();
-		if(e == null) {
-			return null;
-		}
-		return new BukkitMCEntity(sb.getTarget());
-	}
+    @Override
+    public MCEntity getTarget() {
+        Entity e = sb.getTarget();
+        if (e == null) {
+            return null;
+        }
+        return new BukkitMCEntity(sb.getTarget());
+    }
 }

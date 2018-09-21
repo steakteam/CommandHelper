@@ -26,13 +26,15 @@ package com.laytonsmith.abstraction.events;
 import com.laytonsmith.abstraction.blocks.MCBlockFace;
 
 /**
- *
  * @author import
  */
 
 public interface MCBlockPistonEvent extends MCBlockEvent {
-	MCBlockFace getDirection();
-	boolean isSticky();
-	boolean isCancelled();
-	void setCancelled(boolean cancelled);
+    MCBlockFace getDirection();
+
+    boolean isSticky();
+
+    boolean isCancelled();
+
+    void setCancelled(boolean cancelled);
 }

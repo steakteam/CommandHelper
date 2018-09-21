@@ -7,5 +7,5 @@ import com.laytonsmith.core.constructs.Target;
  * a function.
  */
 public interface CompiledFunction {
-    public String compile(Target t, String ... args);
+    public String compile(Target t, String... args);
 }

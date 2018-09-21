@@ -16,20 +16,20 @@ public class CREIllegalArgumentException extends CREException {
     public static final CClassType TYPE = CClassType.get("IllegalArgumentException");
 
     public CREIllegalArgumentException(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREIllegalArgumentException(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "Thrown if an argument was illegal in the given context.";
+        return "Thrown if an argument was illegal in the given context.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

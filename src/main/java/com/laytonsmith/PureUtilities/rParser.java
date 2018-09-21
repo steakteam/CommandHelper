@@ -1,6 +1,7 @@
 package com.laytonsmith.PureUtilities;
 
 import com.laytonsmith.abstraction.enums.MCChatColor;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -8,11 +9,11 @@ import java.util.Arrays;
  * This class provides a method for working around the not so pretty line breaks
  * that SMP does. The original class was written by Nossr50, with portions contributed
  * by Reil.
- * 
  */
 public final class rParser {
-    
-    private rParser(){}
+
+    private rParser() {
+    }
 
     private static final int lineLength = 312;
 
@@ -28,8 +29,8 @@ public final class rParser {
         }
     }
 
-    /* 
-     * 
+    /*
+     *
      */
     public static String combineSplit(int beginHere, String[] split, String seperator) {
         StringBuilder combined = new StringBuilder(split[beginHere]);
@@ -93,8 +94,8 @@ public final class rParser {
             }
             String[] stringArray = words.toArray(new String[words.size()]);
             //if(stringArray.length != 0){
-                out.add(lastColor
-                        + combineSplit(0, stringArray, " ") + " ");
+            out.add(lastColor
+                    + combineSplit(0, stringArray, " ") + " ");
             //}
         }
 
@@ -187,7 +188,7 @@ public final class rParser {
     //=====================================================================
     //Function:	colorChange
     //Input:	char colour: The color code to find the color for
-    //Output:	String: The color that the code identified 
+    //Output:	String: The color that the code identified
     //Use:		Finds a color giving a color code
     //=====================================================================
     public static String colorChange(char colour) {

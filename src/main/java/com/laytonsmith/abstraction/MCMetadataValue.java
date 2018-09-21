@@ -1,27 +1,27 @@
 package com.laytonsmith.abstraction;
 
 public interface MCMetadataValue {
-	public boolean asBoolean();
+    public boolean asBoolean();
 
-	public byte asByte();
+    public byte asByte();
 
-	public double asDouble();
+    public double asDouble();
 
-	public float asFloat();
+    public float asFloat();
 
-	public int asInt();
+    public int asInt();
 
-	public long asLong();
+    public long asLong();
 
-	public short asShort();
+    public short asShort();
 
-	public String asString();
+    public String asString();
 
-	public MCPlugin getOwningPlugin();
+    public MCPlugin getOwningPlugin();
 
-	public void invalidate();
+    public void invalidate();
 
-	public Object value();
+    public Object value();
 
-	public Object getHandle();
+    public Object getHandle();
 }

@@ -12,53 +12,54 @@ import org.bukkit.util.Vector;
 
 /**
  *
- * 
+ *
  */
 public class BukkitMCLocation implements MCLocation {
     Location l;
+
     public BukkitMCLocation(Location l) {
         this.l = l;
     }
 
     public BukkitMCLocation(AbstractionObject a) {
         if (a instanceof MCLocation) {
-            this.l = ((Location)a.getHandle());
+            this.l = ((Location) a.getHandle());
         } else {
             throw new ClassCastException();
         }
     }
 
-	@Override
+    @Override
     public Object getHandle() {
         return l;
     }
 
-	@Override
+    @Override
     public double getX() {
         return l.getX();
     }
 
-	@Override
+    @Override
     public double getY() {
         return l.getY();
     }
 
-	@Override
+    @Override
     public double getZ() {
         return l.getZ();
     }
 
-	@Override
-	public double distance(MCLocation o) {
-		return l.distance(((BukkitMCLocation)o)._Location());
-	}
-	
-	@Override
-	public double distanceSquared(MCLocation o) {
-		return l.distanceSquared(((BukkitMCLocation)o)._Location());
-	}
+    @Override
+    public double distance(MCLocation o) {
+        return l.distance(((BukkitMCLocation) o)._Location());
+    }
 
-	@Override
+    @Override
+    public double distanceSquared(MCLocation o) {
+        return l.distanceSquared(((BukkitMCLocation) o)._Location());
+    }
+
+    @Override
     public MCWorld getWorld() {
         if (l.getWorld() == null) {
             return null;
@@ -66,32 +67,32 @@ public class BukkitMCLocation implements MCLocation {
         return new BukkitMCWorld(l.getWorld());
     }
 
-	@Override
+    @Override
     public float getYaw() {
         return l.getYaw();
     }
 
-	@Override
+    @Override
     public float getPitch() {
         return l.getPitch();
     }
 
-	@Override
+    @Override
     public int getBlockX() {
         return l.getBlockX();
     }
 
-	@Override
+    @Override
     public int getBlockY() {
         return l.getBlockY();
     }
 
-	@Override
+    @Override
     public int getBlockZ() {
         return l.getBlockZ();
     }
 
-	@Override
+    @Override
     public MCBlock getBlock() {
         if (l == null || l.getBlock() == null) {
             return null;
@@ -103,70 +104,70 @@ public class BukkitMCLocation implements MCLocation {
         return l;
     }
 
-	@Override
-	public void setX(double x) {
-		l.setX(x);
-	}
+    @Override
+    public void setX(double x) {
+        l.setX(x);
+    }
 
-	@Override
-	public void setY(double y) {
-		l.setY(y);
-	}
+    @Override
+    public void setY(double y) {
+        l.setY(y);
+    }
 
-	@Override
-	public void setZ(double z) {
-		l.setZ(z);
-	}
+    @Override
+    public void setZ(double z) {
+        l.setZ(z);
+    }
 
-	@Override
+    @Override
     public void setPitch(float p) {
         l.setPitch(p);
     }
 
-	@Override
+    @Override
     public void setYaw(float y) {
         l.setYaw(y);
     }
 
-	@Override
-	public MCLocation add(MCLocation vec) {
-		return new BukkitMCLocation(l.add(((BukkitMCLocation) vec)._Location()));
-	}
+    @Override
+    public MCLocation add(MCLocation vec) {
+        return new BukkitMCLocation(l.add(((BukkitMCLocation) vec)._Location()));
+    }
 
-	@Override
-	public MCLocation add(Vector3D vec) {
-		return new BukkitMCLocation(l.add(new Vector(vec.X(), vec.Y(), vec.Z())));
-	}
+    @Override
+    public MCLocation add(Vector3D vec) {
+        return new BukkitMCLocation(l.add(new Vector(vec.X(), vec.Y(), vec.Z())));
+    }
 
-	@Override
-	public MCLocation add(double x, double y, double z) {
-		return new BukkitMCLocation(l.add(x, y, z));
-	}
+    @Override
+    public MCLocation add(double x, double y, double z) {
+        return new BukkitMCLocation(l.add(x, y, z));
+    }
 
-	@Override
-	public MCLocation multiply(double m) {
-		return new BukkitMCLocation(l.multiply(m));
-	}
+    @Override
+    public MCLocation multiply(double m) {
+        return new BukkitMCLocation(l.multiply(m));
+    }
 
-	@Override
-	public Vector3D toVector() {
-		return new Vector3D(l.getX(), l.getY(), l.getZ());
-	}
+    @Override
+    public Vector3D toVector() {
+        return new Vector3D(l.getX(), l.getY(), l.getZ());
+    }
 
-	@Override
-	public MCLocation subtract(MCLocation vec) {
-		return new BukkitMCLocation(l.subtract(((BukkitMCLocation) vec)._Location()));
-	}
+    @Override
+    public MCLocation subtract(MCLocation vec) {
+        return new BukkitMCLocation(l.subtract(((BukkitMCLocation) vec)._Location()));
+    }
 
-	@Override
-	public MCLocation subtract(Vector3D vec) {
-		return new BukkitMCLocation(l.subtract(new Vector(vec.X(), vec.Y(), vec.Z())));
-	}
+    @Override
+    public MCLocation subtract(Vector3D vec) {
+        return new BukkitMCLocation(l.subtract(new Vector(vec.X(), vec.Y(), vec.Z())));
+    }
 
-	@Override
-	public MCLocation subtract(double x, double y, double z) {
-		return new BukkitMCLocation(l.subtract(x, y, z));
-	}
+    @Override
+    public MCLocation subtract(double x, double y, double z) {
+        return new BukkitMCLocation(l.subtract(x, y, z));
+    }
 
     @Override
     public MCLocation clone() {
@@ -177,34 +178,34 @@ public class BukkitMCLocation implements MCLocation {
         return l;
     }
 
-	@Override
-	public String toString() {
-		return l.toString();
-	}
+    @Override
+    public String toString() {
+        return l.toString();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return (obj instanceof BukkitMCLocation && l.equals(((BukkitMCLocation) obj).l));
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof BukkitMCLocation && l.equals(((BukkitMCLocation) obj).l));
+    }
 
-	@Override
-	public int hashCode() {
-		return l.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return l.hashCode();
+    }
 
-	@Override
-	public void breakBlock() {
-		l.getBlock().breakNaturally();
-	}
+    @Override
+    public void breakBlock() {
+        l.getBlock().breakNaturally();
+    }
 
-	@Override
-	public Vector3D getDirection() {
-		return new Vector3D(l.getDirection().getX(), l.getDirection().getY(), l.getDirection().getZ());
-	}
+    @Override
+    public Vector3D getDirection() {
+        return new Vector3D(l.getDirection().getX(), l.getDirection().getY(), l.getDirection().getZ());
+    }
 
-	@Override
-	public MCChunk getChunk() {
-		return new BukkitMCChunk(l.getChunk());
-	}
+    @Override
+    public MCChunk getChunk() {
+        return new BukkitMCChunk(l.getChunk());
+    }
 
 }

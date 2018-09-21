@@ -8,24 +8,24 @@ import org.bukkit.inventory.meta.SpawnEggMeta;
 
 public class BukkitMCSpawnEggMeta extends BukkitMCItemMeta implements MCSpawnEggMeta {
 
-	SpawnEggMeta sem;
+    SpawnEggMeta sem;
 
-	public BukkitMCSpawnEggMeta(SpawnEggMeta meta) {
-		super(meta);
-		this.sem = meta;
-	}
+    public BukkitMCSpawnEggMeta(SpawnEggMeta meta) {
+        super(meta);
+        this.sem = meta;
+    }
 
-	@Override
-	public MCEntityType getSpawnedType() {
-		EntityType type = sem.getSpawnedType();
-		if(type == null){
-			return null;
-		}
-		return BukkitMCEntityType.valueOfConcrete(sem.getSpawnedType());
-	}
+    @Override
+    public MCEntityType getSpawnedType() {
+        EntityType type = sem.getSpawnedType();
+        if (type == null) {
+            return null;
+        }
+        return BukkitMCEntityType.valueOfConcrete(sem.getSpawnedType());
+    }
 
-	@Override
-	public void setSpawnedType(MCEntityType type) {
-		sem.setSpawnedType(((BukkitMCEntityType) type).getConcrete());
-	}
+    @Override
+    public void setSpawnedType(MCEntityType type) {
+        sem.setSpawnedType(((BukkitMCEntityType) type).getConcrete());
+    }
 }

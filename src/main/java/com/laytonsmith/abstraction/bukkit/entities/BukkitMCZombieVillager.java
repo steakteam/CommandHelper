@@ -8,21 +8,21 @@ import org.bukkit.entity.ZombieVillager;
 
 public class BukkitMCZombieVillager extends BukkitMCZombie implements MCZombieVillager {
 
-	ZombieVillager zv;
+    ZombieVillager zv;
 
-	public BukkitMCZombieVillager(Entity ent) {
-		super(ent);
-		zv = (ZombieVillager) ent;
-	}
+    public BukkitMCZombieVillager(Entity ent) {
+        super(ent);
+        zv = (ZombieVillager) ent;
+    }
 
-	@Override
-	public MCProfession getProfession() {
-		return BukkitMCProfession.getConvertor().getAbstractedEnum(zv.getVillagerProfession());
-	}
+    @Override
+    public MCProfession getProfession() {
+        return BukkitMCProfession.getConvertor().getAbstractedEnum(zv.getVillagerProfession());
+    }
 
-	@Override
-	public void setProfession(MCProfession profession) {
-		zv.setVillagerProfession(BukkitMCProfession.getConvertor().getConcreteEnum(profession));
-	}
+    @Override
+    public void setProfession(MCProfession profession) {
+        zv.setVillagerProfession(BukkitMCProfession.getConvertor().getConcreteEnum(profession));
+    }
 
 }

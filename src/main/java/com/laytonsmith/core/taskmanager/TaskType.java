@@ -7,16 +7,18 @@ import com.laytonsmith.core.Documentation;
  */
 public interface TaskType extends Documentation {
 
-	/**
-	 * Returns the display name of the task type
-	 * @return
-	 */
-	String displayName();
+    /**
+     * Returns the display name of the task type
+     *
+     * @return
+     */
+    String displayName();
 
-	/**
-	 * Returns the enum name of the task type.
-	 * @return
-	 */
-	String name();
+    /**
+     * Returns the enum name of the task type.
+     *
+     * @return
+     */
+    String name();
 
 }

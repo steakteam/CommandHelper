@@ -6,16 +6,18 @@ package com.laytonsmith.PureUtilities.Web;
  */
 public interface HTTPResponseCallback {
 
-	/**
-	 * If the call is successful, the HTTPResponse is returned here.
-	 * @param response 
-	 */
-	public void response(HTTPResponse response);
+    /**
+     * If the call is successful, the HTTPResponse is returned here.
+     *
+     * @param response
+     */
+    public void response(HTTPResponse response);
 
-	/**
-	 * If the call is unsuccessful, the Throwable should be handled here.
-	 * @param error 
-	 */
-	public void error(Throwable error);
+    /**
+     * If the call is unsuccessful, the Throwable should be handled here.
+     *
+     * @param error
+     */
+    public void error(Throwable error);
 
 }

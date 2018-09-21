@@ -9,31 +9,30 @@ import org.bukkit.entity.ThrownPotion;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author Hekta
  */
 public class BukkitMCThrownPotion extends BukkitMCProjectile implements MCThrownPotion {
 
-	public BukkitMCThrownPotion(Entity potion) {
-		super(potion);
-	}
+    public BukkitMCThrownPotion(Entity potion) {
+        super(potion);
+    }
 
-	public BukkitMCThrownPotion(AbstractionObject ao) {
-		this((ThrownPotion) ao.getHandle());
-	}
+    public BukkitMCThrownPotion(AbstractionObject ao) {
+        this((ThrownPotion) ao.getHandle());
+    }
 
-	@Override
-	public ThrownPotion getHandle() {
-		return (ThrownPotion)super.getHandle();
-	}
+    @Override
+    public ThrownPotion getHandle() {
+        return (ThrownPotion) super.getHandle();
+    }
 
-	@Override
-	public MCItemStack getItem() {
-		return new BukkitMCItemStack(getHandle().getItem());
-	}
+    @Override
+    public MCItemStack getItem() {
+        return new BukkitMCItemStack(getHandle().getItem());
+    }
 
-	@Override
-	public void setItem(MCItemStack item) {
-		getHandle().setItem((ItemStack) item.getHandle());
-	}
+    @Override
+    public void setItem(MCItemStack item) {
+        getHandle().setItem((ItemStack) item.getHandle());
+    }
 }

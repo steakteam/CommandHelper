@@ -9,26 +9,26 @@ import org.bukkit.entity.Guardian;
 
 public class BukkitMCGuardian extends BukkitMCLivingEntity implements MCGuardian {
 
-	Guardian e;
+    Guardian e;
 
-	public BukkitMCGuardian(Entity ent) {
-		super(ent);
-		e = (Guardian) ent;
-	}
+    public BukkitMCGuardian(Entity ent) {
+        super(ent);
+        e = (Guardian) ent;
+    }
 
-	@Override
-	public boolean isElder() {
-		return e.isElder();
-	}
+    @Override
+    public boolean isElder() {
+        return e.isElder();
+    }
 
-	@Override
-	public void setElder(boolean shouldBeElder) {
-		try {
-			e.setElder(shouldBeElder);
-		} catch(UnsupportedOperationException ex){
-			// 1.11 or later
-			CHLog.GetLogger().Log(CHLog.Tags.DEPRECATION, LogLevel.ERROR,
-					"Cannot change Guardian to ElderGuardian in Minecraft 1.11+", Target.UNKNOWN);
-		}
-	}
+    @Override
+    public void setElder(boolean shouldBeElder) {
+        try {
+            e.setElder(shouldBeElder);
+        } catch (UnsupportedOperationException ex) {
+            // 1.11 or later
+            CHLog.GetLogger().Log(CHLog.Tags.DEPRECATION, LogLevel.ERROR,
+                    "Cannot change Guardian to ElderGuardian in Minecraft 1.11+", Target.UNKNOWN);
+        }
+    }
 }

@@ -46,7 +46,7 @@ public class GenericTree<T> {
     }
 
     public boolean exists(GenericTreeNode<T> nodeToFind) {
-        return ( find(nodeToFind) != null );
+        return (find(nodeToFind) != null);
     }
 
     public GenericTreeNode<T> find(GenericTreeNode<T> nodeToFind) {
@@ -76,7 +76,7 @@ public class GenericTree<T> {
     }
 
     public boolean isEmpty() {
-        return ( root == null );
+        return (root == null);
     }
 
     public List<GenericTreeNode<T>> build(GenericTreeTraversalOrderEnum traversalOrder) {

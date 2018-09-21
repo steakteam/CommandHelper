@@ -16,20 +16,20 @@ public class CREError extends CREThrowable {
     public static final CClassType TYPE = CClassType.get("Error");
 
     public CREError(String msg, Target t) {
-	super(msg, t);
+        super(msg, t);
     }
 
     public CREError(String msg, Target t, Throwable cause) {
-	super(msg, t, cause);
+        super(msg, t, cause);
     }
 
     @Override
     public String docs() {
-	return "Indicates a serious error occurred. It is not recommended to catch Error directly, but instead catch a specific subtype.";
+        return "Indicates a serious error occurred. It is not recommended to catch Error directly, but instead catch a specific subtype.";
     }
 
     @Override
     public Version since() {
-	return CHVersion.V3_3_1;
+        return CHVersion.V3_3_1;
     }
 }

@@ -9,12 +9,14 @@ import com.laytonsmith.core.events.BindableEvent;
 
 /**
  *
- * 
+ *
  */
 public interface MCServerCommandEvent extends BindableEvent {
-	
-	String getCommand();
-	void setCommand(String command);
-	MCCommandSender getCommandSender();
-	
+
+    String getCommand();
+
+    void setCommand(String command);
+
+    MCCommandSender getCommandSender();
+
 }

@@ -4,37 +4,37 @@ import com.laytonsmith.abstraction.blocks.MCCommandBlock;
 import org.bukkit.block.CommandBlock;
 
 /**
- * 
  * @author jb_aero
  */
 public class BukkitMCCommandBlock extends BukkitMCBlockState implements
-		MCCommandBlock {
+        MCCommandBlock {
 
-	CommandBlock cb;
-	public BukkitMCCommandBlock(CommandBlock block) {
-		super(block);
-		cb = block;
-	}
-	
-	@Override
-	public String getCommand() {
-		return cb.getCommand();
-	}
+    CommandBlock cb;
 
-	@Override
-	public String getName() {
-		return cb.getName();
-	}
+    public BukkitMCCommandBlock(CommandBlock block) {
+        super(block);
+        cb = block;
+    }
 
-	@Override
-	public void setCommand(String command) {
-		cb.setCommand(command);
-		cb.update();
-	}
+    @Override
+    public String getCommand() {
+        return cb.getCommand();
+    }
 
-	@Override
-	public void setName(String name) {
-		cb.setName(name);
-		cb.update();
-	}
+    @Override
+    public String getName() {
+        return cb.getName();
+    }
+
+    @Override
+    public void setCommand(String command) {
+        cb.setCommand(command);
+        cb.update();
+    }
+
+    @Override
+    public void setName(String name) {
+        cb.setName(name);
+        cb.update();
+    }
 }

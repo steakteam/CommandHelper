@@ -1,5 +1,3 @@
-
-
 package com.laytonsmith.abstraction.bukkit.blocks;
 
 import com.laytonsmith.abstraction.MCMaterialData;
@@ -9,41 +7,41 @@ import org.bukkit.block.Sign;
 
 /**
  *
- * 
+ *
  */
 public class BukkitMCSign extends BukkitMCBlockState implements MCSign {
-    
+
     Sign s;
 
     public BukkitMCSign(Sign sign) {
-		super(sign);
+        super(sign);
         this.s = sign;
     }
 
-	@Override
-	public Sign getHandle() {
-		return s;
-	}
+    @Override
+    public Sign getHandle() {
+        return s;
+    }
 
-	@Override
+    @Override
     public void setLine(int i, String line1) {
         s.setLine(i, line1);
         s.update();
     }
 
-	@Override
+    @Override
     public String getLine(int i) {
         return s.getLine(i);
     }
 
-	@Override
+    @Override
     public MCMaterialData getData() {
         return new BukkitMCMaterialData(s.getData());
     }
 
-	@Override
+    @Override
     public int getTypeId() {
         return s.getTypeId();
     }
-    
+
 }
