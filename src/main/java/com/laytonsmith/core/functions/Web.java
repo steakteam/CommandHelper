@@ -1,5 +1,6 @@
 package com.laytonsmith.core.functions;
 
+import com.laytonsmith.core.FileWriteMode;
 import com.laytonsmith.PureUtilities.Common.StackTraceUtils;
 import com.laytonsmith.PureUtilities.Common.StringUtils;
 import com.laytonsmith.PureUtilities.Version;
@@ -17,7 +18,7 @@ import com.laytonsmith.annotations.noboilerplate;
 import com.laytonsmith.annotations.seealso;
 import com.laytonsmith.core.ArgumentValidation;
 import com.laytonsmith.core.CHLog;
-import com.laytonsmith.core.CHVersion;
+import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.EmailProfile;
 import com.laytonsmith.core.LogLevel;
 import com.laytonsmith.core.MethodScriptFileLocations;
@@ -47,6 +48,7 @@ import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.FunctionReturnException;
 import com.laytonsmith.core.exceptions.ProgramFlowManipulationException;
 import com.laytonsmith.core.natives.interfaces.ArrayAccess;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.tools.docgen.DocGenTemplates;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -107,7 +109,7 @@ public class Web {
 		for(Cookie cookie : cookieJar.getAllCookies()) {
 			boolean update = false;
 			CArray aCookie = null;
-			for(Construct ac : arrayJar.asList()) {
+			for(Mixed ac : arrayJar.asList()) {
 				aCookie = Static.getArray(ac, t);
 				if(cookie.getName().equals(aCookie.get("name", t).val())
 						&& cookie.getDomain().equals(aCookie.get("domain", t).val())
@@ -194,7 +196,7 @@ public class Web {
 
 		static {
 			DEFAULT_HEADERS.put("Accept", "text/*, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8");
-			DEFAULT_HEADERS.put("Accept-Encoding", "gzip, deflate, identity");
+			DEFAULT_HEADERS.put("Accept-Encoding", StringUtils.Join(WebUtility.SUPPORTED_ENCODINGS, ", "));
 			DEFAULT_HEADERS.put("User-Agent", "Java/" + System.getProperty("java.version") + "/" + Implementation.GetServerType().getBranding());
 			DEFAULT_HEADERS.put("DNT", "1");
 			DEFAULT_HEADERS.put("Connection", "close");
@@ -216,7 +218,7 @@ public class Web {
 		}
 
 		@Override
-		public Construct exec(final Target t, final Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(final Target t, final Environment environment, Mixed... args) throws ConfigRuntimeException {
 			final URL url;
 			try {
 				url = new URL(args[0].val());
@@ -227,10 +229,20 @@ public class Web {
 			final CClosure success;
 			final CClosure error;
 			final CArray arrayJar;
+			final boolean binary;
+			final String textEncoding;
+			boolean useDefaultHeaders = true;
 			if(args[1] instanceof CClosure) {
 				success = (CClosure) args[1];
 				error = null;
 				arrayJar = null;
+				binary = false;
+				textEncoding = "UTF-8";
+				Map<String, List<String>> headers = new HashMap<>();
+				for(String key : DEFAULT_HEADERS.keySet()) {
+					headers.put(key, Arrays.asList(DEFAULT_HEADERS.get(key)));
+				}
+				settings.setHeaders(headers);
 			} else {
 				CArray csettings = Static.getArray(args[1], t);
 				if(csettings.containsKey("method")) {
@@ -240,7 +252,6 @@ public class Web {
 						throw new CREFormatException(e.getMessage(), t);
 					}
 				}
-				boolean useDefaultHeaders = true;
 				if(csettings.containsKey("useDefaultHeaders")) {
 					useDefaultHeaders = Static.getBoolean(csettings.get("useDefaultHeaders", t), t);
 				}
@@ -249,7 +260,7 @@ public class Web {
 					Map<String, List<String>> mheaders = new HashMap<String, List<String>>();
 					for(String key : headers.stringKeySet()) {
 						List<String> h = new ArrayList<String>();
-						Construct c = headers.get(key, t);
+						Mixed c = headers.get(key, t);
 						if(c instanceof CArray) {
 							for(String kkey : ((CArray) c).stringKeySet()) {
 								h.add(((CArray) c).get(kkey, t).val());
@@ -261,7 +272,7 @@ public class Web {
 					}
 					settings.setHeaders(mheaders);
 				} else {
-					settings.setHeaders(new HashMap<String, List<String>>());
+					settings.setHeaders(new HashMap<>());
 				}
 				if(useDefaultHeaders) {
 					outer:
@@ -281,7 +292,7 @@ public class Web {
 						CArray params = Static.getArray(csettings.get("params", t), t);
 						Map<String, List<String>> mparams = new HashMap<>();
 						for(String key : params.stringKeySet()) {
-							Construct c = params.get(key, t);
+							Mixed c = params.get(key, t);
 							List<String> l = new ArrayList<>();
 							if(c instanceof CArray) {
 								for(String kkey : ((CArray) c).stringKeySet()) {
@@ -362,7 +373,7 @@ public class Web {
 					settings.setProxy(proxy);
 				}
 				if(csettings.containsKey("trustStore")) {
-					Construct trustStore = csettings.get("trustStore", t);
+					Mixed trustStore = csettings.get("trustStore", t);
 					if(trustStore instanceof CBoolean && Static.getBoolean(trustStore, t) == false) {
 						settings.setDisableCertChecking(true);
 					} else if(trustStore instanceof CArray) {
@@ -385,12 +396,12 @@ public class Web {
 					}
 				}
 				if(csettings.containsKey("download")) {
-					Construct download = csettings.get("download", t);
+					Mixed download = csettings.get("download", t);
 					if(download instanceof CNull) {
 						settings.setDownloadTo(null);
 					} else { // TODO: Remove this check and tie into the VFS once that is complete.
 						if(Static.InCmdLine(environment)) {
-							File file = new File(download.val());
+							File file = Static.GetFileFromArgument(Construct.nval(download), environment, t, null);
 							if(!file.isAbsolute()) {
 								file = new File(t.file(), file.getPath());
 							}
@@ -398,6 +409,33 @@ public class Web {
 						}
 					}
 				}
+				if(csettings.containsKey("downloadStrategy")) {
+					com.laytonsmith.core.FileWriteMode mode
+							= ArgumentValidation.getEnum(csettings.get("downloadStrategy", t), FileWriteMode.class, t);
+					com.laytonsmith.PureUtilities.Common.FileWriteMode puMode;
+					if(mode == com.laytonsmith.core.FileWriteMode.APPEND) {
+						puMode = com.laytonsmith.PureUtilities.Common.FileWriteMode.APPEND;
+					} else if(mode == com.laytonsmith.core.FileWriteMode.OVERWRITE) {
+						puMode = com.laytonsmith.PureUtilities.Common.FileWriteMode.OVERWRITE;
+					} else if(mode == com.laytonsmith.core.FileWriteMode.SAFE_WRITE) {
+						puMode = com.laytonsmith.PureUtilities.Common.FileWriteMode.SAFE_WRITE;
+					} else {
+						throw new Error("Unhandled case");
+					}
+					settings.setDownloadStrategy(puMode);
+				}
+				if(csettings.containsKey("binary")) {
+					binary = Static.getBoolean(csettings.get("binary", t), t);
+				} else {
+					binary = false;
+				}
+
+				if(csettings.containsKey("textEncoding")) {
+					textEncoding = csettings.get("textEncoding", t).val();
+				} else {
+					textEncoding = "UTF-8";
+				}
+
 				if(csettings.containsKey("blocking")) {
 					boolean blocking = Static.getBoolean(csettings.get("blocking", t), t);
 					settings.setBlocking(blocking);
@@ -407,6 +445,9 @@ public class Web {
 				}
 				settings.setAuthenticationDetails(username, password);
 			}
+
+			List<ConfigRuntimeException.StackTraceElement> st
+					= environment.getEnv(GlobalEnv.class).GetStackTraceManager().getCurrentStackTrace();
 			environment.getEnv(GlobalEnv.class).GetDaemonManager().activateThread(null);
 			Runnable task = new Runnable() {
 
@@ -415,7 +456,17 @@ public class Web {
 					try {
 						HTTPResponse resp = WebUtility.GetPage(url, settings);
 						final CArray array = CArray.GetAssociativeArray(t);
-						array.set("body", new CString(resp.getContent(), t), t);
+						if(settings.getDownloadTo() == null) {
+							if(binary) {
+								array.set("data", CByteArray.wrap(resp.getContent(), t), t);
+							} else {
+								try {
+									array.set("body", new CString(new String(resp.getContent(), textEncoding), t), t);
+								} catch (UnsupportedEncodingException ex) {
+									throw new CREFormatException("Unsupported encoding [" + textEncoding + "]", t, ex);
+								}
+							}
+						}
 						CArray headers = CArray.GetAssociativeArray(t);
 						for(String key : resp.getHeaderNames()) {
 							CArray h = new CArray(t);
@@ -440,11 +491,11 @@ public class Web {
 							}
 						});
 					} catch (IOException e) {
-						final ConfigRuntimeException ex = new CREIOException((e instanceof UnknownHostException ? "Unknown host: " : "")
-								+ e.getMessage(), t);
+						final CREIOException ex = new CREIOException((e instanceof UnknownHostException ? "Unknown host: " : "")
+							+ e.getMessage(), t);
+						ex.setStackTraceElements(st);
 						if(error != null) {
 							StaticLayer.GetConvertor().runOnMainThreadLater(environment.getEnv(GlobalEnv.class).GetDaemonManager(), new Runnable() {
-
 								@Override
 								public void run() {
 									executeFinish(error, ObjectGenerator.GetGenerator().exception(ex, environment, t), t, environment);
@@ -468,9 +519,9 @@ public class Web {
 			return CVoid.VOID;
 		}
 
-		private void executeFinish(CClosure closure, Construct arg, Target t, Environment environment) {
+		private void executeFinish(CClosure closure, Mixed arg, Target t, Environment environment) {
 			try {
-				closure.execute(new Construct[]{arg});
+				closure.execute(new Mixed[]{arg});
 			} catch (FunctionReturnException e) {
 				//Just ignore this if it's returning void. Otherwise, warn.
 				//TODO: Eventually, this should be taggable as a compile error
@@ -515,6 +566,7 @@ public class Web {
 				}
 			});
 			templates.put("CODE", DocGenTemplates.CODE);
+			templates.put("DEFAULT_HEADERS", (e) -> DEFAULT_HEADERS.toString());
 			try {
 				return super.getBundledDocs(templates);
 			} catch (DocGenTemplates.Generator.GenerateException ex) {
@@ -526,7 +578,7 @@ public class Web {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -584,7 +636,7 @@ public class Web {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray array = Static.getArray(args[0], t);
 			CookieJar jar = getCookieJar(array, t);
 			jar.clearSessionCookies();
@@ -609,7 +661,7 @@ public class Web {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -633,7 +685,7 @@ public class Web {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				return new CString(URLEncoder.encode(args[0].val(), "UTF-8"), t);
 			} catch (UnsupportedEncodingException ex) {
@@ -659,7 +711,7 @@ public class Web {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -690,7 +742,7 @@ public class Web {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				return new CString(URLDecoder.decode(args[0].val(), "UTF-8"), t);
 			} catch (UnsupportedEncodingException ex) {
@@ -715,7 +767,7 @@ public class Web {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -748,7 +800,7 @@ public class Web {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			// Argument processing
 			CArray options;
 			if(args.length == 1) {
@@ -791,7 +843,7 @@ public class Web {
 			String from = ArgumentValidation.getItemFromArray(options, "from", t, null).val();
 			String subject = ArgumentValidation.getItemFromArray(options, "subject", t, new CString("<No Subject>", t)).val();
 			String body = ArgumentValidation.getItemFromArray(options, "body", t, new CString("", t)).val();
-			Construct cto = ArgumentValidation.getItemFromArray(options, "to", t, null);
+			Mixed cto = ArgumentValidation.getItemFromArray(options, "to", t, null);
 			CArray to;
 			if(cto instanceof CString) {
 				to = new CArray(t);
@@ -846,7 +898,7 @@ public class Web {
 					attachments.push(bodyAttachment, 0, t);
 				}
 
-				for(Construct c : to.asList()) {
+				for(Mixed c : to.asList()) {
 					Message.RecipientType type = Message.RecipientType.TO;
 					String address;
 					if(c instanceof CArray) {
@@ -878,7 +930,7 @@ public class Web {
 					String fileName = ArgumentValidation.getItemFromArray(pattachment, "filename", t, new CString("", t)).val().trim();
 					String description = ArgumentValidation.getItemFromArray(pattachment, "description", t, new CString("", t)).val().trim();
 					String disposition = ArgumentValidation.getItemFromArray(pattachment, "disposition", t, new CString("", t)).val().trim();
-					Construct content = ArgumentValidation.getItemFromArray(pattachment, "content", t, null);
+					Mixed content = ArgumentValidation.getItemFromArray(pattachment, "content", t, null);
 					if(!"".equals(fileName)) {
 						message.setFileName(fileName);
 					}
@@ -891,7 +943,7 @@ public class Web {
 					message.setContent(getContent(content, t), type);
 				} else {
 					Multipart mp = new MimeMultipart("alternative");
-					for(Construct attachment : attachments.asList()) {
+					for(Mixed attachment : attachments.asList()) {
 						CArray pattachment = ArgumentValidation.getArray(attachment, t);
 						final String type = ArgumentValidation.getItemFromArray(pattachment, "type", t, null).val();
 						final String fileName = ArgumentValidation.getItemFromArray(pattachment, "filename", t, new CString("", t)).val().trim();
@@ -978,7 +1030,7 @@ public class Web {
 		 * @param t
 		 * @return
 		 */
-		private Object getContent(Construct c, Target t) {
+		private Object getContent(Mixed c, Target t) {
 			if(c instanceof CString) {
 				return c.val();
 			} else if(c instanceof CByteArray) {
@@ -1006,7 +1058,7 @@ public class Web {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override

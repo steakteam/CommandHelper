@@ -1167,13 +1167,13 @@ public class MethodScriptCompilerTest {
 
 		// "- something".
 		this.verifyExecute("msg(-5)", "-5");
-		this.verifyExecute("msg(typeof(-5))", "int");
+		this.verifyExecute("msg(typeof(-5))", "ms.lang.int");
 		this.verifyExecute("msg(- 5)", "-5");
-		this.verifyExecute("msg(typeof(- 5))", "int");
+		this.verifyExecute("msg(typeof(- 5))", "ms.lang.int");
 		this.verifyExecute("@a = 5; msg(-@a)", "-5");
-		this.verifyExecute("@a = 5; msg(typeof(-@a))", "int");
+		this.verifyExecute("@a = 5; msg(typeof(-@a))", "ms.lang.int");
 		this.verifyExecute("@a = 5; msg(- @a)", "-5");
-		this.verifyExecute("@a = 5; msg(typeof(- @a))", "int");
+		this.verifyExecute("@a = 5; msg(typeof(- @a))", "ms.lang.int");
 	}
 
 	@Test
@@ -1223,13 +1223,13 @@ public class MethodScriptCompilerTest {
 
 		// "+ something".
 		this.verifyExecute("msg(+5)", "5");
-		this.verifyExecute("msg(typeof(+5))", "int");
+		this.verifyExecute("msg(typeof(+5))", "ms.lang.int");
 		this.verifyExecute("msg(+ 5)", "5");
-		this.verifyExecute("msg(typeof(+ 5))", "int");
+		this.verifyExecute("msg(typeof(+ 5))", "ms.lang.int");
 		this.verifyExecute("@a = 5; msg(+@a)", "5");
-		this.verifyExecute("@a = 5; msg(typeof(+@a))", "int");
+		this.verifyExecute("@a = 5; msg(typeof(+@a))", "ms.lang.int");
 		this.verifyExecute("@a = 5; msg(+ @a)", "5");
-		this.verifyExecute("@a = 5; msg(typeof(+ @a))", "int");
+		this.verifyExecute("@a = 5; msg(typeof(+ @a))", "ms.lang.int");
 	}
 
 	private void verifyExecute(String script, String expectedResponse) throws ConfigCompileException, ConfigCompileGroupException {
@@ -1240,5 +1240,15 @@ public class MethodScriptCompilerTest {
 				MethodScriptCompiler.lex(script, null, true)), this.env, null, null);
 		verify(player).sendMessage(expectedResponse);
 		this.env.getEnv(CommandHelperEnvironment.class).SetPlayer(temp);
+	}
+
+	@Test
+	@Ignore
+	public void testFullyQualifiedNames() throws Exception {
+		assertEquals("ms.lang.ClassType", StaticTest.SRun("typeof(ms.lang.ArraySortType)", null));
+		assertEquals("ms.lang.ClassType", StaticTest.SRun("typeof(ArraySortType)", null));
+		assertEquals("ms.lang.ArraySortType", StaticTest.SRun("ArraySortType", null));
+		assertEquals("null", StaticTest.SRun("ArraySortType @s = null;", null));
+		assertEquals("null", StaticTest.SRun("ms.lang.ArraySortType @s = null;", null));
 	}
 }

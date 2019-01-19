@@ -3,17 +3,16 @@ package com.laytonsmith.abstraction.enums;
 import com.laytonsmith.PureUtilities.ClassLoading.DynamicEnum;
 import com.laytonsmith.abstraction.MCEntity;
 import com.laytonsmith.annotations.MDynamicEnum;
-import com.laytonsmith.annotations.MEnum;
 import com.laytonsmith.core.Static;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@MDynamicEnum("EntityType")
+@MDynamicEnum("com.commandhelper.EntityType")
 public abstract class MCEntityType<Concrete> extends DynamicEnum<MCEntityType.MCVanillaEntityType, Concrete> {
 
 	// To be filled by the implementer
@@ -74,7 +73,7 @@ public abstract class MCEntityType<Concrete> extends DynamicEnum<MCEntityType.MC
 	/**
 	 * @return Our own EntityType list
 	 */
-	public static Collection<MCEntityType> values() {
+	public static List<MCEntityType> values() {
 		if(NULL == null) { // docs mode
 			ArrayList<MCEntityType> dummy = new ArrayList<>();
 			for(final MCVanillaEntityType t : MCVanillaEntityType.values()) {
@@ -97,10 +96,9 @@ public abstract class MCEntityType<Concrete> extends DynamicEnum<MCEntityType.MC
 			}
 			return dummy;
 		}
-		return MAP.values();
+		return new ArrayList<>(MAP.values());
 	}
 
-	@MEnum("VanillaEntityType")
 	public enum MCVanillaEntityType {
 		AREA_EFFECT_CLOUD(true),
 		ARMOR_STAND(true),

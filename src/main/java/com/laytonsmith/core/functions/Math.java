@@ -9,10 +9,11 @@ import com.laytonsmith.annotations.api;
 import com.laytonsmith.annotations.core;
 import com.laytonsmith.annotations.seealso;
 import com.laytonsmith.core.ArgumentValidation;
-import com.laytonsmith.core.CHVersion;
+import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.Optimizable;
 import com.laytonsmith.core.ParseTree;
 import com.laytonsmith.core.Script;
+import com.laytonsmith.core.SimpleDocumentation;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.compiler.FileOptions;
 import com.laytonsmith.core.compiler.OptimizationUtilities;
@@ -21,7 +22,6 @@ import com.laytonsmith.core.constructs.CDouble;
 import com.laytonsmith.core.constructs.CFunction;
 import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CMutablePrimitive;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.IVariable;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
@@ -36,6 +36,7 @@ import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.natives.interfaces.ArrayAccess;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.text.DecimalFormat;
 
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if(Static.anyDoubles(args)) {
 				double tally = Static.getNumber(args[0], t);
 				for(int i = 1; i < args.length; i++) {
@@ -104,8 +105,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_0_1;
+		public MSVersion since() {
+			return MSVersion.V3_0_1;
 		}
 
 		@Override
@@ -153,7 +154,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if(Static.anyDoubles(args)) {
 				double tally = Static.getNumber(args[0], t);
 				for(int i = 1; i < args.length; i++) {
@@ -186,8 +187,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_0_1;
+		public MSVersion since() {
+			return MSVersion.V3_0_1;
 		}
 
 		@Override
@@ -226,7 +227,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if(Static.anyDoubles(args)) {
 				double tally = Static.getNumber(args[0], t);
 				for(int i = 1; i < args.length; i++) {
@@ -259,8 +260,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_0_1;
+		public MSVersion since() {
+			return MSVersion.V3_0_1;
 		}
 
 		@Override
@@ -306,7 +307,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			double tally = Static.getNumber(args[0], t);
 			for(int i = 1; i < args.length; i++) {
 				double next = Static.getNumber(args[i], t);
@@ -340,8 +341,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_0_1;
+		public MSVersion since() {
+			return MSVersion.V3_0_1;
 		}
 
 		@Override
@@ -381,7 +382,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			long arg1 = Static.getInt(args[0], t);
 			long arg2 = Static.getInt(args[1], t);
 			if(arg2 == 0) {
@@ -406,8 +407,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_0_1;
+		public MSVersion since() {
+			return MSVersion.V3_0_1;
 		}
 
 		@Override
@@ -445,7 +446,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			double arg1 = Static.getNumber(args[0], t);
 			double arg2 = Static.getNumber(args[1], t);
 			return new CDouble(java.lang.Math.pow(arg1, arg2), t);
@@ -467,8 +468,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_0_1;
+		public MSVersion since() {
+			return MSVersion.V3_0_1;
 		}
 
 		@Override
@@ -498,7 +499,7 @@ public class Math {
 	 *
 	 * @return
 	 */
-	protected static Construct doIncrementDecrement(ParseTree[] nodes,
+	protected static Mixed doIncrementDecrement(ParseTree[] nodes,
 			Script parent, Environment env, Target t,
 			Function func, boolean pre, boolean inc) {
 		if(nodes[0].getData() instanceof CFunction) {
@@ -511,14 +512,12 @@ public class Math {
 			}
 			if(f.getName().equals(new ArrayHandling.array_get().getName())) {
 				//Ok, so, this is it, we're in charge here.
-				long temp;
-				long newVal;
 				//First, pull out the current value. We're gonna do this manually though, and we will actually
 				//skip the whole array_get execution.
 				ParseTree eval = nodes[0];
-				Construct array = parent.seval(eval.getChildAt(0), env);
-				Construct index = parent.seval(eval.getChildAt(1), env);
-				Construct cdelta = new CInt(1, t);
+				Mixed array = parent.seval(eval.getChildAt(0), env);
+				Mixed index = parent.seval(eval.getChildAt(1), env);
+				Mixed cdelta = new CInt(1, t);
 				if(nodes.length == 2) {
 					cdelta = parent.seval(nodes[1], env);
 				}
@@ -534,34 +533,44 @@ public class Math {
 					//own exception.
 					throw new CRECastException("Cannot increment/decrement a non-array array"
 							+ " accessed value. (The value passed in was \"" + array.val() + "\")", t);
-				} else {
-					//Ok, we're good. Data types should all be correct.
-					CArray myArray = ((CArray) array);
-					Construct value = myArray.get(index, t);
-					if(value instanceof CInt || value instanceof CDouble) {
-						temp = Static.getInt(value, t);
-						//Alright, now let's actually perform the increment, and store that in the array.
+				}
+				//Ok, we're good. Data types should all be correct.
+				CArray myArray = ((CArray) array);
+				Mixed value = myArray.get(index, t);
 
-						if(inc) {
-							newVal = temp + delta;
-						} else {
-							newVal = temp - delta;
-						}
-						new ArrayHandling.array_set().exec(t, env, array, index, new CInt(newVal, t));
+				//Alright, now let's actually perform the increment, and store that in the array.
+				if(value instanceof CInt) {
+					CInt newVal;
+					if(inc) {
+						newVal = new CInt(Static.getInt(value, t) + delta, t);
 					} else {
-						throw new CRECastException("Cannot increment/decrement a non numeric value.", t);
+						newVal = new CInt(Static.getInt(value, t) - delta, t);
 					}
-				}
-				long valueToReturn;
-				if(pre) {
-					valueToReturn = newVal;
+					new ArrayHandling.array_set().exec(t, env, array, index, newVal);
+					if(pre) {
+						return newVal;
+					} else {
+						return value;
+					}
+				} else if(value instanceof CDouble) {
+					CDouble newVal;
+					if(inc) {
+						newVal = new CDouble(Static.getDouble(value, t) + delta, t);
+					} else {
+						newVal = new CDouble(Static.getDouble(value, t) - delta, t);
+					}
+					new ArrayHandling.array_set().exec(t, env, array, index, newVal);
+					if(pre) {
+						return newVal;
+					} else {
+						return value;
+					}
 				} else {
-					valueToReturn = temp;
+					throw new CRECastException("Cannot increment/decrement a non numeric value.", t);
 				}
-				return new CInt(valueToReturn, t);
 			}
 		}
-		Construct[] args = new Construct[nodes.length];
+		Mixed[] args = new Mixed[nodes.length];
 		for(int i = 0; i < args.length; i++) {
 			args[i] = parent.eval(nodes[i], env);
 		}
@@ -588,12 +597,12 @@ public class Math {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			return doIncrementDecrement(nodes, parent, env, t, this, true, true);
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			long value = 1;
 			if(args.length == 2) {
 				if(args[1] instanceof IVariable) {
@@ -605,7 +614,7 @@ public class Math {
 			if(args[0] instanceof IVariable) {
 				IVariable cur = (IVariable) args[0];
 				IVariable v = env.getEnv(GlobalEnv.class).GetVarList().get(cur.getVariableName(), cur.getTarget());
-				Construct newVal;
+				Mixed newVal;
 				if(Static.anyDoubles(v.ival())) {
 					newVal = new CDouble(Static.getDouble(v.ival(), t) + value, t);
 				} else {
@@ -648,8 +657,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_0_1;
+		public MSVersion since() {
+			return MSVersion.V3_0_1;
 		}
 
 		@Override
@@ -668,7 +677,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct optimize(Target t, Construct... args) throws ConfigCompileException {
+		public Mixed optimize(Target t, Mixed... args) throws ConfigCompileException {
 			if(args[0] instanceof IVariable) {
 				return null;
 			} else {
@@ -704,12 +713,12 @@ public class Math {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			return Math.doIncrementDecrement(nodes, parent, env, t, this, false, true);
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			long value = 1;
 			if(args.length == 2) {
 				if(args[1] instanceof IVariable) {
@@ -721,7 +730,7 @@ public class Math {
 			if(args[0] instanceof IVariable) {
 				IVariable cur = (IVariable) args[0];
 				IVariable v = env.getEnv(GlobalEnv.class).GetVarList().get(cur.getVariableName(), cur.getTarget());
-				Construct newVal;
+				Mixed newVal;
 				if(Static.anyDoubles(v.ival())) {
 					newVal = new CDouble(Static.getDouble(v.ival(), t) + value, t);
 				} else {
@@ -730,7 +739,7 @@ public class Math {
 				if(v.ival() instanceof CMutablePrimitive) {
 					newVal = ((CMutablePrimitive) v.ival()).setAndReturn(newVal, t);
 				}
-				Construct oldVal = null;
+				Mixed oldVal = null;
 				try {
 					oldVal = v.ival().clone();
 				} catch (CloneNotSupportedException ex) {
@@ -769,8 +778,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -779,7 +788,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct optimize(Target t, Construct... args) throws ConfigCompileException {
+		public Mixed optimize(Target t, Mixed... args) throws ConfigCompileException {
 			if(args[0] instanceof IVariable) {
 				return null;
 			} else {
@@ -830,12 +839,12 @@ public class Math {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			return doIncrementDecrement(nodes, parent, env, t, this, true, false);
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			long value = 1;
 			if(args.length == 2) {
 				if(args[1] instanceof IVariable) {
@@ -847,7 +856,7 @@ public class Math {
 			if(args[0] instanceof IVariable) {
 				IVariable cur = (IVariable) args[0];
 				IVariable v = env.getEnv(GlobalEnv.class).GetVarList().get(cur.getVariableName(), cur.getTarget());
-				Construct newVal;
+				Mixed newVal;
 				if(Static.anyDoubles(v.ival())) {
 					newVal = new CDouble(Static.getDouble(v.ival(), t) - value, t);
 				} else {
@@ -889,8 +898,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_0_1;
+		public MSVersion since() {
+			return MSVersion.V3_0_1;
 		}
 
 		@Override
@@ -899,7 +908,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct optimize(Target t, Construct... args) throws ConfigCompileException {
+		public Mixed optimize(Target t, Mixed... args) throws ConfigCompileException {
 			if(args[0] instanceof IVariable) {
 				return null;
 			} else {
@@ -946,12 +955,12 @@ public class Math {
 		}
 
 		@Override
-		public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+		public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 			return doIncrementDecrement(nodes, parent, env, t, this, false, false);
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			long value = 1;
 			if(args.length == 2) {
 				if(args[1] instanceof IVariable) {
@@ -963,7 +972,7 @@ public class Math {
 			if(args[0] instanceof IVariable) {
 				IVariable cur = (IVariable) args[0];
 				IVariable v = env.getEnv(GlobalEnv.class).GetVarList().get(cur.getVariableName(), cur.getTarget());
-				Construct newVal;
+				Mixed newVal;
 				if(Static.anyDoubles(v.ival())) {
 					newVal = new CDouble(Static.getDouble(v.ival(), t) - value, t);
 				} else {
@@ -972,7 +981,7 @@ public class Math {
 				if(v.ival() instanceof CMutablePrimitive) {
 					newVal = ((CMutablePrimitive) v.ival()).setAndReturn(newVal, t);
 				}
-				Construct oldVal = null;
+				Mixed oldVal = null;
 				try {
 					oldVal = v.ival().clone();
 				} catch (CloneNotSupportedException ex) {
@@ -1011,8 +1020,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -1021,7 +1030,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct optimize(Target t, Construct... args) throws ConfigCompileException {
+		public Mixed optimize(Target t, Mixed... args) throws ConfigCompileException {
 			if(args[0] instanceof IVariable) {
 				return null;
 			} else {
@@ -1084,12 +1093,12 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_0_1;
+		public MSVersion since() {
+			return MSVersion.V3_0_1;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if(args.length == 0) {
 				return new CDouble(java.lang.Math.random(), t);
 			} else {
@@ -1162,8 +1171,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_1_2;
+		public MSVersion since() {
+			return MSVersion.V3_1_2;
 		}
 
 		@Override
@@ -1172,7 +1181,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			if(args[0] instanceof CInt) {
 				return new CInt(java.lang.Math.abs(Static.getInt(args[0], t)), t);
 			} else {
@@ -1226,8 +1235,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_1_3;
+		public MSVersion since() {
+			return MSVersion.V3_1_3;
 		}
 
 		@Override
@@ -1236,7 +1245,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return new CInt((long) java.lang.Math.floor(Static.getNumber(args[0], t)), t);
 		}
 
@@ -1278,8 +1287,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_1_3;
+		public MSVersion since() {
+			return MSVersion.V3_1_3;
 		}
 
 		@Override
@@ -1288,7 +1297,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return new CInt((long) java.lang.Math.ceil(Static.getNumber(args[0], t)), t);
 		}
 
@@ -1331,8 +1340,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_2_0;
+		public MSVersion since() {
+			return MSVersion.V3_2_0;
 		}
 
 		@Override
@@ -1341,7 +1350,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			double d = Static.getNumber(args[0], t);
 			if(d < 0) {
 				throw new CRERangeException("sqrt expects a number >= 0", t);
@@ -1393,8 +1402,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_2_0;
+		public MSVersion since() {
+			return MSVersion.V3_2_0;
 		}
 
 		@Override
@@ -1403,14 +1412,14 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			if(args.length == 0) {
 				throw new CREInsufficientArgumentsException("You must send at least one parameter to min", t);
 			}
 			double lowest = Double.POSITIVE_INFINITY;
-			List<Construct> list = new ArrayList<Construct>();
+			List<Mixed> list = new ArrayList<>();
 			recList(list, args);
-			for(Construct c : list) {
+			for(Mixed c : list) {
 				double d = Static.getNumber(c, t);
 				if(d < lowest) {
 					lowest = d;
@@ -1423,8 +1432,8 @@ public class Math {
 			}
 		}
 
-		public List<Construct> recList(List<Construct> list, Construct... args) {
-			for(Construct c : args) {
+		public List<Mixed> recList(List<Mixed> list, Mixed... args) {
+			for(Mixed c : args) {
 				if(c instanceof CArray) {
 					for(int i = 0; i < ((CArray) c).size(); i++) {
 						recList(list, ((CArray) c).get(i, Target.UNKNOWN));
@@ -1475,8 +1484,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_2_0;
+		public MSVersion since() {
+			return MSVersion.V3_2_0;
 		}
 
 		@Override
@@ -1485,14 +1494,14 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			if(args.length == 0) {
 				throw new CREInsufficientArgumentsException("You must send at least one parameter to max", t);
 			}
 			double highest = Double.NEGATIVE_INFINITY;
-			List<Construct> list = new ArrayList<Construct>();
+			List<Mixed> list = new ArrayList<>();
 			recList(list, args);
-			for(Construct c : list) {
+			for(Mixed c : list) {
 				double d = Static.getNumber(c, t);
 				if(d > highest) {
 					highest = d;
@@ -1505,8 +1514,8 @@ public class Math {
 			}
 		}
 
-		public List<Construct> recList(List<Construct> list, Construct... args) {
-			for(Construct c : args) {
+		public List<Mixed> recList(List<Mixed> list, Mixed... args) {
+			for(Mixed c : args) {
 				if(c instanceof CArray) {
 					for(int i = 0; i < ((CArray) c).size(); i++) {
 						recList(list, ((CArray) c).get(i, Target.UNKNOWN));
@@ -1556,8 +1565,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -1566,7 +1575,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return new CDouble(java.lang.Math.sin(Static.getNumber(args[0], t)), t);
 		}
 
@@ -1608,8 +1617,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -1618,7 +1627,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return new CDouble(java.lang.Math.cos(Static.getNumber(args[0], t)), t);
 		}
 
@@ -1660,8 +1669,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -1670,7 +1679,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return new CDouble(java.lang.Math.tan(Static.getNumber(args[0], t)), t);
 		}
 
@@ -1712,8 +1721,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -1722,7 +1731,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return new CDouble(java.lang.Math.asin(Static.getNumber(args[0], t)), t);
 		}
 
@@ -1764,8 +1773,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -1774,7 +1783,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return new CDouble(java.lang.Math.acos(Static.getNumber(args[0], t)), t);
 		}
 
@@ -1816,8 +1825,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -1826,7 +1835,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return new CDouble(java.lang.Math.atan(Static.getNumber(args[0], t)), t);
 		}
 
@@ -1869,7 +1878,7 @@ public class Math {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 
 		@Override
@@ -1878,7 +1887,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return Static.getNumber(java.lang.Math.sinh(ArgumentValidation.getNumber(args[0], t)), t);
 		}
 
@@ -1921,7 +1930,7 @@ public class Math {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 
 		@Override
@@ -1930,7 +1939,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return Static.getNumber(java.lang.Math.cosh(ArgumentValidation.getNumber(args[0], t)), t);
 		}
 
@@ -1973,7 +1982,7 @@ public class Math {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 
 		@Override
@@ -1982,7 +1991,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return Static.getNumber(java.lang.Math.tanh(ArgumentValidation.getNumber(args[0], t)), t);
 		}
 
@@ -2024,8 +2033,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -2034,7 +2043,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return new CDouble(java.lang.Math.toRadians(Static.getNumber(args[0], t)), t);
 		}
 
@@ -2076,8 +2085,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -2086,7 +2095,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return new CDouble(java.lang.Math.toDegrees(Static.getNumber(args[0], t)), t);
 		}
 
@@ -2132,8 +2141,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -2142,7 +2151,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			return new CDouble(java.lang.Math.atan2(Static.getNumber(args[0], t), Static.getNumber(args[1], t)), t);
 		}
 
@@ -2185,8 +2194,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -2195,7 +2204,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			double number = Static.getNumber(args[0], t);
 			int precision = 0;
 			if(args.length > 1) {
@@ -2247,7 +2256,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			double x = Static.getDouble(args[0], t) + 1;
 			DecimalFormat twoDForm = new DecimalFormat("0.##############E0");
 			String str = twoDForm.format(x);
@@ -2279,7 +2288,7 @@ public class Math {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 
 		@Override
@@ -2335,8 +2344,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -2345,7 +2354,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			String expr = args[0].val().trim();
 			if("".equals(expr)) {
 				throw new CREFormatException("Expression may not be empty", t);
@@ -2449,7 +2458,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(args[0] instanceof CInt) {
 				return new CInt(-(Static.getInt(args[0], t)), t);
 			} else {
@@ -2458,8 +2467,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -2490,7 +2499,7 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			double val = Static.getDouble(args[0], t);
 			if(val <= 0) {
 				throw new CRERangeException("val was <= 0", t);
@@ -2524,8 +2533,8 @@ public class Math {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -2565,8 +2574,8 @@ public class Math {
 			return null;
 		}
 
-		@MEnum("MathConstants")
-		public static enum MathConstants {
+		@MEnum("ms.lang.MathConstants")
+		public static enum MathConstants implements SimpleDocumentation {
 			NaN(Double.NaN, "A representation of an undefinied number (Not a Number), per the IEEE 754 standard"),
 			NEGATIVE_INFINITY(Double.NEGATIVE_INFINITY, "A representation of negative infinity, per the IEEE 754 standard"),
 			INFINITY(Double.POSITIVE_INFINITY, "A representation of positive infinity, per the IEEE 754 standard"),
@@ -2587,12 +2596,27 @@ public class Math {
 			PHI(1.6180339887498948482045868343656381177203091798057628621, "The golden ratio"),
 			C(2.99792458e8, "The speed of light in a vacuum, in meters per second"),
 			EULER(0.5772156649015627, "The Euler-Mascheroni constant γ (not to be confused with e)");
+
+			public static String enumDocs() {
+				return "Contains a list of types of math constants";
+			}
+
+			public static Version enumSince() {
+				return new math_const().since();
+			}
+
 			private final Number value;
 			private final String doc;
+			private final Version since;
 
 			private MathConstants(Number value, String doc) {
+				this(value, doc, new math_const().since());
+			}
+
+			private MathConstants(Number value, String doc, Version since) {
 				this.value = value;
 				this.doc = doc;
+				this.since = since;
 			}
 
 			public Number getValue() {
@@ -2602,10 +2626,25 @@ public class Math {
 			public String getDoc() {
 				return doc;
 			}
+
+			@Override
+			public String getName() {
+				return MathConstants.class.getAnnotation(MEnum.class).value();
+			}
+
+			@Override
+			public String docs() {
+				return getDoc();
+			}
+
+			@Override
+			public Version since() {
+				return since;
+			}
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				MathConstants c = MathConstants.valueOf(args[0].val());
 				Number v = c.getValue();
@@ -2652,7 +2691,7 @@ public class Math {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -2670,7 +2709,7 @@ public class Math {
 	}
 
 	@api
-	public static class clamp extends AbstractFunction implements Optimizable {
+	public static class clamp extends CompositeFunction implements Optimizable {
 
 		@Override
 		public Class<? extends CREThrowable>[] thrown() {
@@ -2688,36 +2727,8 @@ public class Math {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-			double value = Static.getDouble(args[0], t);
-			double min = Static.getDouble(args[1], t);
-			double max = Static.getDouble(args[2], t);
-			double v;
-			if(min == max) {
-				v = min;
-			} else if(min < max) {
-				// Normal mode
-				if(value < min) {
-					v = min;
-				} else if(value > max) {
-					v = max;
-				} else {
-					v = value;
-				}
-			} else // Reverse mode
-			if(value < max) {
-				// Actually min
-				v = value;
-			} else if(value > min) {
-				// Actually max
-				v = value;
-			} else // Special handling, find the closer value
-			if(value - max <= min - value) {
-				v = max;
-			} else {
-				v = min;
-			}
-			return new CDouble(v, t);
+		protected String script() {
+			return getBundledCode();
 		}
 
 		@Override
@@ -2745,7 +2756,7 @@ public class Math {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 
 		@Override

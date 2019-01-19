@@ -10,6 +10,7 @@ import com.laytonsmith.abstraction.MCInventory;
 import com.laytonsmith.abstraction.MCInventoryHolder;
 import com.laytonsmith.abstraction.MCItemFactory;
 import com.laytonsmith.abstraction.MCItemStack;
+import com.laytonsmith.abstraction.MCMerchant;
 import com.laytonsmith.abstraction.MCOfflinePlayer;
 import com.laytonsmith.abstraction.MCPlayer;
 import com.laytonsmith.abstraction.MCPluginManager;
@@ -169,6 +170,16 @@ public class BukkitMCServer implements MCServer {
 			return null;
 		}
 		return new BukkitMCPluginManager(s.getPluginManager());
+	}
+
+	@Override
+	@SuppressWarnings("deprecation")
+	public MCPlayer getPlayerExact(String name) {
+		Player p = s.getPlayerExact(name);
+		if(p == null) {
+			return null;
+		}
+		return new BukkitMCPlayer(p);
 	}
 
 	@Override
@@ -400,7 +411,7 @@ public class BukkitMCServer implements MCServer {
 	public List<MCOfflinePlayer> getBannedPlayers() {
 		List<MCOfflinePlayer> list = new ArrayList<>();
 		for(OfflinePlayer p : s.getBannedPlayers()) {
-			list.add(getOfflinePlayer(p.getName()));
+			list.add(new BukkitMCOfflinePlayer(p));
 		}
 		return list;
 	}
@@ -409,7 +420,7 @@ public class BukkitMCServer implements MCServer {
 	public List<MCOfflinePlayer> getWhitelistedPlayers() {
 		List<MCOfflinePlayer> list = new ArrayList<>();
 		for(OfflinePlayer p : s.getWhitelistedPlayers()) {
-			list.add(getOfflinePlayer(p.getName()));
+			list.add(new BukkitMCOfflinePlayer(p));
 		}
 		return list;
 	}
@@ -418,7 +429,7 @@ public class BukkitMCServer implements MCServer {
 	public List<MCOfflinePlayer> getOperators() {
 		List<MCOfflinePlayer> list = new ArrayList<>();
 		for(OfflinePlayer p : s.getOperators()) {
-			list.add(getOfflinePlayer(p.getName()));
+			list.add(new BukkitMCOfflinePlayer(p));
 		}
 		return list;
 	}
@@ -570,5 +581,10 @@ public class BukkitMCServer implements MCServer {
 	@Override
 	public MCBlockData createBlockData(String data) {
 		return new BukkitMCBlockData(s.createBlockData(data));
+	}
+
+	@Override
+	public MCMerchant createMerchant(String title) {
+		return new BukkitMCMerchant(__Server().createMerchant(title), title);
 	}
 }

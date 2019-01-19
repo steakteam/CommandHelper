@@ -22,7 +22,7 @@ import com.laytonsmith.annotations.api;
 import com.laytonsmith.annotations.hide;
 import com.laytonsmith.core.ArgumentValidation;
 import com.laytonsmith.core.CHLog;
-import com.laytonsmith.core.CHVersion;
+import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.ObjectGenerator;
 import com.laytonsmith.core.Optimizable;
 import com.laytonsmith.core.ParseTree;
@@ -35,7 +35,6 @@ import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
@@ -50,6 +49,7 @@ import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -86,7 +86,8 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "array {[world]} Returns a location array for the specified world, or the current player's world, if not specified.";
+			return "array {[world]} Returns a location array for the specified world, or the current player's world"
+					+ " if one is not specified.";
 		}
 
 		@Override
@@ -100,8 +101,8 @@ public class World {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -110,7 +111,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			String world;
 			if(args.length == 1) {
 				world = args[0].val();
@@ -147,7 +148,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer p = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld w = null;
 			if(p != null) {
@@ -191,14 +192,14 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "void {locationArray | [world], x, y, z} Sets the spawn of the world. Note that in some cases, a plugin"
-					+ " may set the spawn differently, and this method will do nothing. In that case, you should use"
-					+ " the plugin's commands to set the spawn.";
+			return "void {locationArray | [world], x, y, z} Sets the spawn of the world. Note that in some cases"
+					+ " a plugin may override the spawn, and this method will do nothing. In that case,"
+					+ " you should use the plugin's commands to set the spawn.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -233,8 +234,8 @@ public class World {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -243,7 +244,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld world;
 			int x;
@@ -302,7 +303,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld world;
 			int x;
@@ -356,13 +357,13 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "void {[world], x, z | [world], locationArray} Loads the chunk, using the specified world, or the current"
-					+ " players world if not provided.";
+			return "void {[world], x, z | [world], locationArray} Loads a chunk for a world using the"
+					+ " x and z coordinates. The current player's world is used if one isn't provided.";
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -385,7 +386,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld world;
 			int x;
@@ -436,13 +437,13 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "void {[world], x, z | [world], locationArray} Unloads the chunk, using the specified world, or the current"
-					+ " players world if not provided.";
+			return "void {[world], x, z | [world], locationArray} Unloads a chunk for a world using the"
+					+ " x and z coordinates. The current player's world is used if one is not provided.";
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -466,7 +467,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld world;
 			if(args.length == 1) {
@@ -487,14 +488,13 @@ public class World {
 						"Could not find the chunk objects of the world (are you running in cmdline mode?)", t);
 			}
 			CArray ret = new CArray(t);
-			for(int i = 0; i < chunks.length; i++) {
-				CArray chunk = new CArray(t);
-				chunk.set("x", new CInt(chunks[i].getX(), t), t);
-				chunk.set("z", new CInt(chunks[i].getZ(), t), t);
-				chunk.set("world", chunks[i].getWorld().getName(), t);
-				ret.set(i, chunk, t);
+			for(MCChunk c : chunks) {
+				CArray chunk = CArray.GetAssociativeArray(t);
+				chunk.set("x", new CInt(c.getX(), t), t);
+				chunk.set("z", new CInt(c.getZ(), t), t);
+				chunk.set("world", c.getWorld().getName(), t);
+				ret.push(chunk, t);
 			}
-
 			return ret;
 		}
 
@@ -510,13 +510,14 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "array {[world]} Gets all currently loaded chunks, in the specified world, or the current"
-					+ " players world if not provided.";
+			return "array {[world]} Gets an array of all currently loaded chunks for a world."
+					+ " The current player's world is used if one is not provided."
+					+ " The chunk objects are associative arrays with the keys: x, z, and world.";
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -536,9 +537,9 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "void {x, z, [world]| locationArray, [world]} Regenerate the chunk, using the specified world, or"
-					+ " the current players world if not provided. Beware that this is destructive! Any data in this"
-					+ " chunk will be lost!";
+			return "void {x, z, [world]| locationArray, [world]} Regenerate the chunk for a world."
+					+ " The current player's world is used if one is not provided. Beware that this is destructive!"
+					+ " Any data in this chunk will be lost!";
 		}
 
 		@Override
@@ -552,8 +553,8 @@ public class World {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -562,7 +563,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld world;
 			int x;
@@ -573,8 +574,8 @@ public class World {
 				MCLocation l = ObjectGenerator.GetGenerator().location(args[0], m != null ? m.getWorld() : null, t);
 
 				world = l.getWorld();
-				x = l.getChunk().getX();
-				z = l.getChunk().getZ();
+				x = l.getBlockX() >> 4;
+				z = l.getBlockZ() >> 4;
 			} else if(args.length == 2) {
 				//Either location array and world provided, or x and z. Test for array at pos 1
 				if(args[0] instanceof CArray) {
@@ -584,8 +585,8 @@ public class World {
 					}
 					MCLocation l = ObjectGenerator.GetGenerator().location(args[0], null, t);
 
-					x = l.getChunk().getX();
-					z = l.getChunk().getZ();
+					x = l.getBlockX() >> 4;
+					z = l.getBlockZ() >> 4;
 				} else {
 					if(m == null) {
 						throw new CREInvalidWorldException("No world specified", t);
@@ -624,8 +625,8 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "boolean {x, z, [world]| locationArray, [world]} Returns if the chunk is a slime spawning chunk,"
-					+ " using the specified world, or the current players world if not provided.";
+			return "boolean {x, z, [world]| locationArray, [world]} Returns if the chunk is a slime spawning chunk."
+					+ " The current player's world is used if one is not provided.";
 		}
 
 		@Override
@@ -639,8 +640,8 @@ public class World {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -651,7 +652,7 @@ public class World {
 		Random rnd = new Random();
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer m = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld world;
 			int x;
@@ -660,8 +661,8 @@ public class World {
 				//Location array provided
 				MCLocation l = ObjectGenerator.GetGenerator().location(args[0], m != null ? m.getWorld() : null, t);
 				world = l.getWorld();
-				x = l.getChunk().getX();
-				z = l.getChunk().getZ();
+				x = l.getBlockX() >> 4;
+				z = l.getBlockZ() >> 4;
 			} else if(args.length == 2) {
 				//Either location array and world provided, or x and z. Test for array at pos 1
 				if(args[0] instanceof CArray) {
@@ -670,8 +671,8 @@ public class World {
 						throw new CREInvalidWorldException("The given world (" + args[1].val() + ") does not exist.", t);
 					}
 					MCLocation l = ObjectGenerator.GetGenerator().location(args[0], null, t);
-					x = l.getChunk().getX();
-					z = l.getChunk().getZ();
+					x = l.getBlockX() >> 4;
+					z = l.getBlockZ() >> 4;
 				} else {
 					if(m == null) {
 						throw new CREInvalidWorldException("No world specified", t);
@@ -699,7 +700,7 @@ public class World {
 		}
 	}
 
-	private static final SortedMap<String, Construct> TIME_LOOKUP = new TreeMap<>();
+	private static final SortedMap<String, CString> TIME_LOOKUP = new TreeMap<>();
 
 	static {
 		synchronized(World.class) {
@@ -735,8 +736,8 @@ public class World {
 			StringBuilder doc = new StringBuilder();
 			synchronized(World.class) {
 				doc.append("void {[world], time} Sets the time of a given world. Should be a number from 0 to"
-						+ " 24000, if not, it is modulo scaled. ---- Alternatively, common time notation (9:30pm, 4:00 am)"
-						+ " is acceptable, and convenient english mappings also exist:");
+						+ " 24000, if not, it is modulo scaled. ---- Alternatively, common time notation"
+						+ " (9:30pm, 4:00 am) is acceptable, and convenient english mappings also exist:");
 				doc.append("<ul>");
 				for(String key : TIME_LOOKUP.keySet()) {
 					doc.append("<li>").append(key).append(" = ").append(TIME_LOOKUP.get(key)).append("</li>");
@@ -757,8 +758,8 @@ public class World {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -767,7 +768,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = null;
 			if(environment.getEnv(CommandHelperEnvironment.class).GetPlayer() != null) {
 				w = environment.getEnv(CommandHelperEnvironment.class).GetPlayer().getWorld();
@@ -834,8 +835,7 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "int {[world]} Returns the time of the specified world, as an integer from"
-					+ " 0 to 24000-1";
+			return "int {[world]} Returns the time of the specified world, as an integer from 0 to 24000-1";
 		}
 
 		@Override
@@ -849,8 +849,8 @@ public class World {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -859,7 +859,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = null;
 			if(environment.getEnv(CommandHelperEnvironment.class).GetPlayer() != null) {
 				w = environment.getEnv(CommandHelperEnvironment.class).GetPlayer().getWorld();
@@ -893,7 +893,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			MCWorldCreator creator = StaticLayer.GetConvertor().getWorldCreator(args[0].val());
 			if(args.length >= 3) {
 				MCWorldType type;
@@ -938,18 +938,18 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "void {name, [type, environment, [seed, [generator]]]} Creates a new world with the specified options."
-					+ " If the world already exists, it will be loaded from disk, and the last 3 arguments may be"
-					+ " ignored. name is the name of the world, type is one of "
+			return "void {name, [type, environment, [seed, [generator]]]} Creates a world with the specified options."
+					+ " If a world by that name already exists, it will instead be loaded from disk, and the last three"
+					+ " arguments may be ignored. The name is the name of the world, type is one of "
 					+ StringUtils.Join(MCWorldType.values(), ", ") + " and environment is one of "
-					+ StringUtils.Join(MCWorldEnvironment.values(), ", ") + ". The seed can be an integer, a string"
-					+ " (will be the hashcode), or null (will be random int)."
+					+ StringUtils.Join(MCWorldEnvironment.values(), ", ") + ". The seed can be an integer,"
+					+ " a string (will be the hashcode), or null (will be random int)."
 					+ " Generator is the name of a world generator loaded on the server.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -972,7 +972,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray worlds = new CArray(t);
 			for(MCWorld w : Static.getServer().getWorlds()) {
 				worlds.push(new CString(w.getName(), t), t);
@@ -996,8 +996,8 @@ public class World {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1015,7 +1015,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			MCCommandSender cs = env.getEnv(CommandHelperEnvironment.class).GetCommandSender();
 			MCPlayer p = null;
 			MCWorld w = null;
@@ -1045,21 +1045,20 @@ public class World {
 				}
 			}
 
-			CArray chunk = new CArray(t,
-					new CInt(l.getChunk().getX(), t),
-					new CInt(l.getChunk().getZ(), t),
-					new CString(l.getChunk().getWorld().getName(), t));
-			chunk.set("x", new CInt(l.getChunk().getX(), t), t);
-			chunk.set("z", new CInt(l.getChunk().getZ(), t), t);
-			chunk.set("world", l.getChunk().getWorld().getName(), t);
+			CArray chunk = CArray.GetAssociativeArray(t);
+			chunk.set(0, new CInt(l.getBlockX() >> 4, t), t);
+			chunk.set(1, new CInt(l.getBlockZ() >> 4, t), t);
+			chunk.set(2, new CString(l.getWorld().getName(), t), t);
+			chunk.set("x", new CInt(l.getBlockX() >> 4, t), t);
+			chunk.set("z", new CInt(l.getBlockZ() >> 4, t), t);
+			chunk.set("world", l.getWorld().getName(), t);
 			return chunk;
 		}
 
 		@Override
 		public String docs() {
-			return "array {[location array]} Returns an array of x, z, world "
-					+ "coords of the chunk of either the location specified or the location of "
-					+ "the player running the command.";
+			return "array {[locationArray]} Returns an array of (x, z, world) coordinates of the chunk of either the"
+					+ " location specified or the location of the player running the command.";
 		}
 
 		@Override
@@ -1074,8 +1073,8 @@ public class World {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -1084,7 +1083,6 @@ public class World {
 		}
 	}
 
-	@hide("Deprecated")
 	@api(environments = {CommandHelperEnvironment.class})
 	public static class spawn_falling_block extends AbstractFunction implements Optimizable {
 
@@ -1104,7 +1102,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCLocation loc = ObjectGenerator.GetGenerator().location(args[0], p != null ? p.getWorld() : null, t);
 
@@ -1137,15 +1135,15 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "integer {location array, blockName, [vector array]} Spawns a falling block"
-					+ " of the specified material at the specified location, applying"
-					+ " vector array as a velocity if given. Values for the vector array are doubles, and 1.0"
-					+ " seems to imply about 3 times walking speed. Gravity applies for y.";
+			return "string {locationArray, blockName, [vectorArray]} Spawns a falling block entity of the specified"
+					+ " block type at the specified location, applying the vector array as a velocity if given."
+					+ " Values for the vector array are doubles, and 1.0 seems to imply about 3 times walking speed."
+					+ " Gravity applies for y.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -1182,8 +1180,8 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment,
-				Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment,
+				Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = Static.getServer().getWorld(args[0].val());
 			if(w == null) {
 				throw new CREInvalidWorldException("Unknown world: " + args[0], t);
@@ -1216,8 +1214,8 @@ public class World {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1240,7 +1238,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			boolean save = true;
 			if(args.length == 2) {
 				save = Static.getBoolean(args[1], t);
@@ -1270,7 +1268,7 @@ public class World {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1310,11 +1308,11 @@ public class World {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld world = Static.getServer().getWorld(args[0].val());
 			if(world == null) {
 				throw new CREInvalidWorldException("Unknown world: " + args[0].val(), t);
@@ -1353,17 +1351,18 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "void {[world], difficulty} Sets the difficulty of the world with the given name, or all worlds if the name is not given."
-					+ " difficulty can be " + StringUtils.Join(MCDifficulty.values(), ", ", ", or ", " or ") + ".";
+			return "void {[world], difficulty} Sets the difficulty of the world with the given name, or all worlds"
+					+ " if the name is not given. The difficulty can be "
+					+ StringUtils.Join(MCDifficulty.values(), ", ", ", or ", " or ") + ".";
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCDifficulty difficulty;
 			if(args.length == 1) {
 				try {
@@ -1425,11 +1424,11 @@ public class World {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld world = Static.getServer().getWorld(args[0].val());
 			if(world == null) {
 				throw new CREInvalidWorldException("Unknown world: " + args[0].val(), t);
@@ -1468,16 +1467,17 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "void {[world], boolean} Sets if PVP is allowed in the world with the given name, or all worlds if the name is not given.";
+			return "void {[world], boolean} Sets if PVP is allowed in the world with the given name,"
+					+ " or all worlds if the name is not given.";
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(args.length == 1) {
 				boolean pvp = Static.getBoolean(args[0], t);
 				for(MCWorld world : Static.getServer().getWorlds()) {
@@ -1525,17 +1525,18 @@ public class World {
 		@Override
 		public String docs() {
 			return "mixed {world, [gameRule]} Returns an associative array containing the values of all existing"
-					+ " gamerules for the given world. If gameRule is specified, the function only returns that value."
-					+ " gameRule can be " + StringUtils.Join(MCGameRule.values(), ", ", ", or ", " or ") + ".";
+					+ " gamerules for the given world. If the gameRule parameter is specified, the function only"
+					+ " returns that one value instead of an array."
+					+ " The gameRule can be " + StringUtils.Join(MCGameRule.values(), ", ", ", or ", " or ") + ".";
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld world = Static.getServer().getWorld(args[0].val());
 			if(world == null) {
 				throw new CREInvalidWorldException("Unknown world: " + args[0].val(), t);
@@ -1578,7 +1579,7 @@ public class World {
 
 		@Override
 		public Class<? extends CREThrowable>[] thrown() {
-			return new Class[]{CREInvalidWorldException.class, CREFormatException.class};
+			return new Class[]{CREInvalidWorldException.class, CREFormatException.class, CRECastException.class};
 		}
 
 		@Override
@@ -1600,40 +1601,26 @@ public class World {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCGameRule gameRule;
 			boolean success = false;
 			if(args.length == 2) {
-				try {
-					gameRule = MCGameRule.valueOf(args[0].val().toUpperCase());
-				} catch (IllegalArgumentException exception) {
-					throw new CREFormatException("The gamerule \"" + args[0].val() + "\" does not exist.", t);
-				}
-				if(!args[1].getCType().equals(gameRule.getRuleType())) {
-					throw new CREFormatException("Wrong value type for \"" + args[0].val() + "\".", t);
-				}
-				String value = args[1].val();
+				gameRule = ArgumentValidation.getEnum(args[0], MCGameRule.class, t);
+				String value = Static.getObject(args[1], t, gameRule.getRuleType()).val();
 				for(MCWorld world : Static.getServer().getWorlds()) {
 					success = world.setGameRuleValue(gameRule, value);
 				}
 			} else {
-				try {
-					gameRule = MCGameRule.valueOf(args[1].val().toUpperCase());
-				} catch (IllegalArgumentException exception) {
-					throw new CREFormatException("The gamerule \"" + args[1].val() + "\" does not exist.", t);
-				}
+				gameRule = ArgumentValidation.getEnum(args[1], MCGameRule.class, t);
 				MCWorld world = Static.getServer().getWorld(args[0].val());
 				if(world == null) {
 					throw new CREInvalidWorldException("Unknown world: " + args[0].val(), t);
 				}
-				if(!args[2].getCType().equals(gameRule.getRuleType())) {
-					throw new CREFormatException("Wrong value type for \"" + args[1].val() + "\".", t);
-				}
-				success = world.setGameRuleValue(gameRule, args[2].val());
+				success = world.setGameRuleValue(gameRule, Static.getObject(args[2], t, gameRule.getRuleType()).val());
 			}
 			return CBoolean.get(success);
 		}
@@ -1669,20 +1656,20 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "locationArray {origin, target, [distance] | origin, direction, [distance]} Returns a location that"
+			return "array {origin, target, [distance] | origin, direction, [distance]} Returns a location array that"
 					+ " is the specified distance from the origin location along a vector. ---- If a target location is"
 					+ " specified, the vector is gotten from that. (the target's world is ignored) If a direction is"
-					+ " specified, that vector is use instead. Distance defaults to 1. Direction can be one of "
+					+ " specified, that vector is use instead. Distance defaults to 1.0. Direction can be one of "
 					+ StringUtils.Join(MCBlockFace.values(), ", ", ", or ", " or ") + ".";
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCLocation loc = ObjectGenerator.GetGenerator().location(args[0], p != null ? p.getWorld() : null, t);
 			double distance = 1;
@@ -1754,11 +1741,11 @@ public class World {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 
@@ -1815,16 +1802,17 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "double {location_from, location_to} Calculate pitch from one location to another.";
+			return "double {location_from, location_to} Calculate pitch from one location to another."
+					+ " This will be from -90.0 to 90.0, which is up and down respectively.";
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 
@@ -1874,17 +1862,18 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "array {location, [magnitude]} Returns a vector from the yaw and pitch in a location array."
+			return "array {locationArray, [magnitude]} Returns a vector from the yaw and pitch in a location array."
+					+ " All other values in the location array are ignored."
 					+ " The second parameter, that defines the magnitude of the vector, defaults to 1.0.";
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			Vector3D v = ObjectGenerator.GetGenerator().location(args[0], p == null ? null : p.getWorld(), t).getDirection();
 			if(args.length == 2) {
@@ -1930,11 +1919,11 @@ public class World {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			MCLocation loc1 = ObjectGenerator.GetGenerator().location(args[0], null, t);
 			MCLocation loc2 = ObjectGenerator.GetGenerator().location(args[1], null, t);
 			try {
@@ -1964,7 +1953,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld world = Static.getWorld(args[0], t);
 			world.save();
 			return CVoid.VOID;
@@ -1987,7 +1976,7 @@ public class World {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -2011,7 +2000,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target target, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target target, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer player = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld world = null;
 			if(player != null) {
@@ -2033,12 +2022,12 @@ public class World {
 
 		@Override
 		public String docs() {
-			return "double {locationArray} Returns the current temperature of the location given.";
+			return "double {locationArray} Returns the current temperature at the location given.";
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -2061,7 +2050,7 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = Static.getServer().getWorld(args[0].val());
 			if(w == null) {
 				throw new CREInvalidWorldException("Unknown world: " + args[0], t);
@@ -2095,7 +2084,7 @@ public class World {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 
@@ -2119,13 +2108,13 @@ public class World {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = Static.getServer().getWorld(args[0].val());
 			if(w == null) {
 				throw new CREInvalidWorldException("Unknown world: " + args[0], t);
 			}
 			MCWorldBorder wb = w.getWorldBorder();
-			Construct c = args[1];
+			Mixed c = args[1];
 			if(!(c instanceof CArray)) {
 				throw new CREFormatException("Expected array but given \"" + args[1].val() + "\"", t);
 			}
@@ -2169,13 +2158,13 @@ public class World {
 		@Override
 		public String docs() {
 			return "void {world_name, paramArray} Updates the world's border with the given values. In addition to the"
-					+ " keys returned by get_world_border(), you can specify the \"seconds\" for which the \"width\""
-					+ " will be applied.";
+					+ " keys returned by get_world_border(), you can also specify the \"seconds\". This is time in"
+					+ " which the border will move from the previous width to the new \"width\".";
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 }

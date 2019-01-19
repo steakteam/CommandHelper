@@ -39,6 +39,7 @@ import com.laytonsmith.core.functions.ArrayHandling;
 import com.laytonsmith.core.functions.Function;
 import com.laytonsmith.core.functions.FunctionBase;
 import com.laytonsmith.core.functions.FunctionList;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.persistence.PersistenceNetwork;
 import com.laytonsmith.persistence.io.ConnectionMixinFactory;
 import org.bukkit.entity.Player;
@@ -346,18 +347,23 @@ public class RandomTests {
 
 	@Test
 	public void testVoidAndReturnedVoidAreTheExactSame() throws Exception {
-		Environment env = Static.GenerateStandaloneEnvironment(false);
-		Construct returnedVoid = new ArrayHandling.array_insert().exec(Target.UNKNOWN, env,
-				C.Array(), C.String(""), C.Int(0));
-		Construct voidKeyword = Static.resolveConstruct("void", Target.UNKNOWN);
-		assertTrue(returnedVoid == voidKeyword);
+		try {
+			Environment env = Static.GenerateStandaloneEnvironment(true);
+			Mixed returnedVoid = new ArrayHandling.array_insert().exec(Target.UNKNOWN, env,
+					C.Array(), C.String(""), C.Int(0));
+			Construct voidKeyword = Static.resolveConstruct("void", Target.UNKNOWN);
+			assertTrue(returnedVoid == voidKeyword);
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+			throw e;
+		}
 	}
 
 	@Test
 	public void testVoidAndReturnedVoidAreSEqualsAndOthers() throws Exception {
 		assertEquals("true", SRun("array_insert(array(), '', 0) === void", fakePlayer));
 		assertEquals("void", SRun("typeof(array_insert(array(), '', 0))", fakePlayer));
-		assertEquals("ClassType", SRun("typeof(typeof(array_insert(array(), '', 0)))", fakePlayer));
+		assertEquals("ms.lang.ClassType", SRun("typeof(typeof(array_insert(array(), '', 0)))", fakePlayer));
 	}
 
 	@Test

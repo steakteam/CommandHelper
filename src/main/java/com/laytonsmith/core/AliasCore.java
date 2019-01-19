@@ -1,6 +1,7 @@
 package com.laytonsmith.core;
 
 import com.laytonsmith.PureUtilities.ArgumentParser;
+import com.laytonsmith.PureUtilities.ArgumentParser.ArgumentBuilder;
 import com.laytonsmith.PureUtilities.Common.StreamUtils;
 import com.laytonsmith.PureUtilities.Common.StringUtils;
 import com.laytonsmith.PureUtilities.TermColors;
@@ -34,7 +35,7 @@ import com.laytonsmith.persistence.io.ConnectionMixinFactory;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +44,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -438,17 +440,32 @@ public class AliasCore {
 		boolean extensions;
 
 		private final ArgumentParser options = ArgumentParser.GetParser()
-				.addFlag("whitelist", "Sets the list of arguments to be a whitelist, that is,"
+				.addArgument(new ArgumentBuilder().setDescription("Sets the list of arguments to be a whitelist, that is,"
 						+ " only the specified modules get reloaded, the rest will be skipped. Without this option,"
 						+ " the specified modules don't get reloaded.")
-				.addFlag('g', "globals", "Specifies that globals memory (values stored with export/import) should be preserved.")
-				.addFlag('t', "tasks", "Specifies that tasks registered with set_interval/set_timeout should be preserved.")
-				.addFlag('e', "execution-queue", "Specifies that tasks registered in execution queues should be preserved.")
-				.addFlag('r', "persistence-config", "Specifies that the persistence config file should not be reloaded.")
-				.addFlag('f', "profiler", "Specifies that the profiler config should not be reloaded.")
-				.addFlag('s', "scripts", "Specifies that scripts should not be reloaded.")
-				.addFlag('x', "extensions", "Specifies that extensions should not be reloaded.")
-				.addFlag('h', "help", "Prints this list and returns. Nothing is reloaded if this option is set.");
+						.asFlag().setName("whitelist"))
+				.addArgument(new ArgumentBuilder().setDescription("Specifies that globals memory (values stored with"
+						+ " export/import) should be preserved.")
+						.asFlag().setName('g', "globals"))
+				.addArgument(new ArgumentBuilder().setDescription("Specifies that tasks registered with"
+						+ " set_interval/set_timeout should be preserved.")
+						.asFlag().setName('t', "tasks"))
+				.addArgument(new ArgumentBuilder().setDescription("Specifies that tasks registered in execution queues"
+						+ " should be preserved.")
+						.asFlag().setName('e', "execution-queue"))
+				.addArgument(new ArgumentBuilder().setDescription("Specifies that the persistence config file should"
+						+ " not be reloaded.")
+						.asFlag().setName('r', "persistence-config"))
+				.addArgument(new ArgumentBuilder().setDescription("Specifies that the profiler config should not be"
+						+ " reloaded.")
+						.asFlag().setName('f', "profiler"))
+				.addArgument(new ArgumentBuilder().setDescription("Specifies that scripts should not be reloaded.")
+						.asFlag().setName('s', "scripts"))
+				.addArgument(new ArgumentBuilder().setDescription("Specifies that extensions should not be reloaded.")
+						.asFlag().setName('x', "extensions"))
+				.addArgument(new ArgumentBuilder().setDescription("Prints this list and returns. Nothing is reloaded"
+						+ " if this option is set.")
+						.asFlag().setName('h', "help"));
 
 		public ReloadOptions(String[] settings) throws ArgumentParser.ValidationException {
 			globals = true;
@@ -536,14 +553,14 @@ public class AliasCore {
 	 * @throws Exception if the file cannot be found
 	 */
 	public static String file_get_contents(String fileLocation) throws IOException {
-		BufferedReader in = new BufferedReader(new FileReader(fileLocation));
-		String ret = "";
-		String str;
-		while((str = in.readLine()) != null) {
-			ret += str + "\n";
+		StringBuilder ret = new StringBuilder();
+		try(BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileLocation), Charset.forName("UTF-8")))) {
+			String str;
+			while((str = in.readLine()) != null) {
+				ret.append(str).append('\n');
+			}
 		}
-		in.close();
-		return ret;
+		return ret.toString();
 	}
 
 	/**

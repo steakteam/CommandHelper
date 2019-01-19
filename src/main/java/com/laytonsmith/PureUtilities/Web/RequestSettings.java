@@ -1,5 +1,6 @@
 package com.laytonsmith.PureUtilities.Web;
 
+import com.laytonsmith.PureUtilities.Common.FileWriteMode;
 import java.io.File;
 import java.net.Proxy;
 import java.util.Arrays;
@@ -25,12 +26,14 @@ public class RequestSettings {
 	private Proxy proxy = null;
 	private byte[] rawParameter;
 	private File downloadTo;
+	private FileWriteMode downloadStrategy = FileWriteMode.SAFE_WRITE;
 	private boolean blocking = false;
 	private boolean disableCertChecking = false;
 	private boolean useDefaultTrustStore = true;
 	private LinkedHashMap<String, String> trustStore = new LinkedHashMap<>();
 	@SuppressWarnings("NonConstantLogger")
 	private Logger logger;
+	private boolean disableDecompressionHandling = false;
 
 	/**
 	 *
@@ -243,11 +246,29 @@ public class RequestSettings {
 	}
 
 	/**
+	 * Sets the download strategy.
+	 * @param downloadStrategy
+	 * @return
+	 */
+	public RequestSettings setDownloadStrategy(FileWriteMode downloadStrategy) {
+		this.downloadStrategy = downloadStrategy;
+		return this;
+	}
+
+	/**
 	 *
 	 * @return The file location to download to, or null if this shouldn't save the request as a file.
 	 */
 	public File getDownloadTo() {
 		return this.downloadTo;
+	}
+
+	/**
+	 * Returns the configured download strategy. The default is {@link FileWriteMode#SAFE_WRITE}
+	 * @return
+	 */
+	public FileWriteMode getDownloadStrategy() {
+		return this.downloadStrategy;
 	}
 
 	/**
@@ -352,6 +373,25 @@ public class RequestSettings {
 	 */
 	public LinkedHashMap<String, String> getTrustStore() {
 		return new LinkedHashMap<>(trustStore);
+	}
+
+	/**
+	 * Sets the disableCompressionHandling flag. If true, the content will be returned as is, no matter what the
+	 * value of the Content-Encoding header is, and must be processed manually.
+	 * @param disableCompressionHandling
+	 * @return
+	 */
+	public RequestSettings setDisableCompressionHandling(boolean disableCompressionHandling) {
+		this.disableDecompressionHandling = disableCompressionHandling;
+		return this;
+	}
+
+	/**
+	 * Returns the disableCompressionHandling flag. Defaults to false.
+	 * @return
+	 */
+	public boolean getDisableCompressionHandling() {
+		return this.disableDecompressionHandling;
 	}
 
 }

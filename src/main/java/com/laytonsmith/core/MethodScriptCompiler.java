@@ -1,5 +1,6 @@
 package com.laytonsmith.core;
 
+import com.laytonsmith.PureUtilities.Common.StringUtils;
 import com.laytonsmith.abstraction.Implementation;
 import com.laytonsmith.annotations.breakable;
 import com.laytonsmith.annotations.nolinking;
@@ -31,16 +32,22 @@ import com.laytonsmith.core.constructs.Variable;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.environments.GlobalEnv;
+import com.laytonsmith.core.exceptions.CRE.CRECastException;
+import com.laytonsmith.core.exceptions.CRE.CRERangeException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigCompileGroupException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.ProgramFlowManipulationException;
+import com.laytonsmith.core.extensions.ExtensionManager;
+import com.laytonsmith.core.extensions.ExtensionTracker;
+import com.laytonsmith.core.functions.ArrayHandling;
 import com.laytonsmith.core.functions.Compiler;
 import com.laytonsmith.core.functions.DataHandling;
 import com.laytonsmith.core.functions.Function;
 import com.laytonsmith.core.functions.FunctionBase;
 import com.laytonsmith.core.functions.FunctionList;
 import com.laytonsmith.core.functions.IncludeCache;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.core.taskmanager.TaskManager;
 import com.laytonsmith.persistence.DataSourceException;
 import java.io.File;
@@ -48,6 +55,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EmptyStackException;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -894,6 +902,42 @@ public final class MethodScriptCompiler {
 			}
 		}
 
+		{
+			// Filename check
+			String fileName = tokenList.getFileOptions().getName();
+			if(!fileName.isEmpty()) {
+				if(!file.getAbsolutePath().replace("\\", "/").endsWith(fileName.replace("\\", "/"))) {
+					CHLog.GetLogger().w(CHLog.Tags.COMPILER, file + " has the wrong file name in the file options ("
+							+ fileName + ")",
+							new Target(0, file, 0));
+				}
+			}
+		}
+		{
+			// Required extension check
+			// TODO: Add support for specifying required versions
+			Collection<ExtensionTracker> exts = ExtensionManager.getTrackers().values();
+			Set<String> notFound = new HashSet<>();
+			for(String extension : tokenList.getFileOptions().getRequiredExtensions()) {
+				boolean found = false;
+				for(ExtensionTracker t : exts) {
+					if(t.getIdentifier().equalsIgnoreCase(extension)) {
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					notFound.add(extension);
+				}
+			}
+			if(!notFound.isEmpty()) {
+				throw new ConfigCompileException("Could not compile file, because one or more required"
+						+ " extensions are not loaded: " + StringUtils.Join(notFound, ", ")
+						+ ". These extensions must be provided before compilation can continue.",
+						new Target(0, file, 0));
+			}
+		}
+
 		return tokenList;
 	}
 
@@ -1143,7 +1187,7 @@ public final class MethodScriptCompiler {
 		constructCount.push(new AtomicInteger(0));
 		parents.push(tree);
 
-		tree.addChild(new ParseTree(new CFunction("__autoconcat__", unknown), fileOptions));
+		tree.addChild(new ParseTree(new CFunction(__autoconcat__, unknown), fileOptions));
 		parents.push(tree.getChildAt(0));
 		tree = tree.getChildAt(0);
 		constructCount.push(new AtomicInteger(0));
@@ -1173,7 +1217,7 @@ public final class MethodScriptCompiler {
 
 			// Brace handling
 			if(t.type == TType.LCURLY_BRACKET) {
-				ParseTree b = new ParseTree(new CFunction("__cbrace__", t.getTarget()), fileOptions);
+				ParseTree b = new ParseTree(new CFunction(__cbrace__, t.getTarget()), fileOptions);
 				tree.addChild(b);
 				tree = b;
 				parents.push(b);
@@ -1188,7 +1232,7 @@ public final class MethodScriptCompiler {
 					//We need to autoconcat some stuff
 					int stacks = constructCount.peek().get();
 					int replaceAt = tree.getChildren().size() - stacks;
-					ParseTree c = new ParseTree(new CFunction("__autoconcat__", tree.getTarget()), fileOptions);
+					ParseTree c = new ParseTree(new CFunction(__autoconcat__, tree.getTarget()), fileOptions);
 					List<ParseTree> subChildren = new ArrayList<>();
 					for(int b = replaceAt; b < tree.numberOfChildren(); b++) {
 						subChildren.add(tree.getChildAt(b));
@@ -1233,12 +1277,13 @@ public final class MethodScriptCompiler {
 				// Wrap previous construct in a CLabel
 				ParseTree cc = tree.getChildren().get(tree.getChildren().size() - 1);
 				tree.removeChildAt(tree.getChildren().size() - 1);
-				tree.addChild(new ParseTree(new CLabel(cc.getData()), fileOptions));
+				tree.addChild(new ParseTree(new CLabel((Construct) cc.getData()), fileOptions));
 				continue;
 			}
 
 			//Array notation handling
 			if(t.type.equals(TType.LSQUARE_BRACKET)) {
+				//tree.addChild(new ParseTree(new CFunction("__cbracket__", t.getTarget()), fileOptions));
 				arrayStack.push(new AtomicInteger(tree.getChildren().size() - 1));
 				continue;
 			} else if(t.type.equals(TType.RSQUARE_BRACKET)) {
@@ -1256,10 +1301,11 @@ public final class MethodScriptCompiler {
 				if(!tree.hasChildren() || array == -1) {
 					throw new ConfigCompileException("Brackets are illegal here", t.target);
 				}
+
 				ParseTree myArray = tree.getChildAt(array);
 				ParseTree myIndex;
 				if(!emptyArray) {
-					myIndex = new ParseTree(new CFunction("__autoconcat__", myArray.getTarget()), fileOptions);
+					myIndex = new ParseTree(new CFunction(__autoconcat__, myArray.getTarget()), fileOptions);
 
 					for(int j = index; j < tree.numberOfChildren(); j++) {
 						myIndex.addChild(tree.getChildAt(j));
@@ -1268,7 +1314,7 @@ public final class MethodScriptCompiler {
 					myIndex = new ParseTree(new CSlice("0..-1", t.target), fileOptions);
 				}
 				tree.setChildren(tree.getChildren().subList(0, array));
-				ParseTree arrayGet = new ParseTree(new CFunction("array_get", t.target), fileOptions);
+				ParseTree arrayGet = new ParseTree(new CFunction(array_get, t.target), fileOptions);
 				arrayGet.addChild(myArray);
 				arrayGet.addChild(myIndex);
 
@@ -1483,10 +1529,8 @@ public final class MethodScriptCompiler {
 					throw new ConfigCompileException(ex);
 				}
 			} else if(t.type == TType.LIT) {
-				Construct c = Static.resolveConstruct(t.val(), t.target);
-				if(c instanceof CString && fileOptions.isStrict()) {
-					compilerErrors.add(new ConfigCompileException("Bare strings are not allowed in strict mode", t.target));
-				} else if((c instanceof CInt || c instanceof CDecimal) && next1.type == TType.DOT && next2.type == TType.LIT) {
+				Construct c = Static.resolveConstruct(t.val(), t.target, true);
+				if((c instanceof CInt || c instanceof CDecimal) && next1.type == TType.DOT && next2.type == TType.LIT) {
 					// make CDouble/CDecimal here because otherwise Long.parseLong() will remove
 					// minus zero before decimals and leading zeroes after decimals
 					try {
@@ -1622,7 +1666,7 @@ public final class MethodScriptCompiler {
 		}
 
 		Stack<List<Procedure>> procs = new Stack<>();
-		procs.add(new ArrayList<Procedure>());
+		procs.add(new ArrayList<>());
 		processKeywords(tree);
 		optimizeAutoconcats(tree, compilerErrors);
 		optimize(tree, procs, compilerErrors);
@@ -1710,11 +1754,15 @@ public final class MethodScriptCompiler {
 		if(func instanceof DataHandling._break) {
 			// First grab the counter in the break function. If the break function doesn't
 			// have any children, then 1 is implied. break() requires the argument to be
-			// a CInt, so if it weren't, there would already have been a compile error, so
-			// we can assume it will be a CInt.
+			// a CInt, so if it weren't, there should be a compile error.
 			long breakCounter = 1;
 			if(tree.getChildren().size() == 1) {
-				breakCounter = ((CInt) tree.getChildAt(0).getData()).getInt();
+				try {
+					breakCounter = Static.getInt32(tree.getChildAt(0).getData(), tree.getChildAt(0).getTarget());
+				} catch (CRECastException | CRERangeException e) {
+					compilerErrors.add(new ConfigCompileException(e));
+					return;
+				}
 			}
 			if(breakCounter > currentLoops) {
 				// Throw an exception, as this would break above a loop. Different error messages
@@ -1744,6 +1792,121 @@ public final class MethodScriptCompiler {
 			checkBreaks0(child, currentLoops, lastUnbreakable, compilerErrors);
 		}
 	}
+
+//	private static void processLinearComponents(ParseTree tree, Set<ConfigCompileException> compilerErrors) {
+//		if(tree.hasChildren()) {
+//			for(ParseTree child : tree.getChildren()) {
+//				processLinearComponents(child, compilerErrors);
+//			}
+//			// Process bare string "concatenation"
+//			for(int i = 0; i < tree.getChildren().size(); i++) {
+//				ParseTree data = tree.getChildAt(i);
+//				ParseTree data2 = null;
+//				if(i < tree.getChildren().size() - 1) {
+//					data2 = tree.getChildAt(i + 1);
+//				}
+//				if(data2 != null) {
+//					if(data.getData() instanceof CBareString && data2.getData() instanceof CSymbol
+//							&& ((CSymbol) data2.getData()).isConcatenation()) {
+//
+//					}
+//				}
+//			}
+//		}
+//		// If there are no children, there's nothing to do right now, so just skip this invocation
+//	}
+
+//	private static void processBareStrings(ParseTree root, Set<ConfigCompileException> compilerExceptions) {
+//		if(root.hasChildren()) {
+//			for(ParseTree child : root.getChildren()) {
+//				processBareStrings(child, compilerExceptions);
+//			}
+//		}
+//		// We need to first remove the CBareStrings, and convert them to CStrings (or CClassType or issue a compiler
+//		// warning, depending on the case), as the rest of these methods assume CStrings.
+//		List<ParseTree> temp = new ArrayList<>(root.getChildren());
+//		checkClassType: for(int i = 0; i < temp.size() - 1; i++) {
+//			ParseTree node = temp.get(i);
+//			ParseTree next = temp.get(i + 1);
+//			if(node.getData() instanceof CBareString && next.getData() instanceof CSymbol
+//					&& ((CSymbol) next.getData()).isConcatenation()) {
+//				// Concatenation of bare strings. We need to look at the whole chain and see if it's a valid
+//				// type or not, and if not, issue an error.
+//				String type = node.getData().val() + ".";
+//				temp.remove(i);
+//				temp.remove(i);
+//				for(int j = i; j < temp.size(); j++) {
+//					ParseTree jNode = temp.get(j);
+//					ParseTree jNext = null;
+//					if(j < temp.size() - 1) {
+//						jNext = temp.get(j + 1);
+//					}
+//					if(jNode.getData() instanceof CBareString) {
+//						type += jNode.getData().val();
+//						temp.remove(j);
+//						if(jNext != null && jNext.getData() instanceof CSymbol
+//								&& ((CSymbol) jNext.getData()).isConcatenation()) {
+//							// Continue the chain
+//							type += ".";
+//							temp.remove(j);
+//							j--;
+//						} else {
+//							// End of the chain, break here.
+//							break;
+//						}
+//					} else {
+//						// This is completely unexpected, and means that we are concatenating a bare string with
+//						// some other data type. We'll reset list, and let the rest of the code take over.
+//						temp = root.getChildren();
+//						break checkClassType;
+//					}
+//				}
+//				// TODO: Once compiler environments are added, we would need to check to see if the value here is a custom
+//				// type. However, as it stands, since we only support the native types, we will just hardcode the check here.
+//				String fqType = NativeTypeList.resolveNativeType(type);
+//				if(fqType != null) {
+//					try {
+//						temp.add(i, new ParseTree(CClassType.get(FullyQualifiedClassName
+//								.forFullyQualifiedClass(fqType)), node.getFileOptions()));
+//					} catch(ClassNotFoundException ex) {
+//						throw new RuntimeException(ex);
+//					}
+//				} else {
+//					compilerExceptions.add(new ConfigCompileException("Invalid/Unknown type: " + type, node.getTarget()));
+//					return;
+//				}
+//				i--;
+//			}
+//		}
+//		root.setChildren(temp);
+//		// Now, any bare strings that remain are an error in strict mode, or need to be converted to CStrings
+//		// in non-strict mode. There is one exception though, if the string is a class type, then it was a
+//		// not fully qualified class name, which is allowed, so in that case, we convert it to CClassType.
+//		for(int i = 0; i < root.getChildren().size(); i++) {
+//			ParseTree node = root.getChildren().get(i);
+//			if(node.getData() instanceof CBareString) {
+//				String fqType = NativeTypeList.resolveNativeType(node.getData().val());
+//				if(fqType != null) {
+//					root.getChildren().remove(i);
+//					try {
+//						root.getChildren().add(i, new ParseTree(CClassType.get(FullyQualifiedClassName
+//								.forFullyQualifiedClass(fqType)), node.getFileOptions()));
+//					} catch(ClassNotFoundException ex) {
+//						throw new RuntimeException(ex);
+//					}
+//					continue;
+//				}
+//				if(node.getFileOptions().isStrict()) {
+//					compilerExceptions.add(new ConfigCompileException("Bare strings are not allowed in strict mode.",
+//							node.getTarget()));
+//				} else {
+//					root.getChildren().remove(i);
+//					root.getChildren().add(i, new ParseTree(new CString(node.getData().val(), node.getTarget()),
+//							node.getFileOptions()));
+//				}
+//			}
+//		}
+//	}
 
 	/**
 	 * Optimizing __autoconcat__ out should happen early, and should happen regardless of whether or not optimizations
@@ -1801,12 +1964,12 @@ public final class MethodScriptCompiler {
 	private static void link(ParseTree tree, Set<ConfigCompileException> compilerErrors) {
 		FunctionBase treeFunction = null;
 		try {
-			treeFunction = FunctionList.getFunction(tree.getData());
+			treeFunction = FunctionList.getFunction((CFunction) tree.getData());
 			if(treeFunction.getClass().getAnnotation(nolinking.class) != null) {
 				//Don't link children of a nolinking function.
 				return;
 			}
-		} catch (ConfigCompileException ex) {
+		} catch (ConfigCompileException | ClassCastException ex) {
 			//This can happen if the treeFunction isn't a function, is a proc, etc,
 			//but we don't care, we just want to continue.
 		}
@@ -1835,9 +1998,11 @@ public final class MethodScriptCompiler {
 				if(child.getData().val().charAt(0) != '_' || child.getData().val().charAt(1) == '_') {
 					// This will throw an exception if the function doesn't exist.
 					try {
-						FunctionList.getFunction(child.getData());
+						FunctionList.getFunction((CFunction) child.getData());
 					} catch (ConfigCompileException ex) {
 						compilerErrors.add(ex);
+					} catch (ClassCastException ex) {
+						throw new RuntimeException(ex);
 					}
 				}
 				link(child, compilerErrors);
@@ -1845,8 +2010,13 @@ public final class MethodScriptCompiler {
 		}
 	}
 
-	@SuppressWarnings("checkstyle:constantname") // Variable is more clear when named after the function it represents.
+	// Variable is more clear when named after the function it represents.
+	@SuppressWarnings("checkstyle:constantname")
 	private static final String __autoconcat__ = new Compiler.__autoconcat__().getName();
+	@SuppressWarnings("checkstyle:constantname")
+	private static final String array_get = new ArrayHandling.array_get().getName();
+	@SuppressWarnings("checkstyle:constantname")
+	private static final String __cbrace__ = new Compiler.__cbrace__().getName();
 
 	/**
 	 * Recurses down into the tree, attempting to optimize where possible. A few things have strong coupling, for
@@ -1869,7 +2039,7 @@ public final class MethodScriptCompiler {
 		}
 		//If it is a proc definition, we need to go ahead and see if we can add it to the const proc stack
 		if(tree.getData().val().equals("proc")) {
-			procs.push(new ArrayList<Procedure>());
+			procs.push(new ArrayList<>());
 		}
 		CFunction cFunction = (CFunction) tree.getData();
 		Function func;
@@ -1888,7 +2058,9 @@ public final class MethodScriptCompiler {
 			//Add the child to the identifier
 			ParseTree c = ((CIdentifier) cFunction).contained();
 			tree.addChild(c);
-			c.getData().setWasIdentifier(true);
+			if(c.getData() instanceof Construct) {
+				((Construct) c.getData()).setWasIdentifier(true);
+			}
 		}
 
 		List<ParseTree> children = tree.getChildren();
@@ -1953,8 +2125,8 @@ public final class MethodScriptCompiler {
 				}
 				Function f;
 				try {
-					f = (Function) FunctionList.getFunction(t.getData());
-				} catch (ConfigCompileException ex) {
+					f = (Function) FunctionList.getFunction(((CFunction) t.getData()));
+				} catch (ConfigCompileException | ClassCastException ex) {
 					continue;
 				}
 				Set<OptimizationOption> options = NO_OPTIMIZATIONS;
@@ -1981,8 +2153,11 @@ public final class MethodScriptCompiler {
 				optimize(node, procs, compilerErrors);
 			}
 
-			if(node.getData().isDynamic() && !(node.getData() instanceof IVariable)) {
-				fullyStatic = false;
+			if(node.getData() instanceof Construct) {
+				Construct d = (Construct) node.getData();
+				if(d.isDynamic() || (d instanceof IVariable)) {
+					fullyStatic = false;
+				}
 			}
 			if(node.getData() instanceof IVariable) {
 				hasIVars = true;
@@ -2007,7 +2182,7 @@ public final class MethodScriptCompiler {
 			}
 			if(p != null) {
 				try {
-					Construct c = DataHandling.proc.optimizeProcedure(p.getTarget(), p, children);
+					Mixed c = DataHandling.proc.optimizeProcedure(p.getTarget(), p, children);
 					if(c != null) {
 						tree.setData(c);
 						tree.removeChildren();
@@ -2091,7 +2266,7 @@ public final class MethodScriptCompiler {
 					tree.setData(tempNode.getData());
 					tree.setOptimized(tempNode.isOptimized());
 					tree.setChildren(tempNode.getChildren());
-					tree.getData().setWasIdentifier(tempNode.getData().wasIdentifier());
+					Construct.SetWasIdentifierHelper(tree.getData(), tempNode.getData(), false);
 					optimize(tree, procs, compilerErrors);
 					tree.setOptimized(true);
 					//Some functions can actually make static the arguments, for instance, by pulling up a hardcoded
@@ -2116,15 +2291,15 @@ public final class MethodScriptCompiler {
 		}
 		//It could have optimized by changing the name, in that case, we
 		//don't want to run this now
-		if(tree.getData().getValue().equals(oldFunctionName)
+		if(tree.getData().val().equals(oldFunctionName)
 				&& (options.contains(OptimizationOption.OPTIMIZE_CONSTANT) || options.contains(OptimizationOption.CONSTANT_OFFLINE))) {
-			Construct[] constructs = new Construct[tree.getChildren().size()];
+			Mixed[] constructs = new Mixed[tree.getChildren().size()];
 			for(int i = 0; i < tree.getChildren().size(); i++) {
 				constructs[i] = tree.getChildAt(i).getData();
 			}
 			try {
 				try {
-					Construct result;
+					Mixed result;
 					if(options.contains(OptimizationOption.CONSTANT_OFFLINE)) {
 						List<Integer> numArgsList = Arrays.asList(func.numArgs());
 						if(!numArgsList.contains(Integer.MAX_VALUE)
@@ -2133,7 +2308,20 @@ public final class MethodScriptCompiler {
 									+ tree.getData().val(), tree.getData().getTarget()));
 							result = null;
 						} else {
-							result = func.exec(tree.getData().getTarget(), null, constructs);
+							// TODO: This should probably be moved up outside of this single method, and create a
+							// compiler environment, which would be used by the functions that can do specific
+							// optimizations, i.e. compile time type checking, etc. This is a good first start
+							// though.
+							Environment env = null;
+							try {
+								env = Static.GenerateStandaloneEnvironment(false);
+							} catch (IOException | DataSourceException | URISyntaxException
+									| Profiles.InvalidProfileException e) {
+								// Print the stacktrace and move on. Not sure how to deal with this right now, or
+								// what cases it would occur in.
+								e.printStackTrace(System.err);
+							}
+							result = func.exec(tree.getData().getTarget(), env, constructs);
 						}
 					} else {
 						result = ((Optimizable) func).optimize(tree.getData().getTarget(), constructs);
@@ -2141,7 +2329,7 @@ public final class MethodScriptCompiler {
 
 					//If the result is null, it was just a check, it can't optimize further.
 					if(result != null) {
-						result.setWasIdentifier(tree.getData().wasIdentifier());
+						Construct.SetWasIdentifierHelper(tree.getData(), result, false);
 						tree.setData(result);
 						tree.removeChildren();
 					}
@@ -2201,13 +2389,13 @@ public final class MethodScriptCompiler {
 	 * @throws com.laytonsmith.core.exceptions.ConfigCompileGroupException This indicates that a group of compile errors
 	 * occurred.
 	 */
-	public static Construct execute(String script, File file, boolean inPureMScript, Environment env, MethodScriptComplete done, Script s, List<Variable> vars) throws ConfigCompileException, ConfigCompileGroupException {
+	public static Mixed execute(String script, File file, boolean inPureMScript, Environment env, MethodScriptComplete done, Script s, List<Variable> vars) throws ConfigCompileException, ConfigCompileGroupException {
 		return execute(compile(lex(script, file, inPureMScript)), env, done, s, vars);
 	}
 
 	/**
 	 * Executes a pre-compiled MethodScript, given the specified Script environment. Both done and script may be null,
-	 * and if so, reasonable defaults will be provided. The value sent to done will also be returned, as a Construct, so
+	 * and if so, reasonable defaults will be provided. The value sent to done will also be returned, as a Mixed, so
 	 * this one function may be used synchronously also.
 	 *
 	 * @param root
@@ -2216,7 +2404,7 @@ public final class MethodScriptCompiler {
 	 * @param script
 	 * @return
 	 */
-	public static Construct execute(ParseTree root, Environment env, MethodScriptComplete done, Script script) {
+	public static Mixed execute(ParseTree root, Environment env, MethodScriptComplete done, Script script) {
 		return execute(root, env, done, script, null);
 	}
 
@@ -2231,7 +2419,7 @@ public final class MethodScriptCompiler {
 	 * @param vars
 	 * @return
 	 */
-	public static Construct execute(ParseTree root, Environment env, MethodScriptComplete done, Script script, List<Variable> vars) {
+	public static Mixed execute(ParseTree root, Environment env, MethodScriptComplete done, Script script, List<Variable> vars) {
 		if(root == null) {
 			return CVoid.VOID;
 		}
@@ -2243,7 +2431,7 @@ public final class MethodScriptCompiler {
 			for(Variable v : vars) {
 				varMap.put(v.getVariableName(), v);
 			}
-			for(Construct tempNode : root.getAllData()) {
+			for(Mixed tempNode : root.getAllData()) {
 				if(tempNode instanceof Variable) {
 					Variable vv = varMap.get(((Variable) tempNode).getVariableName());
 					if(vv != null) {
@@ -2256,9 +2444,9 @@ public final class MethodScriptCompiler {
 			}
 		}
 		StringBuilder b = new StringBuilder();
-		Construct returnable = null;
+		Mixed returnable = null;
 		for(ParseTree gg : root.getChildren()) {
-			Construct retc = script.eval(gg, env);
+			Mixed retc = script.eval(gg, env);
 			if(root.numberOfChildren() == 1) {
 				returnable = retc;
 			}

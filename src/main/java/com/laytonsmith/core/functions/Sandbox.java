@@ -1,5 +1,6 @@
 package com.laytonsmith.core.functions;
 
+import com.laytonsmith.core.FileWriteMode;
 import com.laytonsmith.PureUtilities.Common.StringUtils;
 import com.laytonsmith.PureUtilities.TermColors;
 import com.laytonsmith.PureUtilities.Version;
@@ -10,18 +11,18 @@ import com.laytonsmith.annotations.hide;
 import com.laytonsmith.annotations.noboilerplate;
 import com.laytonsmith.commandhelper.BukkitDirtyRegisteredListener;
 import com.laytonsmith.core.ArgumentValidation;
-import com.laytonsmith.core.CHVersion;
+import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.MethodScriptCompiler;
 import com.laytonsmith.core.ParseTree;
 import com.laytonsmith.core.Security;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CBoolean;
+import com.laytonsmith.core.constructs.CByteArray;
 import com.laytonsmith.core.constructs.CDouble;
 import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CResource;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
@@ -37,12 +38,15 @@ import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigCompileGroupException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import org.bukkit.event.Cancellable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Random;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -89,8 +93,8 @@ public class Sandbox {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -99,7 +103,7 @@ public class Sandbox {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			BoundEvent.ActiveEvent original = environment.getEnv(GlobalEnv.class).GetEvent();
 			if(original == null) {
 				throw new CREBindException("is_cancelled cannot be called outside an event handler", t);
@@ -152,7 +156,7 @@ public class Sandbox {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer me;
 			boolean isVanished;
 			MCPlayer other;
@@ -172,8 +176,8 @@ public class Sandbox {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 	}
 
@@ -213,7 +217,7 @@ public class Sandbox {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer me;
 			MCPlayer other;
 			if(args.length == 1) {
@@ -227,8 +231,8 @@ public class Sandbox {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 	}
 
@@ -266,7 +270,7 @@ public class Sandbox {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return new CString(GenerateMooSaying(args[0].val())
 					+ " \\   ^__^\n"
 					+ "  \\  (oo)\\_______\n"
@@ -287,7 +291,7 @@ public class Sandbox {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return new CString(
 					GenerateMooSaying(args[0].val())
 					+ "              ^__^   /\n"
@@ -309,7 +313,7 @@ public class Sandbox {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return new CString("  .-*)) `*-.\n"
 					+ " /*  ((*   *'.\n"
 					+ "|   *))  *   *\\\n"
@@ -326,7 +330,7 @@ public class Sandbox {
 	public static class norway extends DummyFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Function color = new Echoes.color();
 			String red = color.exec(t, environment, args.length == 3 ? args[0] : new CString("RED", t)).val();
 			String white = color.exec(t, environment, args.length == 3 ? args[1] : new CString("WHITE", t)).val();
@@ -389,7 +393,7 @@ public class Sandbox {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Random r;
 			try {
 				r = (Random) ArgumentValidation.getObject(args[0], t, CResource.class).getResource();
@@ -418,7 +422,7 @@ public class Sandbox {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 
 	}
@@ -466,7 +470,7 @@ public class Sandbox {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 
 	}
@@ -505,8 +509,8 @@ public class Sandbox {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_2;
+		public MSVersion since() {
+			return MSVersion.V3_3_2;
 		}
 
 		@Override
@@ -515,7 +519,7 @@ public class Sandbox {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			File file = Static.GetFileFromArgument(args[0].val(), env, t, null);
 			int num = 0;
 			if(Security.CheckSecurity(file)) {
@@ -569,4 +573,85 @@ public class Sandbox {
 			}
 		}
 	}
+
+	@api
+	@noboilerplate
+	public static class x_write extends AbstractFunction {
+		@Override
+		public Class<? extends CREThrowable>[] thrown() {
+			return new Class[]{CRESecurityException.class, CREIOException.class};
+		}
+
+		@Override
+		public boolean isRestricted() {
+			return true;
+		}
+
+		@Override
+		public Boolean runAsync() {
+			return null;
+		}
+
+		@Override
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
+			if(!Static.InCmdLine(environment)) {
+				throw new CRESecurityException(getName() + " is only available in cmdline mode.", t);
+			}
+			File location = Static.GetFileFromArgument(args[0].val(), environment, t, null);
+			if(location.isDirectory()) {
+				throw new CREIOException("Path already exists, and is a directory", t);
+			}
+
+			byte[] content;
+			if(!(args[1] instanceof CByteArray)) {
+				content = args[1].val().getBytes(Charset.forName("UTF-8"));
+			} else {
+				content = ArgumentValidation.getByteArray(args[1], t).asByteArrayCopy();
+			}
+			FileWriteMode mode = FileWriteMode.SAFE_WRITE;
+			if(args.length > 2) {
+				mode = ArgumentValidation.getEnum(args[2], FileWriteMode.class, t);
+			}
+			if(mode == FileWriteMode.SAFE_WRITE && location.exists()) {
+				throw new CREIOException("File already exists, refusing to overwrite.", t);
+			}
+
+			try {
+				FileUtils.writeByteArrayToFile(location, content, mode == FileWriteMode.APPEND);
+			} catch (IOException e) {
+				throw new CREIOException(e.getMessage(), t, e);
+			}
+			return CVoid.VOID;
+		}
+
+		@Override
+		public String getName() {
+			return "x_write";
+		}
+
+		@Override
+		public Integer[] numArgs() {
+			return new Integer[]{2, 3};
+		}
+
+		@Override
+		public String docs() {
+			return "void {path, content, [mode]} Writes a file to the file system. This method only works from the"
+					+ " cmdline,"
+					+ " if not in cmdline, a SecurityExcpetion is thrown. Because of this, there is no check against"
+					+ " the base-dir path. The path, if relative, is relative to this script"
+					+ " file. If the path already exists, and is a directory, an IOException is thrown."
+					+ " The content may be a string, in which case it is written out as UTF-8 text. It could also"
+					+ " be a byte_array, in which cases it is written as is. Mode can be one of the following, but"
+					+ " defaults to SAFE_WRITE:\n"
+					+ createEnumTable(FileWriteMode.class);
+		}
+
+		@Override
+		public Version since() {
+			return MSVersion.V3_3_4;
+		}
+
+	}
+
 }

@@ -2,7 +2,7 @@ package com.laytonsmith.core.constructs;
 
 import com.laytonsmith.PureUtilities.Version;
 import com.laytonsmith.annotations.typeof;
-import com.laytonsmith.core.CHVersion;
+import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.natives.interfaces.ObjectModifier;
 import java.util.EnumSet;
 import java.util.Set;
@@ -10,11 +10,11 @@ import java.util.Set;
 /**
  * Represents a MethodScript boolean.
  */
-@typeof("boolean")
+@typeof("ms.lang.boolean")
 public final class CBoolean extends CPrimitive implements Cloneable {
 
 	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
-	public static final CClassType TYPE = CClassType.get("boolean");
+	public static final CClassType TYPE = CClassType.get("ms.lang.boolean");
 
 	public static final long serialVersionUID = 1L;
 
@@ -116,7 +116,7 @@ public final class CBoolean extends CPrimitive implements Cloneable {
 
 	@Override
 	public Version since() {
-		return CHVersion.V3_0_1;
+		return MSVersion.V3_0_1;
 	}
 
 	@Override
@@ -126,12 +126,17 @@ public final class CBoolean extends CPrimitive implements Cloneable {
 
 	@Override
 	public CClassType[] getInterfaces() {
-		return new CClassType[]{};
+		return CClassType.EMPTY_CLASS_ARRAY;
 	}
 
 	@Override
 	public Set<ObjectModifier> getObjectModifiers() {
 		return EnumSet.of(ObjectModifier.FINAL, ObjectModifier.PUBLIC);
+	}
+
+	@Override
+	public CBoolean duplicate() {
+		return new CBoolean(val, getTarget());
 	}
 
 }

@@ -3,7 +3,7 @@ package com.laytonsmith.core.constructs;
 import com.laytonsmith.PureUtilities.Common.ArrayUtils;
 import com.laytonsmith.PureUtilities.Version;
 import com.laytonsmith.annotations.typeof;
-import com.laytonsmith.core.CHVersion;
+import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
 import com.laytonsmith.core.exceptions.CRE.CREIndexOverflowException;
 import java.lang.reflect.Constructor;
@@ -28,11 +28,11 @@ import javax.crypto.spec.SecretKeySpec;
  *
  * @author cailin
  */
-@typeof("secure_string")
+@typeof("ms.lang.secure_string")
 public class CSecureString extends CString {
 
 	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
-	public static final CClassType TYPE = CClassType.get("secure_string");
+	public static final CClassType TYPE = CClassType.get("ms.lang.secure_string");
 
 	private byte[] encrypted;
 	private Cipher decrypter;
@@ -47,6 +47,15 @@ public class CSecureString extends CString {
 	public CSecureString(CArray val, Target t) {
 		super("**secure string**", t);
 		construct(CArrayToByteArray(val, t));
+	}
+
+	// duplicate constructor
+	private CSecureString(byte[] encrypted, Cipher decrypter, int encLength, int actualLength, Target t) {
+		super("**secure string**", t);
+		this.encrypted = encrypted;
+		this.decrypter = decrypter;
+		this.encLength = encLength;
+		this.actualLength = actualLength;
 	}
 
 	private void construct(byte[] val) {
@@ -127,7 +136,7 @@ public class CSecureString extends CString {
 
 	@Override
 	public Version since() {
-		return CHVersion.V3_3_2;
+		return MSVersion.V3_3_2;
 	}
 
 	@Override
@@ -137,7 +146,7 @@ public class CSecureString extends CString {
 
 	@Override
 	public CClassType[] getInterfaces() {
-		return new CClassType[]{};
+		return CClassType.EMPTY_CLASS_ARRAY;
 	}
 
 	@Override
@@ -202,6 +211,11 @@ public class CSecureString extends CString {
 		if(newMaxKeyLength < 256) {
 			throw new RuntimeException(errorString); // hack failed
 		}
+	}
+
+	@Override
+	public CSecureString duplicate() {
+		return new CSecureString(encrypted, decrypter, encLength, actualLength, getTarget());
 	}
 
 }

@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sk89q</groupId>
 	<artifactId>commandhelper</artifactId>
-	<version>3.3.3-SNAPSHOT</version>
+	<version>3.3.4-SNAPSHOT</version>
 	<name>CommandHelper</name>
 	<description>CommandHelper is a full blown scripting language built right into Minecraft</description>
 	<inceptionYear>2010</inceptionYear>
@@ -302,13 +302,19 @@
 			<artifactId>jchardet</artifactId>
 			<version>1.0</version>
 		</dependency>
-			<!-- https://mvnrepository.com/artifact/org.apache.oltu.oauth2/org.apache.oltu.oauth2.client -->
-			<dependency>
-				<!-- Apache License 2.0 -->
-				<groupId>org.apache.oltu.oauth2</groupId>
-				<artifactId>org.apache.oltu.oauth2.client</artifactId>
-				<version>1.0.2</version>
-			</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.oltu.oauth2/org.apache.oltu.oauth2.client -->
+		<dependency>
+			<!-- Apache License 2.0 -->
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.client</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+		<dependency>
+			<!-- MIT -->
+			<groupId>org.brotli</groupId>
+			<artifactId>dec</artifactId>
+			<version>0.1.2</version>
+		</dependency>
 		<!-- Test libraries -->
 		<!-- Hamcrest must come before powermock -->
 		<dependency>
@@ -349,17 +355,6 @@
 			<version>1.5.2</version>
 			<scope>test</scope>
 		</dependency>-->
-		<dependency>
-			<groupId>org.java.net.substance</groupId>
-			<artifactId>substance</artifactId>
-			<version>6.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>asm</groupId>
-					<artifactId>asm-all</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
@@ -409,7 +404,7 @@
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ftp</artifactId>
-				<version>1.0-beta-6</version>
+				<version>3.2.0</version>
 			</extension>
 		</extensions>
 
@@ -525,6 +520,7 @@
 									<include>javax.activation:activation:jar:*</include>
 									<include>postgresql:postgresql:jar:*</include>
 									<include>org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:jar:*</include>
+									<include>org.brotli:dec:jar:*</include>
 								</includes>
 							</artifactSet>
 							<relocations>
@@ -623,6 +619,10 @@
 								<relocation>
 									<pattern>org.apache.oltu.oauth2</pattern>
 									<shadedPattern>com.laytonsmith.libs.org.apache.oltu.oauth2</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>org.brotli</pattern>
+									<shadedPattern>com.laytonsmith.libs.org.brotli</shadedPattern>
 								</relocation>
 							</relocations>
 							<filters>
@@ -814,38 +814,11 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>3.1</version>
-				<configuration>
-					<reportPlugins>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-project-info-reports-plugin</artifactId>
-							<version>2.5</version>
-							<reportSets>
-								<reportSet>
-									<reports>
-										<report>license</report>
-										<report>index</report>
-									</reports>
-								</reportSet>
-							</reportSets>
-						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-javadoc-plugin</artifactId>
-							<version>2.8.1</version>
-						</plugin>
-						<plugin>
-							<groupId>org.codehaus.mojo</groupId>
-							<artifactId>cobertura-maven-plugin</artifactId>
-							<version>2.4</version>
-						</plugin>
-					</reportPlugins>
-				</configuration>
-			</plugin>
+			</plugin>			
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.6.201602180812</version>
+				<version>0.8.2</version>
 				<configuration>
 					<excludes>
 						<!-- Application starter -->
@@ -950,6 +923,14 @@
 							<skip>true</skip>
 						</configuration>
 					</plugin>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.8.2</version>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -966,4 +947,31 @@
 			<url>http://maven-annotation-plugin.googlecode.com/svn/trunk/mavenrepo</url>
 		</pluginRepository>
 	</pluginRepositories>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.5</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>license</report>
+							<report>index</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

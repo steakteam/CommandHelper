@@ -2,18 +2,17 @@ package com.laytonsmith.abstraction.enums;
 
 import com.laytonsmith.PureUtilities.ClassLoading.DynamicEnum;
 import com.laytonsmith.annotations.MDynamicEnum;
-import com.laytonsmith.annotations.MEnum;
 import com.laytonsmith.core.Static;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-@MDynamicEnum("Sound")
+@MDynamicEnum("com.commandhelper.Sound")
 public abstract class MCSound<Concrete> extends DynamicEnum<MCSound.MCVanillaSound, Concrete> {
 
 	protected static final Map<String, MCSound> MAP = new HashMap<>();
@@ -47,7 +46,7 @@ public abstract class MCSound<Concrete> extends DynamicEnum<MCSound.MCVanillaSou
 		return new TreeSet<>(MAP.keySet());
 	}
 
-	public static Collection<MCSound> values() {
+	public static List<MCSound> values() {
 		if(NULL == null) { // docs mode
 			ArrayList<MCSound> dummy = new ArrayList<>();
 			for(final MCVanillaSound s : MCVanillaSound.values()) {
@@ -68,10 +67,9 @@ public abstract class MCSound<Concrete> extends DynamicEnum<MCSound.MCVanillaSou
 			}
 			return dummy;
 		}
-		return MAP.values();
+		return new ArrayList<>(MAP.values());
 	}
 
-	@MEnum("VanillaSound")
 	public enum MCVanillaSound {
 		// After 1.9
 		AMBIENT_CAVE,

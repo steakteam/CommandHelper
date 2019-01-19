@@ -2,25 +2,27 @@ package com.laytonsmith.core.constructs;
 
 import com.laytonsmith.PureUtilities.Version;
 import com.laytonsmith.annotations.typeof;
-import com.laytonsmith.core.CHVersion;
+import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.exceptions.CRE.CREFormatException;
-import com.laytonsmith.core.exceptions.CRE.CREIndexOverflowException;
 import com.laytonsmith.core.exceptions.CRE.CRERangeException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.natives.interfaces.ArrayAccess;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.core.natives.interfaces.ObjectType;
+import java.util.AbstractSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
  *
  *
  */
-@typeof("string")
+@typeof("ms.lang.string")
 public class CString extends CPrimitive implements Cloneable, ArrayAccess {
 
 	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
-	public static final CClassType TYPE = CClassType.get("string");
+	public static final CClassType TYPE = CClassType.get("ms.lang.string");
 
 	public CString(String value, Target t) {
 		super(value == null ? "" : value, ConstructType.STRING, t);
@@ -32,6 +34,14 @@ public class CString extends CPrimitive implements Cloneable, ArrayAccess {
 
 	public CString(CharSequence value, Target t) {
 		this(value.toString(), t);
+	}
+
+	/**
+	 * Given the input construct, uses the val() method of it, and constructs a new string based on that.
+	 * @param val
+	 */
+	public CString(Mixed val) {
+		this(val.val(), val.getTarget());
 	}
 
 	@Override
@@ -55,7 +65,7 @@ public class CString extends CPrimitive implements Cloneable, ArrayAccess {
 	}
 
 	@Override
-	public Construct slice(int begin, int end, Target t) {
+	public Mixed slice(int begin, int end, Target t) {
 		if(begin > end) {
 			return new CString("", t);
 		}
@@ -72,7 +82,7 @@ public class CString extends CPrimitive implements Cloneable, ArrayAccess {
 	}
 
 	@Override
-	public Construct get(int index, Target t) throws ConfigRuntimeException {
+	public Mixed get(int index, Target t) throws ConfigRuntimeException {
 		try {
 			return new CString(this.val().charAt(index), t);
 		} catch (StringIndexOutOfBoundsException e) {
@@ -81,13 +91,13 @@ public class CString extends CPrimitive implements Cloneable, ArrayAccess {
 	}
 
 	@Override
-	public final Construct get(Construct index, Target t) throws ConfigRuntimeException {
+	public final Mixed get(Mixed index, Target t) throws ConfigRuntimeException {
 		int i = Static.getInt32(index, t);
 		return get(i, t);
 	}
 
 	@Override
-	public final Construct get(String index, Target t) {
+	public final Mixed get(String index, Target t) {
 		try {
 			int i = Integer.parseInt(index);
 			return get(i, t);
@@ -102,8 +112,31 @@ public class CString extends CPrimitive implements Cloneable, ArrayAccess {
 	}
 
 	@Override
-	public Set<Construct> keySet() {
-		throw new CREIndexOverflowException("Not supported.", Target.UNKNOWN);
+	public Set<Mixed> keySet() {
+		return new AbstractSet<Mixed>() {
+			@Override
+			public int size() {
+				return CString.this.val().length();
+			}
+
+			@Override
+			public Iterator<Mixed> iterator() {
+				return new Iterator<Mixed>() {
+					int i = 0;
+					@Override
+					public boolean hasNext() {
+						return i < CString.this.val().length();
+					}
+
+					@Override
+					public Mixed next() {
+						return new CInt(i++, Target.UNKNOWN);
+					}
+				};
+			}
+
+
+		};
 	}
 
 	@Override
@@ -113,7 +146,7 @@ public class CString extends CPrimitive implements Cloneable, ArrayAccess {
 
 	@Override
 	public Version since() {
-		return CHVersion.V3_0_1;
+		return MSVersion.V3_0_1;
 	}
 
 	@Override
@@ -131,4 +164,8 @@ public class CString extends CPrimitive implements Cloneable, ArrayAccess {
 		return ObjectType.CLASS;
 	}
 
+	@Override
+	public CString duplicate() {
+		return new CString(val(), getTarget());
+	}
 }

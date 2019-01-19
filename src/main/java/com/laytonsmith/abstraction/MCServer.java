@@ -22,6 +22,8 @@ public interface MCServer extends AbstractionObject {
 
 	MCPluginManager getPluginManager();
 
+	MCPlayer getPlayerExact(String name);
+
 	MCPlayer getPlayer(String name);
 
 	MCPlayer getPlayer(UUID uuid);
@@ -165,4 +167,6 @@ public interface MCServer extends AbstractionObject {
 	MCBossBar createBossBar(String title, MCBarColor color, MCBarStyle style);
 
 	MCBlockData createBlockData(String data);
+
+	MCMerchant createMerchant(String title);
 }

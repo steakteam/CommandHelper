@@ -2,17 +2,16 @@ package com.laytonsmith.abstraction.enums;
 
 import com.laytonsmith.PureUtilities.ClassLoading.DynamicEnum;
 import com.laytonsmith.annotations.MDynamicEnum;
-import com.laytonsmith.annotations.MEnum;
 import com.laytonsmith.core.Static;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@MDynamicEnum("BiomeType")
+@MDynamicEnum("com.commandhelper.BiomeType")
 public abstract class MCBiomeType<Concrete> extends DynamicEnum<MCBiomeType.MCVanillaBiomeType, Concrete> {
 
 	protected static final Map<String, MCBiomeType> MAP = new HashMap<>();
@@ -49,7 +48,7 @@ public abstract class MCBiomeType<Concrete> extends DynamicEnum<MCBiomeType.MCVa
 	/**
 	 * @return Our own MCBiomeType list
 	 */
-	public static Collection<MCBiomeType> values() {
+	public static List<MCBiomeType> values() {
 		if(NULL == null) { // docs mode
 			ArrayList<MCBiomeType> dummy = new ArrayList<>();
 			for(final MCVanillaBiomeType t : MCVanillaBiomeType.values()) {
@@ -67,10 +66,9 @@ public abstract class MCBiomeType<Concrete> extends DynamicEnum<MCBiomeType.MCVa
 			}
 			return dummy;
 		}
-		return MAP.values();
+		return new ArrayList<>(MAP.values());
 	}
 
-	@MEnum("VanillaBiomeType")
 	public enum MCVanillaBiomeType {
 		OCEAN,
 		PLAINS,

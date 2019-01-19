@@ -52,7 +52,6 @@ import com.laytonsmith.core.Script;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CBoolean;
 import com.laytonsmith.core.constructs.CString;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.constructs.Token;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
@@ -73,6 +72,7 @@ import com.laytonsmith.core.extensions.ExtensionManager;
 import com.laytonsmith.core.functions.BasicLogic.equals;
 import com.laytonsmith.core.functions.Function;
 import com.laytonsmith.core.functions.FunctionBase;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -226,7 +226,7 @@ public class StaticTest {
 				//er.. let's just try with 10...
 				i = 10;
 			}
-			Construct[] con = new Construct[i];
+			Mixed[] con = new Mixed[i];
 			//Throw the book at it. Most functions will fail, and that is ok, what isn't
 			//ok is if it throws an unexpected type of exception. It should only ever
 			//throw a ConfigRuntimeException, or a CancelCommandException. Further,
@@ -279,7 +279,11 @@ public class StaticTest {
 					// objects instead, but for now, it returns an enum. This will
 					// be a large change.
 					List<String> expectedNames = new ArrayList<>();
-					for(Class<? extends CREThrowable> tt : f.thrown()) {
+					Class[] thrown = f.thrown();
+					if(thrown == null) {
+						thrown = new Class[0];
+					}
+					for(Class<? extends CREThrowable> tt : thrown) {
 						expectedNames.add(tt.getAnnotation(typeof.class).value());
 					}
 					if(f.thrown() == null || !expectedNames.contains(name)) {
@@ -325,7 +329,7 @@ public class StaticTest {
 	 * @param c
 	 * @return
 	 */
-	public static Object Val(Construct c) {
+	public static Object Val(Mixed c) {
 		return c.val();
 	}
 
@@ -336,7 +340,7 @@ public class StaticTest {
 	 * @param expected
 	 * @param actual
 	 */
-	public static void assertCEquals(Construct expected, Construct actual) throws CancelCommandException {
+	public static void assertCEquals(Mixed expected, Mixed actual) throws CancelCommandException {
 		equals e = new equals();
 		CBoolean ret = (CBoolean) e.exec(Target.UNKNOWN, null, expected, actual);
 		if(ret.getBoolean() == false) {
@@ -351,7 +355,7 @@ public class StaticTest {
 	 * @param actual
 	 * @throws CancelCommandException
 	 */
-	public static void assertCNotEquals(Construct expected, Construct actual) throws CancelCommandException {
+	public static void assertCNotEquals(Mixed expected, Mixed actual) throws CancelCommandException {
 		equals e = new equals();
 		CBoolean ret = (CBoolean) e.exec(Target.UNKNOWN, null, expected, actual);
 		if(ret.getBoolean() == true) {
@@ -365,7 +369,7 @@ public class StaticTest {
 	 *
 	 * @param actual
 	 */
-	public static void assertCTrue(Construct actual) {
+	public static void assertCTrue(Mixed actual) {
 		if(!Static.getBoolean(actual, Target.UNKNOWN)) {
 			fail("Expected '" + actual.val() + "' to resolve to true, but it did not");
 		}
@@ -377,7 +381,7 @@ public class StaticTest {
 	 *
 	 * @param actual
 	 */
-	public static void assertCFalse(Construct actual) {
+	public static void assertCFalse(Mixed actual) {
 		if(Static.getBoolean(actual, Target.UNKNOWN)) {
 			fail("Expected '" + actual.val() + "' to resolve to false, but it did not");
 		}
@@ -389,7 +393,7 @@ public class StaticTest {
 	 * @param test
 	 * @param retTypes
 	 */
-	public static void assertReturn(Construct test, Class... retTypes) {
+	public static void assertReturn(Mixed test, Class... retTypes) {
 		if(!Arrays.asList(retTypes).contains(test.getClass())) {
 			StringBuilder b = new StringBuilder();
 			if(retTypes.length == 1) {
@@ -879,8 +883,8 @@ public class StaticTest {
 		}
 
 		@Override
-		public Map<String, Construct> evaluate_helper(BindableEvent e) throws EventException {
-			Map<String, Construct> map = new HashMap<String, Construct>();
+		public Map<String, Mixed> evaluate_helper(BindableEvent e) throws EventException {
+			Map<String, Mixed> map = new HashMap<>();
 			if(fakePlayer != null) {
 				map.put("player", new CString(fakePlayer.getName(), Target.UNKNOWN));
 			}

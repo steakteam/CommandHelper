@@ -18,7 +18,7 @@ import com.laytonsmith.abstraction.enums.MCEntityType;
 import com.laytonsmith.annotations.api;
 import com.laytonsmith.core.ArgumentValidation;
 import com.laytonsmith.core.CHLog;
-import com.laytonsmith.core.CHVersion;
+import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.ObjectGenerator;
 import com.laytonsmith.core.Optimizable;
 import com.laytonsmith.core.ParseTree;
@@ -31,7 +31,6 @@ import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
@@ -47,6 +46,7 @@ import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -68,7 +68,7 @@ public class Minecraft {
 		return "These functions provide a hook into game functionality.";
 	}
 
-	private static final SortedMap<String, Construct> DATA_VALUE_LOOKUP = new TreeMap<>();
+	private static final SortedMap<String, Mixed> DATA_VALUE_LOOKUP = new TreeMap<>();
 
 	static {
 		Properties p1 = new Properties();
@@ -98,7 +98,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			if(args[0] instanceof CInt) {
 				return new CInt(Static.getInt(args[0], t), t);
 			}
@@ -145,8 +145,8 @@ public class Minecraft {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_0_1;
+		public MSVersion since() {
+			return MSVersion.V3_0_1;
 		}
 
 		@Override
@@ -198,8 +198,8 @@ public class Minecraft {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -208,7 +208,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			int i = -1;
 			int i2 = -1;
 			if(args[0] instanceof CString) {
@@ -292,15 +292,15 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray item = Static.getArray(args[0], t);
 			MCItemStack is = ObjectGenerator.GetGenerator().item(item, t, true);
 			return ObjectGenerator.GetGenerator().item(is, t);
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_3;
+		public MSVersion since() {
+			return MSVersion.V3_3_3;
 		}
 	}
 
@@ -340,8 +340,8 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-			Construct id = args[0];
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
+			Mixed id = args[0];
 			if(id instanceof CArray) {
 				MCItemStack is = ObjectGenerator.GetGenerator().item(id, t);
 				return new CInt(is.getType().getMaxStackSize(), t);
@@ -368,8 +368,8 @@ public class Minecraft {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -405,11 +405,12 @@ public class Minecraft {
 
 		@Override
 		public String docs() {
-			return "void {locationArray, effect, [radius]} Plays the specified effect (sound effect) at the given location, for all players within"
-					+ " the radius (or 64 by default). The effect can be one of the following: "
+			return "void {locationArray, effect, [radius]} Plays the specified effect at the given location"
+					+ " for all players within the radius (or 64 by default). The effect can be one of the following: "
 					+ StringUtils.Join(MCEffect.values(), ", ", ", or ", " or ")
-					+ ". Additional data can be supplied with the syntax EFFECT:DATA. The RECORD_PLAY effect takes the item"
-					+ " id of a disc as data, STEP_SOUND takes a blockID and SMOKE takes a direction bit (4 is upwards).";
+					+ ". Additional data can be supplied with the syntax EFFECT:DATA. The STEP_SOUND effect takes an"
+					+ " int of a legacy block id, SMOKE takes an int as a direction (4 is upwards), and POTION_BREAK"
+					+ " takes an int as a color.";
 		}
 
 		@Override
@@ -423,8 +424,8 @@ public class Minecraft {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_1_3;
+		public MSVersion since() {
+			return MSVersion.V3_1_3;
 		}
 
 		@Override
@@ -433,7 +434,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCLocation l = ObjectGenerator.GetGenerator().location(args[0], p == null ? null : p.getWorld(), t);
 			MCEffect e;
@@ -475,7 +476,7 @@ public class Minecraft {
 			if(children.size() < 2) {
 				return null;
 			}
-			Construct effect = children.get(1).getData();
+			Mixed effect = children.get(1).getData();
 			if(effect instanceof CString) {
 				String effectName = effect.val().split(":")[0].toUpperCase();
 				try {
@@ -509,8 +510,9 @@ public class Minecraft {
 		@Override
 		public String docs() {
 			return "mixed {[value]} Returns various information about server."
-					+ "If value is set, it should be an integer of one of the following indexes, and only that information for that index"
-					+ " will be returned. ---- Otherwise if value is not specified (or is -1), it returns an array of"
+					+ "If value is set, it should be an integer of one of the following indexes,"
+					+ " and only that information for that index will be returned."
+					+ " ---- Otherwise if value is not specified (or is -1), it returns an array of"
 					+ " information with the following pieces of information in the specified index: "
 					+ "<ul><li>0 - Server name; the name of the server in server.properties.</li>"
 					+ "<li>1 - API version; The version of the plugin API this server is implementing.</li>"
@@ -543,8 +545,8 @@ public class Minecraft {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -553,7 +555,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			MCServer server = StaticLayer.GetServer();
 			int index = -1;
 			if(args.length == 0) {
@@ -566,7 +568,7 @@ public class Minecraft {
 				throw new CRERangeException(this.getName() + " expects the index to be between -1 and 16 (inclusive)", t);
 			}
 
-			ArrayList<Construct> retVals = new ArrayList<>();
+			ArrayList<Mixed> retVals = new ArrayList<>();
 
 			if(index == 0 || index == -1) {
 				//Server name
@@ -672,7 +674,7 @@ public class Minecraft {
 			}
 
 			CArray ca = new CArray(t);
-			for(Construct c : retVals) {
+			for(Mixed c : retVals) {
 				ca.push(c, t);
 			}
 			return ca;
@@ -694,7 +696,7 @@ public class Minecraft {
 
 		@Override
 		public String docs() {
-			return "Array {} An array of players banned on the server.";
+			return "array {} An array of players banned on the server.";
 		}
 
 		@Override
@@ -708,8 +710,8 @@ public class Minecraft {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -718,7 +720,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			MCServer server = StaticLayer.GetServer();
 			CArray co = new CArray(t);
 			List<MCOfflinePlayer> so = server.getBannedPlayers();
@@ -748,7 +750,7 @@ public class Minecraft {
 
 		@Override
 		public String docs() {
-			return "Array {} An array of players whitelisted on the server.";
+			return "array {} An array of players whitelisted on the server.";
 		}
 
 		@Override
@@ -762,8 +764,8 @@ public class Minecraft {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -772,7 +774,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws CancelCommandException, ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws CancelCommandException, ConfigRuntimeException {
 			MCServer server = StaticLayer.GetServer();
 			CArray co = new CArray(t);
 			List<MCOfflinePlayer> so = server.getWhitelistedPlayers();
@@ -806,7 +808,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = null;
 			MCPlayer p = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			if(p != null) {
@@ -833,13 +835,12 @@ public class Minecraft {
 
 		@Override
 		public String docs() {
-			return "string {locationArray} Gets the spawner type of the specified mob spawner. ----"
-					+ " Valid types will be one of the mob types.";
+			return "string {locationArray} Gets the entity type that will spawn from the specified mob spawner.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -863,7 +864,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = null;
 			MCPlayer p = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			if(p != null) {
@@ -896,14 +897,15 @@ public class Minecraft {
 
 		@Override
 		public String docs() {
-			return "void {locationArray, type} Sets the mob spawner type at the location specified. If the location is not a mob spawner,"
-					+ " or if the type is invalid, a FormatException is thrown. The type may be one of either "
+			return "void {locationArray, type} Sets the mob spawner's entity type at the location specified."
+					+ " If the location is not a mob spawner, or if the type is invalid, a FormatException is thrown."
+					+ " ---- The type may be one of either "
 					+ StringUtils.Join(MCEntityType.MCVanillaEntityType.values(), ", ", ", or ");
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -927,7 +929,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer p = Static.GetPlayer(args[0], t);
 			p.sendResourcePack(args[1].val());
 			return CVoid.VOID;
@@ -947,14 +949,14 @@ public class Minecraft {
 		public String docs() {
 			return "void {player, url} Sends a resourcepack URL to the player's client."
 					+ " If the client has not been requested to change resources in the"
-					+ " past, they will recieve a confirmation dialog before downloading"
+					+ " past, they will receive a confirmation dialog before downloading"
 					+ " and switching to the new pack. Clients that ignore server resources"
-					+ " will not recieve the request, so this function will not affect them.";
+					+ " will not receive the request, so this function will not affect them.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -977,7 +979,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCServer s = Static.getServer();
 			CArray ret = new CArray(t);
 			for(String ip : s.getIPBans()) {
@@ -1002,8 +1004,8 @@ public class Minecraft {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1026,7 +1028,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCServer s = Static.getServer();
 			String ip = args[0].val();
 			if(Static.getBoolean(args[1], t)) {
@@ -1054,8 +1056,8 @@ public class Minecraft {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1068,7 +1070,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCMaterial mat = StaticLayer.GetMaterial(args[0].val());
 			if(mat == null) {
 				try {
@@ -1155,7 +1157,7 @@ public class Minecraft {
 					+ " it returns only that trait. Available traits: hasGravity, isBlock, isBurnable, isEdible,"
 					+ " isFlammable, isOccluding, isRecord, isSolid, isTransparent, isInteractable, maxDurability,"
 					+ " hardness (for block materials only), blastResistance (for block materials only),"
-					+ " and maxStacksize.";
+					+ " and maxStacksize. The accuracy of these values depend on the server implementation.";
 		}
 
 		@Override
@@ -1170,7 +1172,7 @@ public class Minecraft {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -1225,11 +1227,11 @@ public class Minecraft {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws CancelCommandException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws CancelCommandException {
 			Static.getServer().shutdown();
 			throw new CancelCommandException("", t);
 		}
@@ -1261,7 +1263,7 @@ public class Minecraft {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld world = null;
 			MCPlayer p = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			if(p != null) {
@@ -1293,14 +1295,15 @@ public class Minecraft {
 
 		@Override
 		public String docs() {
-			return "void {location, [isMonitored]} Sets up a location to be monitored for redstone changes. If a location is monitored,"
-					+ " it will cause redstone_changed events to be trigged. By default, isMonitored is true, however, setting it to false"
-					+ " will remove the previously monitored location from the list of monitors.";
+			return "void {location, [isMonitored]} Sets up a location to be monitored for redstone changes."
+					+ " If a location is monitored, it will cause redstone_changed events to be triggered. By default,"
+					+ " isMonitored is true, however, setting it to false will remove the previously monitored location"
+					+ " from the list of monitors.";
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 	}

@@ -3,13 +3,14 @@ package com.laytonsmith.core.constructs;
 import com.laytonsmith.PureUtilities.Version;
 import com.laytonsmith.annotations.typeof;
 import com.laytonsmith.core.CHLog;
-import com.laytonsmith.core.CHVersion;
+import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.MethodScriptCompiler;
 import com.laytonsmith.core.ParseTree;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.environments.GlobalEnv;
 import com.laytonsmith.core.exceptions.CRE.AbstractCREException;
 import com.laytonsmith.core.exceptions.CRE.CRECastException;
+import com.laytonsmith.core.exceptions.CRE.CREStackOverflowError;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.exceptions.FunctionReturnException;
@@ -27,21 +28,21 @@ import java.util.logging.Logger;
  *
  *
  */
-@typeof("closure")
+@typeof("ms.lang.closure")
 public class CClosure extends Construct {
 
 	public static final long serialVersionUID = 1L;
 	protected ParseTree node;
 	protected final Environment env;
 	protected final String[] names;
-	protected final Construct[] defaults;
+	protected final Mixed[] defaults;
 	protected final CClassType[] types;
 	protected final CClassType returnType;
 
 	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
-	public static final CClassType TYPE = CClassType.get("closure");
+	public static final CClassType TYPE = CClassType.get("ms.lang.closure");
 
-	public CClosure(ParseTree node, Environment env, CClassType returnType, String[] names, Construct[] defaults, CClassType[] types, Target t) {
+	public CClosure(ParseTree node, Environment env, CClassType returnType, String[] names, Mixed[] defaults, CClassType[] types, Target t) {
 		super(node != null ? node.toString() : "", ConstructType.CLOSURE, t);
 		this.node = node;
 		this.env = env;
@@ -137,7 +138,7 @@ public class CClosure extends Construct {
 	 * LoopManipulationException) within the closure
 	 * @throws FunctionReturnException If the closure has a return() call in it.
 	 */
-	public void execute(Construct... values) throws ConfigRuntimeException, ProgramFlowManipulationException, FunctionReturnException, CancelCommandException {
+	public void execute(Mixed... values) throws ConfigRuntimeException, ProgramFlowManipulationException, FunctionReturnException, CancelCommandException {
 		if(node == null) {
 			return;
 		}
@@ -151,7 +152,7 @@ public class CClosure extends Construct {
 			if(values != null) {
 				for(int i = 0; i < names.length; i++) {
 					String name = names[i];
-					Construct value;
+					Mixed value;
 					try {
 						value = values[i];
 					} catch (Exception e) {
@@ -171,7 +172,7 @@ public class CClosure extends Construct {
 			if(!hasArgumentsParam) {
 				CArray arguments = new CArray(node.getData().getTarget());
 				if(values != null) {
-					for(Construct value : values) {
+					for(Mixed value : values) {
 						arguments.push(value, node.getData().getTarget());
 					}
 				}
@@ -193,7 +194,7 @@ public class CClosure extends Construct {
 			} catch (FunctionReturnException ex) {
 				// Check the return type of the closure to see if it matches the defined type
 				// Normal execution.
-				Construct ret = ex.getReturn();
+				Mixed ret = ex.getReturn();
 				if(!InstanceofUtil.isInstanceof(ret, returnType)) {
 					throw new CRECastException("Expected closure to return a value of type " + returnType.val()
 							+ " but a value of type " + ret.typeof() + " was returned instead", ret.getTarget());
@@ -207,9 +208,8 @@ public class CClosure extends Construct {
 					((AbstractCREException) ex).freezeStackTraceElements(stManager);
 				}
 				throw ex;
-			} catch (Throwable t) {
-				// Not sure. Pop and re-throw.
-				throw t;
+			} catch (StackOverflowError e) {
+				throw new CREStackOverflowError(null, node.getTarget(), e);
 			} finally {
 				stManager.popStackTraceElement();
 			}
@@ -236,7 +236,7 @@ public class CClosure extends Construct {
 
 	@Override
 	public Version since() {
-		return CHVersion.V3_3_1;
+		return MSVersion.V3_3_1;
 	}
 
 	@Override
@@ -246,7 +246,7 @@ public class CClosure extends Construct {
 
 	@Override
 	public CClassType[] getInterfaces() {
-		return new CClassType[]{};
+		return CClassType.EMPTY_CLASS_ARRAY;
 	}
 
 }

@@ -2,6 +2,7 @@ package com.laytonsmith.core.functions;
 
 import com.laytonsmith.PureUtilities.ClassLoading.ClassDiscovery;
 import com.laytonsmith.PureUtilities.Common.StreamUtils;
+import com.laytonsmith.annotations.MEnum;
 import com.laytonsmith.annotations.core;
 import com.laytonsmith.annotations.hide;
 import com.laytonsmith.annotations.noprofile;
@@ -10,18 +11,19 @@ import com.laytonsmith.core.Documentation;
 import com.laytonsmith.core.LogLevel;
 import com.laytonsmith.core.ParseTree;
 import com.laytonsmith.core.Script;
+import com.laytonsmith.core.SimpleDocumentation;
 import com.laytonsmith.core.compiler.FileOptions;
 import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CClosure;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.IVariable;
 import com.laytonsmith.core.constructs.IVariableList;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import com.laytonsmith.core.snapins.PackagePermission;
 import com.laytonsmith.tools.docgen.DocGenTemplates;
 import com.laytonsmith.tools.docgen.DocGenTemplates.Generator.GenerateException;
@@ -51,7 +53,7 @@ public abstract class AbstractFunction implements Function {
 	 * @return
 	 */
 	@Override
-	public Construct execs(Target t, Environment env, Script parent, ParseTree... nodes) {
+	public Mixed execs(Target t, Environment env, Script parent, ParseTree... nodes) {
 		return CVoid.VOID;
 	}
 
@@ -83,7 +85,7 @@ public abstract class AbstractFunction implements Function {
 	 * @param args
 	 * @return
 	 */
-	public Construct optimize(Target t, Construct... args) throws ConfigCompileException {
+	public Mixed optimize(Target t, Mixed... args) throws ConfigCompileException {
 		return null;
 	}
 
@@ -134,10 +136,10 @@ public abstract class AbstractFunction implements Function {
 	}
 
 	@Override
-	public String profileMessage(Construct... args) {
+	public String profileMessage(Mixed... args) {
 		StringBuilder b = new StringBuilder();
 		boolean first = true;
-		for(Construct ccc : args) {
+		for(Mixed ccc : args) {
 			if(!first) {
 				b.append(", ");
 			}
@@ -145,7 +147,7 @@ public abstract class AbstractFunction implements Function {
 			if(ccc instanceof CArray) {
 				//Arrays take too long to toString, so we don't want to actually toString them here if
 				//we don't need to.
-				b.append("<arrayNotShown size:" + ((CArray) ccc).size() + ">");
+				b.append("<arrayNotShown size:").append(((CArray) ccc).size()).append(">");
 			} else if(ccc instanceof CClosure) {
 				//The toString of a closure is too long, so let's not output them either.
 				b.append("<closureNotShown>");
@@ -196,6 +198,30 @@ public abstract class AbstractFunction implements Function {
 			map = new HashMap<>();
 		}
 		return DocGenTemplates.DoTemplateReplacement(template, map);
+	}
+
+	protected <T extends Enum<?> & SimpleDocumentation> String createEnumTable(Class<T> c) {
+		StringBuilder b = new StringBuilder();
+		MEnum me = c.getAnnotation(MEnum.class);
+		String title;
+		if(me == null) {
+			title = c.getSimpleName();
+		} else {
+			title = me.value();
+		}
+		b.append("<br>'''").append(title).append("'''<br>\n");
+		b.append("{|\n");
+		b.append("|-\n! Name\n! Docs\n! Since\n");
+		Enum[] elist = c.getEnumConstants();
+		for(Enum e : elist) {
+			SimpleDocumentation d = (SimpleDocumentation) e;
+			b.append("|-\n")
+					.append("| ").append(d.getName()).append("\n")
+					.append("| ").append(d.docs()).append("\n")
+					.append("| ").append(d.since()).append("\n");
+		}
+		b.append("|}\n");
+		return b.toString();
 	}
 
 	@Override

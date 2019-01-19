@@ -2,17 +2,19 @@ package com.laytonsmith.core.functions;
 
 import com.laytonsmith.PureUtilities.Common.StreamUtils;
 import com.laytonsmith.PureUtilities.HeapDumper;
+import com.laytonsmith.PureUtilities.TermColors;
+import com.laytonsmith.PureUtilities.Version;
 import com.laytonsmith.annotations.api;
 import com.laytonsmith.annotations.noboilerplate;
-import com.laytonsmith.core.CHVersion;
+import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.LogLevel;
 import com.laytonsmith.core.MethodScriptFileLocations;
 import com.laytonsmith.core.Prefs;
+import com.laytonsmith.core.Script;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.IVariable;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.Environment;
@@ -22,6 +24,7 @@ import com.laytonsmith.core.exceptions.CRE.CREIOException;
 import com.laytonsmith.core.exceptions.CRE.CREPluginInternalException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -89,7 +92,7 @@ public class Debug {
 //			return true;
 //		}
 //
-//		public CHVersion since() {
+//		public MSVersion since() {
 //			return "0.0.0";
 //		}
 //
@@ -97,7 +100,7 @@ public class Debug {
 //			return false;
 //		}
 //
-//		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+//		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 //			if(!(Boolean) Static.getPreferences().getPreference("allow-debug-logging")) {
 //				throw new ConfigRuntimeException("allow-debug-logging is currently set to false. To use " + this.getVariableName() + ", enable it in your preferences.", CRESecurityException.class, t);
 //			}
@@ -220,8 +223,8 @@ public class Debug {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -230,7 +233,7 @@ public class Debug {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(Prefs.DebugMode()) {
 				try {
 					Static.LogDebug(MethodScriptFileLocations.getDefault().getConfigDirectory(), args[0].val(), LogLevel.DEBUG);
@@ -261,16 +264,16 @@ public class Debug {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			if(args[0] instanceof IVariable) {
 				if(Prefs.DebugMode()) {
 					IVariable ivar = (IVariable) args[0];
-					Construct val = environment.getEnv(GlobalEnv.class).GetVarList().get(ivar.getVariableName(), t);
+					Mixed val = environment.getEnv(GlobalEnv.class).GetVarList().get(ivar.getVariableName(), t);
 					StreamUtils.GetSystemOut().println(ivar.getVariableName() + ": " + val.val());
 				}
 				return CVoid.VOID;
 			} else {
-				throw new CRECastException("Expecting an ivar, but recieved " + args[0].getCType() + " instead", t);
+				throw new CRECastException("Expecting an ivar, but recieved " + args[0].typeof().getSimpleName() + " instead", t);
 			}
 			//TODO: Once Prefs are no longer static, check to see if debug mode is on during compilation, and
 			//if so, remove this function entirely
@@ -299,8 +302,8 @@ public class Debug {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -336,15 +339,15 @@ public class Debug {
 //			return true;
 //		}
 //
-//		public CHVersion since() {
-//			return CHVersion.V3_3_0;
+//		public MSVersion since() {
+//			return MSVersion.V3_3_0;
 //		}
 //
 //		public Boolean runAsync() {
 //			return false;
 //		}
 //
-//		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+//		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 //			if(!(Boolean) Static.getPreferences().getPreference("allow-debug-logging")) {
 //				throw new ConfigRuntimeException("allow-debug-logging is currently set to false. To use " + this.getVariableName() + ", enable it in your preferences.", CRESecurityException.class, t);
 //			}
@@ -389,15 +392,15 @@ public class Debug {
 //			return true;
 //		}
 //
-//		public CHVersion since() {
-//			return CHVersion.V3_3_0;
+//		public MSVersion since() {
+//			return MSVersion.V3_3_0;
 //		}
 //
 //		public Boolean runAsync() {
 //			return true;
 //		}
 //
-//		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+//		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 //			if(!(Boolean) Static.getPreferences().getPreference("allow-debug-logging")) {
 //				throw new ConfigRuntimeException("allow-debug-logging is currently set to false. To use " + this.getVariableName() + ", enable it in your preferences.", CRESecurityException.class, t);
 //			}
@@ -465,15 +468,15 @@ public class Debug {
 //			return true;
 //		}
 //
-//		public CHVersion since() {
-//			return CHVersion.V3_3_0;
+//		public MSVersion since() {
+//			return MSVersion.V3_3_0;
 //		}
 //
 //		public Boolean runAsync() {
 //			return false;
 //		}
 //
-//		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+//		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 //			if(!(Boolean) Static.getPreferences().getPreference("allow-debug-logging")) {
 //				throw new ConfigRuntimeException("allow-debug-logging is currently set to false. To use " + this.getVariableName() + ", enable it in your preferences.", CRESecurityException.class, t);
 //			}
@@ -509,7 +512,7 @@ public class Debug {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
 			CArray carray = new CArray(t);
 			for(Thread thread : threadSet) {
@@ -535,8 +538,8 @@ public class Debug {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -561,7 +564,7 @@ public class Debug {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			File file = new File("dump.bin");
 			try {
 				HeapDumper.dumpHeap(file.getAbsolutePath(), true);
@@ -590,8 +593,63 @@ public class Debug {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
+		}
+
+	}
+
+	@api
+	@noboilerplate
+	public static class set_debug_output extends AbstractFunction {
+
+		@Override
+		public Class<? extends CREThrowable>[] thrown() {
+			return null;
+		}
+
+		@Override
+		public boolean isRestricted() {
+			return true;
+		}
+
+		@Override
+		public Boolean runAsync() {
+			return null;
+		}
+
+		@Override
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
+			Script.debugOutput = Static.getBoolean(args[0], t);
+			if(Script.debugOutput) {
+				StreamUtils.GetSystemOut().println(TermColors.BG_RED + "[[DEBUG]] set_debug_output(true)"
+						+ TermColors.RESET);
+			}
+			return CVoid.VOID;
+		}
+
+		@Override
+		public String getName() {
+			return "set_debug_output";
+		}
+
+		@Override
+		public Integer[] numArgs() {
+			return new Integer[]{1};
+		}
+
+		@Override
+		public String docs() {
+			return "void {booleanValue} Turns verbose debug output on or off. This should generally never be on in"
+					+ " a production server, but can be useful to quickly trace what a script is doing when it runs in a"
+					+ " test environment. When on, every single function call will be printed out, along with the"
+					+ " parameters passed in to it. To reduce impact on scripts when this is disabled, this has been"
+					+ " implemented as a system wide setting, and applies to all scripts running in the same system.";
+		}
+
+		@Override
+		public Version since() {
+			return MSVersion.V3_3_3;
 		}
 
 	}

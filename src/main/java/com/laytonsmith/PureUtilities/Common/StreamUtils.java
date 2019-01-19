@@ -63,7 +63,7 @@ public class StreamUtils {
 			encoding = "UTF-8";
 		}
 		if(in == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("InputStream is null");
 		}
 		InputStreamReader input;
 		input = new InputStreamReader(new BufferedInputStream(in), encoding);
@@ -85,6 +85,7 @@ public class StreamUtils {
 
 	/**
 	 * Fully reads in a stream, as efficiently as possible, and returns a byte array.
+	 * The input stream is not closed afterwards.
 	 *
 	 * @param in
 	 * @return
@@ -92,7 +93,7 @@ public class StreamUtils {
 	 */
 	public static byte[] GetBytes(InputStream in) throws IOException {
 		BufferedInputStream bis = new BufferedInputStream(in);
-		List<Byte> bytes = new ArrayList<Byte>();
+		List<Byte> bytes = new ArrayList<>();
 		int i;
 		while((i = bis.read()) != -1) {
 			bytes.add(((byte) i));

@@ -90,7 +90,7 @@ import com.laytonsmith.abstraction.enums.MCTreeSpecies;
 import com.laytonsmith.annotations.api;
 import com.laytonsmith.annotations.seealso;
 import com.laytonsmith.core.ArgumentValidation;
-import com.laytonsmith.core.CHVersion;
+import com.laytonsmith.core.MSVersion;
 import com.laytonsmith.core.ObjectGenerator;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CArray;
@@ -101,7 +101,6 @@ import com.laytonsmith.core.constructs.CInt;
 import com.laytonsmith.core.constructs.CNull;
 import com.laytonsmith.core.constructs.CString;
 import com.laytonsmith.core.constructs.CVoid;
-import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
@@ -118,13 +117,12 @@ import com.laytonsmith.core.exceptions.CRE.CRERangeException;
 import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import com.laytonsmith.core.natives.interfaces.Mixed;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -183,7 +181,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			CArray ret = new CArray(t);
 			if(args.length == 0) {
 				for(MCWorld w : Static.getServer().getWorlds()) {
@@ -233,8 +231,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -251,7 +249,7 @@ public class EntityManagement {
 		public String docs() {
 			return "array {[world, [x, z]] | [locationArray]} Returns an array of IDs for all entities in the given"
 					+ " scope. With no args, this will return all entities loaded on the entire server. If the first"
-					+ " argument is given and is a location, only entities in the chunk containin that location will"
+					+ " argument is given and is a location, only entities in the chunk containing that location will"
 					+ " be returned, or if it is a world only entities in that world will be returned. If all three"
 					+ " arguments are given, only entities in the chunk with those coords will be returned. This can"
 					+ " take chunk coords (ints) or location coords (doubles).";
@@ -275,7 +273,7 @@ public class EntityManagement {
 	public static class entity_exists extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e;
 			try {
 				e = Static.getEntity(args[0], t);
@@ -292,12 +290,12 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID} Returns true if entity exists, otherwise false.";
+			return "boolean {entityUUID} Returns true if entity exists, otherwise false.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -305,7 +303,7 @@ public class EntityManagement {
 	public static class is_entity_living extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e;
 
 			try {
@@ -324,12 +322,12 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID} Returns true if entity is living, otherwise false.";
+			return "boolean {entityUUID} Returns true if entity is living, otherwise false.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -348,7 +346,7 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID} Returns true or false if the specified entity is tameable";
+			return "boolean {entityUUID} Returns true or false if the specified entity is tameable";
 		}
 
 		@Override
@@ -362,8 +360,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_0;
+		public MSVersion since() {
+			return MSVersion.V3_3_0;
 		}
 
 		@Override
@@ -372,7 +370,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			boolean ret;
 			if(e == null) {
@@ -390,7 +388,7 @@ public class EntityManagement {
 	public static class entity_loc extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			return ObjectGenerator.GetGenerator().location(e.getLocation());
 		}
@@ -402,7 +400,7 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "locationArray {entityID} Returns the location array for this entity, if it exists."
+			return "locationArray {entityUUID} Returns the location array for this entity, if it exists."
 					+ " This array will be compatible with any function that expects a location.";
 		}
 
@@ -416,8 +414,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -432,7 +430,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			MCLocation l;
 			if(args[1] instanceof CArray) {
@@ -450,7 +448,7 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID, locationArray} Teleports the entity to the given location and returns whether"
+			return "boolean {entityUUID, locationArray} Teleports the entity to the given location and returns whether"
 					+ " the action was successful. Note this can set both location and direction.";
 		}
 
@@ -473,8 +471,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -483,7 +481,7 @@ public class EntityManagement {
 	public static class entity_velocity extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			CArray va = ObjectGenerator.GetGenerator().vector(e.getVelocity(), t);
 			va.set("magnitude", new CDouble(e.getVelocity().length(), t), t);
@@ -497,8 +495,8 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "array {entityID} Returns an associative array indicating the x/y/z components of this entity's velocity."
-					+ " As a convenience, the magnitude is also included.";
+			return "array {entityUUID} Returns an entity's motion vector represented as an associative array with the"
+					+ " the keys x, y, and z. As a convenience, the magnitude is also included.";
 		}
 
 		@Override
@@ -511,8 +509,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -521,7 +519,7 @@ public class EntityManagement {
 	public static class set_entity_velocity extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			e.setVelocity(ObjectGenerator.GetGenerator().vector(args[1], t));
 			return CVoid.VOID;
@@ -534,9 +532,9 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, array} Sets the velocity of this entity according to the supplied xyz array. All 3"
-					+ " values default to 0, so an empty array will simply stop the entity's motion. Both normal and"
-					+ " associative arrays are accepted.";
+			return "void {entityUUID, array} Sets the velocity of this entity according to the supplied xyz array."
+					+ " All 3 values default to 0, so an empty array will simply stop the entity's motion. Both normal"
+					+ " and associative arrays are accepted.";
 		}
 
 		@Override
@@ -552,8 +550,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -562,7 +560,7 @@ public class EntityManagement {
 	public static class entity_remove extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			if(ent == null) {
 				return CVoid.VOID;
@@ -581,14 +579,14 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID} Removes the specified entity from the world, without any drops or animations. "
+			return "void {entityUUID} Removes the specified entity from the world, without any drops or animations. "
 					+ "Note: you can't remove players. As a safety measure for working with NPC plugins, it will "
 					+ "not work on anything human, even if it is not a player.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -602,7 +600,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent;
 			try {
 				ent = Static.getEntity(args[0], t);
@@ -619,13 +617,13 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "string {entityID} Returns the EntityType of the entity with the specified ID."
+			return "string {entityUUID} Returns the EntityType of the entity with the specified ID."
 					+ " Returns null if the entity does not exist.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -633,7 +631,7 @@ public class EntityManagement {
 	public static class get_entity_age extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			if(ent == null) {
 				return CNull.NULL;
@@ -649,12 +647,12 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "int {entityID} Returns the entity age as an integer, represented by server ticks.";
+			return "int {entityUUID} Returns the entity age as an integer, represented by server ticks.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -668,7 +666,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			int age = Static.getInt32(args[1], t);
 			if(age < 1) {
 				throw new CRERangeException("Entity age can't be less than 1 server tick.", t);
@@ -689,12 +687,13 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, int} Sets the age of the entity to the specified int, represented by server ticks.";
+			return "void {entityUUID, int} Sets the age of the entity to the specified int,"
+					+ " represented by server ticks.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -708,7 +707,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 
@@ -847,18 +846,18 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "int {[entity[, projectile]] | player, projectile, target[, speed]} shoots an entity from the"
-					+ " specified location (can be entityID, player name or location array), or the current player"
-					+ " if no arguments are passed. If no entity type is specified, it defaults to a fireball."
-					+ " If provide three arguments, with target (entityID, player name or location array), entity will"
-					+ " shoot to target location. Last, fourth argument, is double and specifies the speed"
-					+ " of projectile. Returns the EntityID of the entity. Valid projectile types: "
+			return "string {[entity[, projectile]] | player, projectile, target[, speed]} shoots an entity from the"
+					+ " specified location (can be an entity UUID, player name or location array), or the current"
+					+ " player if no arguments are passed. If no entity type is specified, it defaults to a fireball."
+					+ " If provide three arguments, with target (entity UUID, player name or location array), entity"
+					+ " will shoot to target location. Last, fourth argument, is double and specifies the speed"
+					+ " of projectile. Returns the UUID of the entity. Valid projectile types: "
 					+ StringUtils.Join(MCProjectileType.values(), ", ", ", or ", " or ");
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -876,7 +875,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer p = env.getEnv(CommandHelperEnvironment.class).GetPlayer();
 
 			MCLocation loc;
@@ -890,6 +889,10 @@ public class EntityManagement {
 			loc = ObjectGenerator.GetGenerator().location(args[0], p != null ? p.getWorld() : null, t);
 			dist = Static.getInt32(args[1], t);
 
+			if(dist < 0) {
+				throw new CRERangeException("Distance cannot be negative.", t);
+			}
+
 			if(args.length == 3) {
 				if(args[2] instanceof CArray) {
 					CArray ta = (CArray) args[2];
@@ -902,37 +905,33 @@ public class EntityManagement {
 				types = prepareTypes(t, types);
 			}
 
-			// The idea and code comes from skore87 (http://forums.bukkit.org/members/skore87.105075/)
-			// http://forums.bukkit.org/threads/getnearbyentities-of-a-location.101499/#post-1341141
-			int chunkRadius = dist < 16 ? 1 : (dist - (dist % 16)) / 16;
+			MCWorld world = loc.getWorld();
+			int chunkRadius = (dist + 16) / 16;
+			int distanceSquared = dist * dist;
+			int centerX = loc.getBlockX() >> 4;
+			int centerZ = loc.getBlockZ() >> 4;
 
-			Set<UUID> eSet = new HashSet<>();
-			for(int chX = 0 - chunkRadius; chX <= chunkRadius; chX++) {
-				for(int chZ = 0 - chunkRadius; chZ <= chunkRadius; chZ++) {
-					MCLocation nl = StaticLayer.GetLocation(loc.getWorld(), loc.getX() + (chX * 16), loc.getY(), loc.getZ() + (chZ * 16));
-					for(MCEntity e : nl.getChunk().getEntities()) {
-						if(!e.getWorld().equals(loc.getWorld())) {
-							// We can't measure entity distances that are in different worlds!
-							continue;
-						}
-						if(e.getLocation().distance(loc) <= dist && e.getLocation().getBlock() != loc.getBlock()) {
+			CArray entities = new CArray(t);
+			for(int offsetX = 0 - chunkRadius; offsetX <= chunkRadius; offsetX++) {
+				for(int offsetZ = 0 - chunkRadius; offsetZ <= chunkRadius; offsetZ++) {
+					if(!world.isChunkLoaded(centerX + offsetX, centerZ + offsetZ)) {
+						continue;
+					}
+					for(MCEntity e : world.getChunkAt(centerX + offsetX, centerZ + offsetZ).getEntities()) {
+						if(e.getLocation().distanceSquared(loc) <= distanceSquared) {
 							if(types.isEmpty() || types.contains(e.getType().name())) {
-								eSet.add(e.getUniqueId());
+								entities.push(new CString(e.getUniqueId().toString(), t), t);
 							}
 						}
 					}
 				}
 			}
-			CArray entities = new CArray(t);
-			for(UUID e : eSet) {
-				entities.push(new CString(e.toString(), t), t);
-			}
 			return entities;
 		}
 
 		private List<String> prepareTypes(Target t, List<String> types) {
-			List<String> newTypes = new ArrayList<String>();
-			MCEntityType entityType = null;
+			List<String> newTypes = new ArrayList<>();
+			MCEntityType entityType;
 			for(String type : types) {
 				try {
 					entityType = MCEntityType.valueOf(type.toUpperCase());
@@ -946,20 +945,21 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "array {location array, distance, [type] | location array, distance, [arrayTypes]} Returns an array of"
-					+ " all entities within the given radius. Set type argument to filter entities to a specific type. You"
-					+ " can pass an array of types. Valid types (case doesn't matter): "
+			return "array {locationArray, distance, [type] | locationArray, distance, [arrayTypes]} Returns an array of"
+					+ " all entities within the given distance from the location. Set type argument to filter entities"
+					+ " to a specific entity type. You can pass an array of types. Valid types (case doesn't matter): "
 					+ StringUtils.Join(MCEntityType.types(), ", ", ", or ", " or ");
 		}
 
 		@Override
 		public Class<? extends CREThrowable>[] thrown() {
-			return new Class[]{CRECastException.class, CREBadEntityException.class, CREFormatException.class};
+			return new Class[]{CRECastException.class, CREBadEntityException.class, CREFormatException.class,
+					CRERangeException.class};
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -967,7 +967,7 @@ public class EntityManagement {
 	public static class entity_onfire extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			return new CInt(ent.getFireTicks() / 20, t);
 		}
@@ -979,13 +979,13 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "int {entityID} Returns the number of seconds until this entity"
+			return "int {entityUUID} Returns the number of seconds until this entity"
 					+ " stops being on fire, 0 if it already isn't.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -994,7 +994,7 @@ public class EntityManagement {
 	public static class set_entity_onfire extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			int seconds = Static.getInt32(args[1], t);
 			if(seconds < 0) {
@@ -1013,14 +1013,14 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, seconds} Sets the entity on fire for the"
+			return "void {entityUUID, seconds} Sets the entity on fire for the"
 					+ " given number of seconds. Throws a RangeException"
 					+ " if seconds is less than 0 or greater than 107374182.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -1029,7 +1029,7 @@ public class EntityManagement {
 	public static class play_entity_effect extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			MCEntityEffect mee;
 			try {
@@ -1048,7 +1048,7 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, effect} Plays the given visual effect on the"
+			return "void {entityUUID, effect} Plays the given visual effect on the"
 					+ " entity. Non-applicable effects simply won't happen. Note:"
 					+ " the death effect makes the mob invisible to players and"
 					+ " immune to melee attacks. When used on players, they are"
@@ -1058,8 +1058,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -1068,7 +1068,7 @@ public class EntityManagement {
 	public static class get_mob_name extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity le = Static.getEntity(args[0], t);
 			try {
 				return new CString(le.getCustomName(), t);
@@ -1084,12 +1084,12 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "string {entityID} Returns the name of the given mob.";
+			return "string {entityUUID} Returns the name of the given mob.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1097,7 +1097,7 @@ public class EntityManagement {
 	public static class set_mob_name extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity le = Static.getEntity(args[0], t);
 			try {
 				le.setCustomName(args[1].val());
@@ -1114,13 +1114,13 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, name} Sets the name of the given mob. This"
+			return "void {entityUUID, name} Sets the name of the given mob. This"
 					+ " automatically truncates if it is more than 64 characters.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1134,7 +1134,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCCommandSender cs = environment.getEnv(CommandHelperEnvironment.class).GetCommandSender();
 			int qty = 1;
 			CArray ret = new CArray(t);
@@ -1222,7 +1222,7 @@ public class EntityManagement {
 				}
 			}
 			return "array {entityType, [qty], [location], [closure]} Spawns the specified number of entities of the"
-					+ " given type at the given location. Returns an array of entityIDs of what is spawned."
+					+ " given type at the given location. Returns an array of entity UUIDs of what is spawned."
 					+ "  Qty defaults to 1 and location defaults to the location of the commandsender,"
 					+ " if it is a block or player. If the commandsender is console, location must be supplied."
 					+ " ---- Entitytype can be one of " + StringUtils.Join(spawnable, ", ", " or ", ", or ") + "."
@@ -1233,8 +1233,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		@Override
@@ -1252,7 +1252,7 @@ public class EntityManagement {
 	public static class set_entity_rider extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity horse;
 			MCEntity rider;
 			boolean success;
@@ -1266,7 +1266,7 @@ public class EntityManagement {
 			} else {
 				rider = Static.getEntity(args[1], t);
 			}
-			if((horse == null && rider == null) || horse == rider) {
+			if((horse == null && rider == null) || args[0].val().equals(args[1].val())) {
 				throw new CREFormatException("Horse and rider cannot be the same entity", t);
 			} else if(horse == null) {
 				success = rider.leaveVehicle();
@@ -1294,12 +1294,13 @@ public class EntityManagement {
 					+ " If rider is null, horse will eject its current rider, if it has one. If horse is null,"
 					+ " rider will leave whatever it is riding. If horse and rider are both valid entities,"
 					+ " rider will ride horse. The function returns the success of whatever operation is done."
-					+ " If horse and rider are both null, or otherwise the same, a FormatException is thrown.";
+					+ " If horse and rider are both null, or otherwise the same, a FormatException is thrown."
+					+ " If a horse already has a rider, this will add the new rider without ejecting the existing one.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1307,10 +1308,11 @@ public class EntityManagement {
 	public static class get_entity_rider extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
-			if(ent.getPassenger() != null) {
-				return new CString(ent.getPassenger().getUniqueId().toString(), t);
+			List<MCEntity> passengers = ent.getPassengers();
+			if(!passengers.isEmpty()) {
+				return new CString(passengers.get(0).getUniqueId().toString(), t);
 			}
 			return CNull.NULL;
 		}
@@ -1322,12 +1324,43 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "string {entityID} Returns the ID of the given entity's rider, or null if it doesn't have one.";
+			return "string {entityUUID} Returns the UUID of the given entity's rider, or null if it doesn't have one."
+					+ " If there are multiple riders, only the first is returned.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
+		}
+	}
+
+	@api
+	public static class get_entity_riders extends EntityGetterFunction {
+
+		@Override
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
+			MCEntity ent = Static.getEntity(args[0], t);
+			List<MCEntity> riders = ent.getPassengers();
+			CArray ret = new CArray(t);
+			for(MCEntity rider : riders) {
+				ret.push(new CString(rider.getUniqueId().toString(), t), t);
+			}
+			return ret;
+		}
+
+		@Override
+		public String getName() {
+			return "get_entity_riders";
+		}
+
+		@Override
+		public String docs() {
+			return "array {entityUUID} Returns an array of UUIDs for the given entity's riders.";
+		}
+
+		@Override
+		public MSVersion since() {
+			return MSVersion.V3_3_3;
 		}
 	}
 
@@ -1335,7 +1368,7 @@ public class EntityManagement {
 	public static class get_entity_vehicle extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity ent = Static.getEntity(args[0], t);
 			if(ent.isInsideVehicle()) {
 				return new CString(ent.getVehicle().getUniqueId().toString(), t);
@@ -1350,12 +1383,12 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "string {entityID} Returns the ID of the given entity's vehicle, or null if it doesn't have one.";
+			return "string {entityUUID} Returns the UUID of the given entity's vehicle, or null if none exists.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1368,14 +1401,12 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
-			if(e instanceof MCBoat) {
-				return new CDouble(((MCBoat) e).getMaxSpeed(), t);
-			} else if(e instanceof MCMinecart) {
+			if(e instanceof MCMinecart) {
 				return new CDouble(((MCMinecart) e).getMaxSpeed(), t);
 			}
-			throw new CREBadEntityTypeException("Given entity must be a boat or minecart.", t);
+			throw new CREBadEntityTypeException("Given entity must be a minecart.", t);
 		}
 
 		@Override
@@ -1385,13 +1416,12 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "double {entityID} Returns a max speed for given entity. Make sure that the entity is a boat"
-					+ " or minecart.";
+			return "double {entityUUID} Returns a max speed for given entity. Make sure that the entity is a minecart.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1405,15 +1435,13 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			double speed = Static.getDouble(args[1], t);
-			if(e instanceof MCBoat) {
-				((MCBoat) e).setMaxSpeed(speed);
-			} else if(e instanceof MCMinecart) {
+			if(e instanceof MCMinecart) {
 				((MCMinecart) e).setMaxSpeed(speed);
 			} else {
-				throw new CREBadEntityTypeException("Given entity must be a boat or minecart.", t);
+				throw new CREBadEntityTypeException("Given entity must be a minecart.", t);
 			}
 			return CVoid.VOID;
 		}
@@ -1425,13 +1453,12 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID} Sets a max speed for given entity. Make sure that the entity is a boat"
-					+ " or minecart.";
+			return "void {entityUUID} Sets a max speed for given entity. Make sure that the entity is a minecart.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1439,7 +1466,7 @@ public class EntityManagement {
 	public static class get_name_visible extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				return CBoolean.get(Static.getEntity(args[0], t).isCustomNameVisible());
 			} catch (IllegalArgumentException e) {
@@ -1454,14 +1481,14 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID} Returns whether or not a mob's custom name is always visible."
+			return "boolean {entityUUID} Returns whether or not a mob's custom name is always visible."
 					+ " If this is true it will be as visible as player names, otherwise it will only be"
 					+ " visible when near the mob.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1469,7 +1496,7 @@ public class EntityManagement {
 	public static class set_name_visible extends EntitySetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			try {
 				Static.getEntity(args[0], t).setCustomNameVisible(Static.getBoolean(args[1], t));
 			} catch (IllegalArgumentException e) {
@@ -1485,14 +1512,14 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, boolean} Sets the visibility of a mob's custom name."
+			return "void {entityUUID, boolean} Sets the visibility of a mob's custom name."
 					+ " True means it will be visible from a distance, like a playername."
 					+ " False means it will only be visible when near the mob.";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1515,7 +1542,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = null;
 			if(environment.getEnv(CommandHelperEnvironment.class).GetPlayer() != null) {
 				w = environment.getEnv(CommandHelperEnvironment.class).GetPlayer().getWorld();
@@ -1548,7 +1575,7 @@ public class EntityManagement {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 
 	}
@@ -1572,7 +1599,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCWorld w = null;
 			if(environment.getEnv(CommandHelperEnvironment.class).GetPlayer() != null) {
 				w = environment.getEnv(CommandHelperEnvironment.class).GetPlayer().getWorld();
@@ -1621,7 +1648,7 @@ public class EntityManagement {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_1;
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1629,7 +1656,7 @@ public class EntityManagement {
 	public static class entity_grounded extends EntityGetterFunction {
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return CBoolean.get(Static.getEntity(args[0], t).isOnGround());
 		}
 
@@ -1640,12 +1667,12 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID} returns whether the entity is touching the ground";
+			return "boolean {entityUUID} returns whether the entity is touching the ground";
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -1690,7 +1717,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 			CArray specArray = CArray.GetAssociativeArray(t);
 			switch(entity.getType().getAbstracted()) {
@@ -1723,6 +1750,7 @@ public class EntityManagement {
 					specArray.set(entity_spec.KEY_AREAEFFECTCLOUD_WAITTIME, new CInt(cloud.getWaitTime(), t), t);
 					break;
 				case ARROW:
+				case TRIDENT:
 					MCArrow arrow = (MCArrow) entity;
 					specArray.set(entity_spec.KEY_ARROW_CRITICAL, CBoolean.get(arrow.isCritical()), t);
 					specArray.set(entity_spec.KEY_ARROW_KNOCKBACK, new CInt(arrow.getKnockbackStrength(), t), t);
@@ -1995,8 +2023,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 		//used to ensure that the indexes are the same in entity_spec(), set_entity_spec(), and in the documentation.
@@ -2103,7 +2131,7 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, specArray} Sets the data in the specArray to the given entity."
+			return "void {entityUUID, specArray} Sets the data in the specArray to the given entity."
 					+ " The specArray must follow the same format as entity_spec()."
 					+ " See the documentation for that function for info on available options."
 					+ " All indices in the specArray are optional.";
@@ -2114,7 +2142,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 			CArray specArray = Static.getArray(args[1], t);
 
@@ -2146,11 +2174,11 @@ public class EntityManagement {
 								}
 								break;
 							case entity_spec.KEY_AREAEFFECTCLOUD_POTIONMETA:
-								Construct c = specArray.get(index, t);
+								Mixed c = specArray.get(index, t);
 								if(c instanceof CArray) {
 									CArray meta = (CArray) c;
 									if(meta.containsKey("base")) {
-										Construct base = meta.get("base", t);
+										Mixed base = meta.get("base", t);
 										if(base instanceof CArray) {
 											MCPotionData pd = ObjectGenerator.GetGenerator().potionData((CArray) base, t);
 											cloud.setBasePotionData(pd);
@@ -2158,7 +2186,7 @@ public class EntityManagement {
 									}
 									if(meta.containsKey("potions")) {
 										cloud.clearCustomEffects();
-										Construct potions = meta.get("potions", t);
+										Mixed potions = meta.get("potions", t);
 										if(potions instanceof CArray) {
 											List<MCLivingEntity.MCEffect> list = ObjectGenerator.GetGenerator().potions((CArray) potions, t);
 											for(MCLivingEntity.MCEffect effect : list) {
@@ -2183,7 +2211,7 @@ public class EntityManagement {
 								cloud.setReapplicationDelay(ArgumentValidation.getInt32(specArray.get(index, t), t));
 								break;
 							case entity_spec.KEY_AREAEFFECTCLOUD_SOURCE:
-								Construct cloudSource = specArray.get(index, t);
+								Mixed cloudSource = specArray.get(index, t);
 								if(cloudSource instanceof CNull) {
 									cloud.setSource(null);
 								} else if(cloudSource instanceof CArray) {
@@ -2206,6 +2234,7 @@ public class EntityManagement {
 					}
 					break;
 				case ARROW:
+				case TRIDENT:
 					MCArrow arrow = (MCArrow) entity;
 					for(String index : specArray.stringKeySet()) {
 						switch(index.toLowerCase()) {
@@ -2368,7 +2397,7 @@ public class EntityManagement {
 								endercrystal.setShowingBottom(Static.getBoolean(specArray.get(index, t), t));
 								break;
 							case entity_spec.KEY_ENDERCRYSTAL_BEAMTARGET:
-								Construct c = specArray.get(index, t);
+								Mixed c = specArray.get(index, t);
 								if(c instanceof CNull) {
 									endercrystal.setBeamTarget(null);
 								} else if(c instanceof CArray) {
@@ -2403,7 +2432,7 @@ public class EntityManagement {
 					MCEnderSignal endereye = (MCEnderSignal) entity;
 					// Order matters here. Target must be set first or it will reset despawn ticks and drop.
 					if(specArray.containsKey(entity_spec.KEY_ENDEREYE_TARGET)) {
-						Construct targetLoc = specArray.get(entity_spec.KEY_ENDEREYE_TARGET, t);
+						Mixed targetLoc = specArray.get(entity_spec.KEY_ENDEREYE_TARGET, t);
 						try {
 							endereye.setTargetLocation(ObjectGenerator.GetGenerator().location(targetLoc, null, t));
 						} catch (IllegalArgumentException ex) {
@@ -2443,7 +2472,7 @@ public class EntityManagement {
 					for(String index : specArray.stringKeySet()) {
 						switch(index.toLowerCase()) {
 							case entity_spec.KEY_EVOKERFANGS_SOURCE:
-								Construct source = specArray.get(index, t);
+								Mixed source = specArray.get(index, t);
 								if(source instanceof CNull) {
 									fangs.setOwner(null);
 								} else {
@@ -2833,7 +2862,7 @@ public class EntityManagement {
 					for(String index : specArray.stringKeySet()) {
 						switch(index.toLowerCase()) {
 							case entity_spec.KEY_SHULKERBULLET_TARGET:
-								Construct c = specArray.get(index, t);
+								Mixed c = specArray.get(index, t);
 								if(c instanceof CNull) {
 									bullet.setTarget(null);
 								} else {
@@ -2921,11 +2950,11 @@ public class EntityManagement {
 								}
 								break;
 							case entity_spec.KEY_TIPPEDARROW_POTIONMETA:
-								Construct c = specArray.get(index, t);
+								Mixed c = specArray.get(index, t);
 								if(c instanceof CArray) {
 									CArray meta = (CArray) c;
 									if(meta.containsKey("base")) {
-										Construct base = meta.get("base", t);
+										Mixed base = meta.get("base", t);
 										if(base instanceof CArray) {
 											MCPotionData pd = ObjectGenerator.GetGenerator().potionData((CArray) base, t);
 											tippedarrow.setBasePotionData(pd);
@@ -2933,7 +2962,7 @@ public class EntityManagement {
 									}
 									if(meta.containsKey("potions")) {
 										tippedarrow.clearCustomEffects();
-										Construct potions = meta.get("potions", t);
+										Mixed potions = meta.get("potions", t);
 										if(potions instanceof CArray) {
 											List<MCLivingEntity.MCEffect> list = ObjectGenerator.GetGenerator().potions((CArray) potions, t);
 											for(MCLivingEntity.MCEffect effect : list) {
@@ -3074,8 +3103,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -3089,13 +3118,13 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "mixed {entityID} Returns the shooter of the given projectile, can be null."
+			return "mixed {entityUUID} Returns the shooter of the given projectile, can be null."
 					+ " If the shooter is an entity, that entity's ID will be return, but if it is a block,"
 					+ " that block's location will be returned.";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 
 			if(entity instanceof MCProjectile) {
@@ -3113,8 +3142,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -3128,12 +3157,12 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, shooterID} Sets the shooter of the given projectile. This can be entity UUID,"
+			return "void {entityUUID, shooter} Sets the shooter of the given projectile. This can be an entity UUID,"
 					+ " dispenser location array (throws CastException if not a dispenser), or null.";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 			if(entity instanceof MCProjectile) {
 				if(args[1] instanceof CNull) {
@@ -3155,8 +3184,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -3170,11 +3199,11 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID} Returns whether or not the given projectile should bounce or not when it hits something.";
+			return "boolean {entityUUID} Returns if the given projectile should bounce when it hits something.";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 			if(entity instanceof MCProjectile) {
 				return CBoolean.get(((MCProjectile) entity).doesBounce());
@@ -3184,8 +3213,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -3199,11 +3228,11 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, boolean} Sets whether or not the given projectile should bounce or not when it hits something.";
+			return "void {entityUUID, boolean} Sets if the given projectile should bounce when it hits something.";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity entity = Static.getEntity(args[0], t);
 			if(entity instanceof MCProjectile) {
 				((MCProjectile) entity).setBounce(Static.getBoolean(args[1], t));
@@ -3214,8 +3243,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -3229,17 +3258,17 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "double {entityID} Returns the distance the entity has fallen.";
+			return "double {entityUUID} Returns the distance the entity has fallen.";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return new CDouble(Static.getEntity(args[0], t).getFallDistance(), t);
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -3253,18 +3282,18 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, double} Sets the distance the entity has fallen.";
+			return "void {entityUUID, double} Sets the distance the entity has fallen.";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Static.getEntity(args[0], t).setFallDistance(ArgumentValidation.getDouble32(args[1], t));
 			return CVoid.VOID;
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 	}
 
@@ -3278,18 +3307,18 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, boolean} If true, applies glowing effect to the entity";
+			return "void {entityUUID, boolean} If true, applies glowing effect to the entity";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			Static.getEntity(args[0], t).setGlowing(Static.getBoolean(args[1], t));
 			return CVoid.VOID;
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 
@@ -3303,18 +3332,18 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID} Returns true if the entity is glowing";
+			return "boolean {entityUUID} Returns true if the entity is glowing";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			return CBoolean.GenerateCBoolean(e.isGlowing(), t);
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 
@@ -3328,17 +3357,17 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID} Returns true if the entity produces sounds";
+			return "boolean {entityUUID} Returns true if the entity produces sounds";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return CBoolean.GenerateCBoolean(Static.getEntity(args[0], t).isSilent(), t);
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 
@@ -3352,11 +3381,11 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, boolean} Sets whether or not entity produces sounds";
+			return "void {entityUUID, boolean} Sets whether or not entity produces sounds";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			e.setSilent(Static.getBoolean(args[1], t));
 			return CVoid.VOID;
@@ -3364,7 +3393,7 @@ public class EntityManagement {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 
@@ -3378,17 +3407,17 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID} Returns true if gravity applies to the entity.";
+			return "boolean {entityUUID} Returns true if gravity applies to the entity.";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return CBoolean.GenerateCBoolean(Static.getEntity(args[0], t).hasGravity(), t);
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 
@@ -3402,11 +3431,11 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, boolean} Sets whether or not gravity applies to the entity.";
+			return "void {entityUUID, boolean} Sets whether or not gravity applies to the entity.";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			e.setHasGravity(Static.getBoolean(args[1], t));
 			return CVoid.VOID;
@@ -3414,7 +3443,7 @@ public class EntityManagement {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 
@@ -3428,17 +3457,17 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID} Returns true if the entity cannot be damaged";
+			return "boolean {entityUUID} Returns true if the entity cannot be damaged";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			return CBoolean.GenerateCBoolean(Static.getEntity(args[0], t).isInvulnerable(), t);
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 
@@ -3452,12 +3481,12 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "void {entityID, boolean} If set to true the entity cannot be damaged, except by players in"
+			return "void {entityUUID, boolean} If set to true the entity cannot be damaged, except by players in"
 					+ " creative mode";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			e.setInvulnerable(Static.getBoolean(args[1], t));
 			return CVoid.VOID;
@@ -3465,7 +3494,7 @@ public class EntityManagement {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 
@@ -3479,11 +3508,11 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "array {entityID} Returns an array of scoreboard tags for this entity.";
+			return "array {entityUUID} Returns an array of scoreboard tags for this entity.";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			CArray tags = new CArray(t);
 			for(String tag : e.getScoreboardTags()) {
@@ -3494,7 +3523,7 @@ public class EntityManagement {
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 
@@ -3508,18 +3537,18 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID, tag} Adds a tag to the entity. Returns whether or not it was successful.";
+			return "boolean {entityUUID, tag} Adds a tag to the entity. Returns whether or not it was successful.";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			return CBoolean.get(e.addScoreboardTag(args[1].val()));
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 
@@ -3533,18 +3562,18 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "boolean {entityID, tag} Removes a tag from the entity. Returns whether or not it was successful.";
+			return "boolean {entityUUID, tag} Removes a tag from the entity. Returns whether or not it was successful.";
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCEntity e = Static.getEntity(args[0], t);
 			return CBoolean.get(e.removeScoreboardTag(args[1].val()));
 		}
 
 		@Override
 		public Version since() {
-			return CHVersion.V3_3_2;
+			return MSVersion.V3_3_2;
 		}
 	}
 
@@ -3563,10 +3592,10 @@ public class EntityManagement {
 
 		@Override
 		public String docs() {
-			return "int {[player/LocationArray], itemArray, [spawnNaturally]} Drops the specified item stack at the"
+			return "string {[player/LocationArray], itemArray, [spawnNaturally]} Drops the specified item stack at the"
 					+ " specified player's feet (or at an arbitrary Location, if an array is given), and returns its"
-					+ " entity id. spawnNaturally takes a boolean, which forces the way the item will be spawned. If"
-					+ " true, the item will be dropped with a random velocity.";
+					+ " entity UUID. spawnNaturally takes a boolean, which forces the way the item will be spawned."
+					+ " If true, the item will be dropped with a random velocity.";
 		}
 
 		@Override
@@ -3580,8 +3609,8 @@ public class EntityManagement {
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_2_0;
+		public MSVersion since() {
+			return MSVersion.V3_2_0;
 		}
 
 		@Override
@@ -3590,7 +3619,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment env, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment env, Mixed... args) throws ConfigRuntimeException {
 			MCLocation l;
 			MCItemStack is;
 			boolean natural;
@@ -3651,7 +3680,7 @@ public class EntityManagement {
 		}
 
 		@Override
-		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+		public Mixed exec(Target t, Environment environment, Mixed... args) throws ConfigRuntimeException {
 			MCPlayer p = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
 			MCWorld w = null;
 			if(p != null) {
@@ -3675,9 +3704,9 @@ public class EntityManagement {
 
 			List<MCFireworkEffect> effects = new ArrayList<>();
 			if(options.containsKey("effects")) {
-				Construct cEffects = options.get("effects", t);
+				Mixed cEffects = options.get("effects", t);
 				if(cEffects instanceof CArray) {
-					for(Construct c : ((CArray) cEffects).asList()) {
+					for(Mixed c : ((CArray) cEffects).asList()) {
 						effects.add(ObjectGenerator.GetGenerator().fireworkEffect((CArray) c, t));
 					}
 				} else {
@@ -3720,37 +3749,41 @@ public class EntityManagement {
 					names.add(f.getName());
 				}
 			}
-			return "void {locationArray, [optionsArray]} Launches a firework. The location array specifies where it is launched from,"
-					+ " and the options array is an associative array described below. All parameters in the associative array are"
-					+ " optional, and default to the specified values if not set. The default options being set will make it look like"
-					+ " a normal firework, with a white explosion. ----"
+			return "string {locationArray, [optionsArray]} Launches a firework rocket."
+					+ " The location array specifies where it is launched from,"
+					+ " and the options array is an associative array described below."
+					+ " All parameters in the array are optional, and default to the specified values if not set."
+					+ " The default options being set will make it look like a normal firework, with a white explosion."
+					+ " Returns the firework rocket entity's UUID. ----"
 					+ " The options array may have the following keys:\n"
 					+ "{| cellspacing=\"1\" cellpadding=\"1\" border=\"1\" class=\"wikitable\"\n"
 					+ "! Array key !! Description !! Default\n"
 					+ "|-\n"
-					+ "| strength || A number specifying how far up the firework should go || 2\n"
+					+ "| strength \n A number specifying how far up the firework should go \n 2\n"
 					+ "|-\n"
-					+ "| flicker || A boolean, determining if the firework will flicker\n || false\n"
+					+ "| flicker \n A boolean, determining if the firework will flicker \n false\n"
 					+ "|-\n"
-					+ "| trail || A boolean, determining if the firework will leave a trail || true\n"
+					+ "| trail \n A boolean, determining if the firework will leave a trail \n true\n"
 					+ "|-\n"
-					+ "| colors || An array of colors, or a pipe seperated string of color names (for the named colors only)"
-					+ " for instance: array('WHITE') or 'WHITE<nowiki>|</nowiki>BLUE'. If you want custom colors, you must use an array, though"
-					+ " you can still use color names as an item in the array, for instance: array('ORANGE', array(30, 45, 150))."
-					+ " These colors are used as the primary colors. || 'WHITE'\n"
+					+ "| colors \n An array of colors, or a pipe separated string of color names"
+					+ " for instance: array('WHITE') or 'WHITE<nowiki>|</nowiki>BLUE'. If you want custom colors,"
+					+ " you must use an array, though you can still use color names as an item in the array,"
+					+ " for instance: array('ORANGE', array(30, 45, 150))."
+					+ " These colors are used as the primary colors. \n 'WHITE'\n"
 					+ "|-\n"
-					+ "| fade || An array of colors to be used as the fade colors. This parameter should be formatted the same as"
-					+ " the colors parameter || array()\n"
+					+ "| fade \n An array of colors to be used as the fade colors. This parameter should be formatted"
+					+ " the same as the colors parameter \n array()\n"
 					+ "|-\n"
-					+ "| type || An enum value of one of the firework types, one of: " + StringUtils.Join(MCFireworkType.values(), ", ", " or ")
-					+ " || " + MCFireworkType.BALL.name() + "\n"
+					+ "| type \n An enum value of one of the firework types, one of: "
+					+ StringUtils.Join(MCFireworkType.values(), ", ", " or ")
+					+ " \n " + MCFireworkType.BALL.name() + "\n"
 					+ "|}\n"
 					+ "The \"named colors\" can be one of: " + StringUtils.Join(names, ", ", " or ");
 		}
 
 		@Override
-		public CHVersion since() {
-			return CHVersion.V3_3_1;
+		public MSVersion since() {
+			return MSVersion.V3_3_1;
 		}
 
 	}
