@@ -1359,12 +1359,15 @@ public class EntityManagement {
         public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
             MCLivingEntity le;
             if (args.length > 0) {
+                UUID uuid = null;
                 try {
-                    UUID uuid = Static.GetUUID(args[0], t);
-                    le = Static.getLivingByUUID(uuid, t);
-                } catch (Exception ex) {
-                    le = Static.GetPlayer(args[0], t);
+                    uuid = Static.GetUUID(args[0], t);
+                } catch (CRELengthException ex) {
+                    // Ignore
                 }
+                le = uuid != null
+                        ? Static.getLivingByUUID(uuid, t)
+                        : Static.GetPlayer(args[0], t);
             } else {
                 le = Static.getPlayer(environment, t);
             }
