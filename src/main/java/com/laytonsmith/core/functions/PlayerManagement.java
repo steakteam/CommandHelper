@@ -54,15 +54,10 @@ import com.laytonsmith.core.exceptions.CRE.CREThrowable;
 import com.laytonsmith.core.exceptions.CancelCommandException;
 import com.laytonsmith.core.exceptions.ConfigCompileException;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
+import org.bukkit.OfflinePlayer;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -144,6 +139,73 @@ public class PlayerManagement {
         @Override
         public Boolean runAsync() {
             return false;
+        }
+    }
+
+    @api(environments = {CommandHelperEnvironment.class})
+    public static class puuid extends AbstractFunction {
+
+        @Override
+        public Class<? extends CREThrowable>[] thrown() {
+            return new Class[]{CREPlayerOfflineException.class, CRENotFoundException.class};
+        }
+
+        @Override
+        public boolean isRestricted() {
+            return false;
+        }
+
+        @Override
+        public Boolean runAsync() {
+            return false;
+        }
+
+        @Override
+        public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+            MCPlayer pl = environment.getEnv(CommandHelperEnvironment.class).GetPlayer();
+            boolean dashless = false;
+            if (args.length >= 1) {
+                try {
+                    pl = Static.GetPlayer(args[0], t);
+                } catch (ConfigRuntimeException cre) {
+                    // Ignore
+                }
+            }
+            if (args.length == 2) {
+                dashless = Static.getBoolean(args[1]);
+            }
+            if (pl == null) {
+                throw new CREPlayerOfflineException("No matching player could be found.", t);
+            }
+            UUID uuid = pl.getUniqueId();
+            if (uuid == null) {
+                throw new CRENotFoundException(
+                        "Could not find the UUID of the player (are you running in cmdline mode?)", t);
+            }
+            String uuidStr = uuid.toString();
+            return new CString(dashless ? uuidStr.replace("-", "") : uuidStr, t);
+        }
+
+        @Override
+        public String getName() {
+            return "puuid";
+        }
+
+        @Override
+        public Integer[] numArgs() {
+            return new Integer[]{0, 1, 2};
+        }
+
+        @Override
+        public String docs() {
+            return "string {[player], [dashless]} Returns the uuid of the current player or the specified player."
+                    + " This will attempt to find an offline player, but if that also fails,"
+                    + " a PlayerOfflineException will be thrown.";
+        }
+
+        @Override
+        public Version since() {
+            return CHVersion.V3_3_1;
         }
     }
 

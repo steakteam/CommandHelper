@@ -1357,8 +1357,18 @@ public class EntityManagement {
 
         @Override
         public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-            MCLivingEntity le = Static.getLivingEntity(args[0], t);
-            return new CDouble(le.getMaxHealth(), t);
+            MCLivingEntity le;
+            if (args.length > 0) {
+                try {
+                    UUID uuid = Static.GetUUID(args[0], t);
+                    le = Static.getLivingByUUID(uuid, t);
+                } catch (Exception ex) {
+                    le = Static.GetPlayer(args[0], t);
+                }
+            } else {
+                le = Static.getPlayer(environment, t);
+            }
+            return new CInt(le.getMaxHealth(), t);
         }
 
         @Override
@@ -1368,12 +1378,17 @@ public class EntityManagement {
 
         @Override
         public String docs() {
-            return "double {entityID} Returns the maximum health of this living entity.";
+            return "double {[entityID|player]} Returns the maximum health of this living entity.";
         }
 
         @Override
         public CHVersion since() {
             return CHVersion.V3_3_1;
+        }
+
+        @Override
+        public Integer[] numArgs() {
+            return new Integer[] {0, 1};
         }
     }
 
