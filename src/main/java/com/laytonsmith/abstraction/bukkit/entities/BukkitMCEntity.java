@@ -128,8 +128,7 @@ public class BukkitMCEntity extends BukkitMCMetadatable implements MCEntity {
         return BukkitMCEntityType.valueOfConcrete(e.getType());
     }
 
-    @Override
-    public UUID getUniqueId() {
+    public UUID getUniqueID() {
         return e.getUniqueId();
     }
 
@@ -255,5 +254,10 @@ public class BukkitMCEntity extends BukkitMCMetadatable implements MCEntity {
     @Override
     public MCLocation asyncGetLocation() {
         return new BukkitMCLocation(e.getLocation());
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return e.getUniqueId();
     }
 }

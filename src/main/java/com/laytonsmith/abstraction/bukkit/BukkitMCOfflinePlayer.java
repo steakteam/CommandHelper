@@ -1,19 +1,25 @@
 package com.laytonsmith.abstraction.bukkit;
 
+import com.laytonsmith.PureUtilities.Common.ReflectionUtils;
 import com.laytonsmith.abstraction.MCLocation;
 import com.laytonsmith.abstraction.MCOfflinePlayer;
 import com.laytonsmith.abstraction.MCPlayer;
 import com.laytonsmith.abstraction.bukkit.entities.BukkitMCPlayer;
+import net.minecraft.server.v1_5_R3.NBTTagCompound;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.craftbukkit.v1_5_R3.CraftOfflinePlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 /**
  *
- *
  */
 public class BukkitMCOfflinePlayer extends BukkitMCAnimalTamer implements MCOfflinePlayer {
-
+    public static final String NBT_KEY_UUID_MOST = "UUIDMost";
+    public static final String NBT_KEY_UUID_LEAST = "UUIDLeast";
     OfflinePlayer op;
 
     BukkitMCOfflinePlayer(OfflinePlayer offlinePlayer) {
@@ -73,5 +79,22 @@ public class BukkitMCOfflinePlayer extends BukkitMCAnimalTamer implements MCOffl
     public MCLocation getBedSpawnLocation() {
         Location loc = op.getBedSpawnLocation();
         return loc == null ? null : new BukkitMCLocation(loc);
+    }
+
+    @Override
+    public UUID getUniqueID() {
+        if (op instanceof Entity) {
+            return ((Entity) op).getUniqueId();
+        } else if (op instanceof CraftOfflinePlayer) {
+            CraftOfflinePlayer offlinePlayer = ((CraftOfflinePlayer) op);
+            NBTTagCompound tag = (NBTTagCompound) ReflectionUtils.invokeMethod(CraftOfflinePlayer.class, offlinePlayer, "getBukkitData");
+            if (tag != null && tag.hasKey(NBT_KEY_UUID_MOST) && tag.hasKey(NBT_KEY_UUID_LEAST)) {
+                return new UUID(
+                        tag.getLong(NBT_KEY_UUID_MOST),
+                        tag.getLong(NBT_KEY_UUID_LEAST)
+                );
+            }
+        }
+        return null;
     }
 }
